@@ -102,6 +102,8 @@ class OrderController extends Controller
         if ($order->team_id == $team_id) {
             return response()->json($result, 200);
         }
+
+        return null;
     }
 
     /**
