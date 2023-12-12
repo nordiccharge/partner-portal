@@ -17,7 +17,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'sku' => $this->faker->unique()->uuid(),
+            'sku' => 'nc-0001',
             'name' => $this->faker->name(),
             'brand_id' => 1,
             'category_id' => 1,

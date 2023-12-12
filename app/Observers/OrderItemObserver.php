@@ -31,8 +31,6 @@ class OrderItemObserver
     public function deleted(OrderItem $orderItem): void
     {
 
-        $new_quantity = $orderItem->inventory->quantity - $orderItem->quantity;
-        Inventory::find($orderItem->inventory_id)->update(['quantity' => $new_quantity]);
     }
 
     /**

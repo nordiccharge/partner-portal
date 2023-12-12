@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('team_id');
             $table->foreignId('product_id')
-                ->unique()
                 ->constrained();
             $table->bigInteger('quantity')
                 ->default(0);

@@ -4,8 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Country;
+use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Postal;
 use App\Models\Product;
 use App\Models\Team;
 use Illuminate\Http\Request;
@@ -47,6 +51,11 @@ class OrderController extends Controller
             $products = $request->post('items');
             $products = json_decode($products, true);
             foreach($products as $product) {
+                if (Inventory::find($product['id'])->team_id != $request->header('team_id')) {
+                    return response()->json([
+                        'message' => 'Error on adding item ' . $product['id']
+                    ], 403);
+                }
                 array_push($order_items, [
                     'inventory_id' => (int)$product['id'],
                     'quantity' => (int)$product['quantity']
@@ -65,9 +74,9 @@ class OrderController extends Controller
             'customer_email' => $request->post('customer_email'),
             'customer_phone' => $request->post('customer_phone'),
             'shipping_address' => $request->post('shipping_address'),
-            'postal' => $request->post('postal'),
-            'city' => $request->post('city'),
-            'country' => $request->post('country'),
+            'postal_id' => Postal::where('postal', (int)$request->post('postal'))->first()->id,
+            'city_id' => City::where('name', (int)$request->post('city'))->first()->id,
+            'country_id' => Country::where('short_name', (int)$request->post('country'))->first()->id,
             'wished_installation_date' => $request->post('wished_installation_date'),
             'note' => $request->post('note'),
         ]);

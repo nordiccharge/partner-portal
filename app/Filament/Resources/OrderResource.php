@@ -6,23 +6,15 @@ use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Inventory;
 use App\Models\Order;
-use App\Models\Pipeline;
-use App\Models\Product;
 use App\Models\Stage;
+use Filament\Actions\Action;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
-use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Nette\Utils\Image;
 
 class OrderResource extends Resource
 {
@@ -109,6 +101,7 @@ class OrderResource extends Resource
                                             function () {
                                                 return
                                                     Inventory::join('products', 'inventories.product_id', '=', 'products.id')
+                                                        ->whereBelongsTo(Filament::getTenant())
                                                         ->pluck('products.detailed_name', 'inventories.id');
                                             }
                                         )
@@ -156,6 +149,11 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('Activity')
+                    ->icon('heroicon-o-document-text')
+                    ->color('gray')
+                    ->url(fn ($record) => OrderResource::getUrl('activities', ['record' => $record]))
+                    ->visible(auth()->user()->isAdmin()),
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->visible(auth()->user()->isAdmin()),
@@ -182,7 +180,9 @@ class OrderResource extends Resource
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
             'view' => Pages\ViewOrder::route('/{record}'),
+            'activities' => Pages\ListOrderActivities::class::route('/{record}/activities'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
+
 }

@@ -14,8 +14,6 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected static $logAttributes = ['*'];
-
     protected $fillable = [
         'team_id',
         'pipeline_id',
@@ -74,6 +72,9 @@ class Order extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults();
+        return
+            LogOptions::defaults()
+                ->logOnly(['*'])
+                ->logOnlyDirty();
     }
 }

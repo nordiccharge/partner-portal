@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Partner\RegisterTeam;
 use App\Filament\Pages\Partner\Settings;
+use App\Http\Middleware\ApplyTenantScopes;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -40,6 +41,9 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#57995A'),
             ])
+            ->tenantMiddleware([
+                ApplyTenantScopes::class,
+            ], isPersistent: true)
             ->userMenuItems([
                 MenuItem::make()
                     ->label('Admin Panel')

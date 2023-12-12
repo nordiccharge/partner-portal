@@ -8,11 +8,12 @@ use App\Models\City;
 use App\Models\Country;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\Pipeline;
 use App\Models\Postal;
 use App\Models\Team;
 use Illuminate\Http\Request;
 
-class InventoryController extends Controller
+class PipelineController extends Controller
 {
 
     private function apiAllowed(Request $request): bool {
@@ -29,7 +30,7 @@ class InventoryController extends Controller
         }
 
         $team = Team::find($request->header('team_id'));
-        return response()->json($team->inventories, 200);
+        return response()->json(Pipeline::join('stages', 'stages.pipeline_id', '=', 'pipelines.id')->get(), 200);
     }
 
 }

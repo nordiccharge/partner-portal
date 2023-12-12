@@ -20,3 +20,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('orders', \App\Http\Controllers\API\OrderController::class);
 Route::apiResource('products', \App\Http\Controllers\API\ProductController::class);
+Route::apiResource('inventory', \App\Http\Controllers\API\InventoryController::class);
+Route::apiResource('pipeline', \App\Http\Controllers\API\PipelineController::class);

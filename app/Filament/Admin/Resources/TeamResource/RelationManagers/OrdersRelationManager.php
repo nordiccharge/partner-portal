@@ -7,6 +7,7 @@ use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Stage;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -93,6 +94,7 @@ class OrdersRelationManager extends RelationManager
                                         function () {
                                             return
                                                 Inventory::join('products', 'inventories.product_id', '=', 'products.id')
+                                                    ->whereBelongsTo($this->getOwnerRecord())
                                                     ->pluck('products.detailed_name', 'inventories.id');
                                         }
                                     )
