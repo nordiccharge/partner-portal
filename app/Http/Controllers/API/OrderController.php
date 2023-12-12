@@ -35,6 +35,7 @@ class OrderController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @throws \Exception
      */
     public function store(Request $request)
     {
@@ -112,7 +113,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-
+        return null;
     }
 
     /**
@@ -124,5 +125,6 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
+        return null;
     }
 }
