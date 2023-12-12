@@ -41,7 +41,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Partner Panel')
                     ->url('/partner')
                     ->icon('heroicon-o-users')
-                    ->visible()
+                    ->visible(),
+                'profile' => MenuItem::make()
+                    ->label('Edit profile'),
             ])
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->widgets([
