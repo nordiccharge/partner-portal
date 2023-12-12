@@ -4,7 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\Country;
 use App\Models\Order;
+use App\Models\Postal;
 use App\Models\Team;
 use Illuminate\Http\Request;
 
@@ -18,7 +21,7 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): \Illuminate\Http\JsonResponse
     {
         if(!$this->apiAllowed($request)) {
             return response()->json('Unauthorized', 401);
@@ -61,9 +64,9 @@ class OrderController extends Controller
             'customer_email' => $request->post('customer_email'),
             'customer_phone' => $request->post('customer_phone'),
             'shipping_address' => $request->post('shipping_address'),
-            'postal' => $request->post('postal'),
-            'city' => $request->post('city'),
-            'country' => $request->post('country'),
+            'postal_id' => Postal::where('postal', '=', $request->post('postal'))->first()->id,
+            'city_id' => City::where('name', '=', $request->post('city'))->first()->id,
+            'country_id' => Country::where('short_name', '=', $request->post('country'))->first()->id,
             'wished_installation_date' => $request->post('wished_installation_date'),
             'note' => $request->post('note'),
         ]);
