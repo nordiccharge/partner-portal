@@ -33,7 +33,7 @@ class InstallerResource extends Resource
                     ->options(
                         function () {
                             return
-                                Company::all()->where('company_type_id', '=', '1')->pluck('name', 'id');
+                                Company::all();
                         }
                     ),
                 Forms\Components\TextInput::make('contact_email')
