@@ -14,8 +14,6 @@ class Order extends Model
 {
     use HasFactory, LogsActivity;
 
-    protected static $logAttributes = ['*'];
-
     protected $fillable = [
         'team_id',
         'pipeline_id',

@@ -79,7 +79,6 @@ class TeamResource extends Resource
                             ->helperText('The secret key must only be shared with executives of the parent team company')
                             ->unique(ignoreRecord: true)
                             ->required()
-                            ->disabled()
                             ->readOnly(true)
                             ->columnSpanFull(),
                     ])->columns(2),
