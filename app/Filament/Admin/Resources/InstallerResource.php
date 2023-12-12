@@ -30,12 +30,7 @@ class InstallerResource extends Resource
                     ->label('Company')
                     ->required()
                     ->unique(ignoreRecord: true)
-                    ->options(
-                        function () {
-                            return
-                                Company::all();
-                        }
-                    ),
+                    ->relationship('company', 'name'),
                 Forms\Components\TextInput::make('contact_email')
                     ->required()
                     ->email(),
