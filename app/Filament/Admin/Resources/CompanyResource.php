@@ -28,7 +28,7 @@ class CompanyResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
-                            ->unique(),
+                            ->unique(ignoreRecord: true),
                         Forms\Components\Select::make('company_type_id')
                             ->relationship('companyType', 'name')
                             ->required(),
