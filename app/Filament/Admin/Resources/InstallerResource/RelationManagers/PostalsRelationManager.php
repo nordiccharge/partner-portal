@@ -20,7 +20,14 @@ class PostalsRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('postal')
                     ->required()
+                    ->unique(ignoreRecord: true)
                     ->maxLength(255),
+                Forms\Components\Select::make('country_id')
+                    ->required()
+                    ->relationship('country', 'name'),
+                Forms\Components\Select::make('city_id')
+                    ->required()
+                    ->relationship('city', 'name')
             ]);
     }
 

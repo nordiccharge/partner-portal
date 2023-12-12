@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('country_id');
             $table->foreignId('city_id');
-            $table->unsignedBigInteger('postal');
+            $table->unsignedBigInteger('postal')
+                ->unique();
             $table->foreignId('installer_id')
                 ->nullable();
             $table->timestamps();

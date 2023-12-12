@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\City;
 use App\Models\Company;
+use App\Models\CompanyType;
 use App\Models\Country;
 use App\Models\Installer;
 use App\Models\Inventory;
@@ -30,11 +31,17 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(10)->create();
 
         \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@nordiccharge.com',
-            'password' => bcrypt('123seb'),
+            'name' => 'Sebastian Bak Lundahl',
+            'email' => 'sebastian@nordiccharge.com',
+            'password' => bcrypt('123sebHnj88mts??'),
             'is_admin' => 1
         ]);
+
+        Pipeline::factory()->create();
+
+        CompanyType::factory()->create();
+
+        Country::factory()->create();
 
     }
 }

@@ -27,6 +27,7 @@ class InstallerResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('company_id')
+                    ->label('Company')
                     ->required()
                     ->unique(ignoreRecord: true)
                     ->options(
