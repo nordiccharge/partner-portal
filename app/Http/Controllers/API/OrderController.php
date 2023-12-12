@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
 
     private function apiAllowed(Request $request): bool {
-        $team = Team::find($request->header('team_id'));
+        $team = Team::findOrFail($request->header('team_id'));
         return $team->basic_api && $team->secret_key == $request->header('secret_key');
     }
     /**
@@ -23,13 +23,12 @@ class OrderController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-        $request = $request->server->get('HTTP_HOST');
 
         if(!$this->apiAllowed($request)) {
             return response()->json('Unauthorized', 401);
         }
 
-        $team = Team::find($request->header('team_id'));
+        $team = Team::findOrFail($request->header('team_id'));
         return response()->json($team->orders, 200);
     }
 
