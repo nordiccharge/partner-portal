@@ -119,7 +119,7 @@ class OrderResource extends Resource
                                         ->numeric()
                                         ->default(1)
                                         ->required()
-                                ])->columnSpanFull()
+                                ])->columns(2)
                         ])
             ]);
     }

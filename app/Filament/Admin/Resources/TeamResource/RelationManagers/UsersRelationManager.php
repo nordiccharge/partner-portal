@@ -36,7 +36,7 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\AttachAction::make()
-                    ->recordSelectSearchColumns(['name', 'email']),
+                    ->recordSelectSearchColumns(['name', 'email'])
             ])
             ->actions([
                 Tables\Actions\DetachAction::make(),

@@ -67,17 +67,20 @@ class OrdersRelationManager extends RelationManager
                         Forms\Components\TextInput::make('shipping_address')
                             ->label('Address')
                             ->required(),
-                        Forms\Components\TextInput::make('postal')
-                            ->integer()
+                        Forms\Components\Select::make('postal_id')
+                            ->label('Postal')
+                            ->searchable()
+                            ->preload()
+                            ->relationship('postal', 'postal')
                             ->required(),
-                        Forms\Components\TextInput::make('city')
+                        Forms\Components\Select::make('city_id')
+                            ->relationship('city', 'name')
+                            ->searchable()
+                            ->preload()
                             ->required(),
-                        Forms\Components\Select::make('country')
+                        Forms\Components\Select::make('country_id')
                             ->required()
-                            ->options([
-                                'DK' => 'Denmark'
-                            ])
-                            ->default('DK'),
+                            ->relationship('country', 'name'),
                         Forms\Components\DatePicker::make('installation_date'),
                         Forms\Components\TextInput::make('tracking_code')
                     ])->columns(2)
