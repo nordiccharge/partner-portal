@@ -23,6 +23,8 @@ class OrderController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
+        $request->server->get('HTTP_HOST');
+
         if(!$this->apiAllowed($request)) {
             return response()->json('Unauthorized', 401);
         }
