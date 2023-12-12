@@ -23,13 +23,7 @@ class OrderController extends Controller
      */
     public function index(Request $request): \Illuminate\Http\JsonResponse
     {
-
-        if(!$this->apiAllowed($request)) {
-            return response()->json('Unauthorized', 401);
-        }
-
-        $team = Team::findOrFail($request->header('team_id'));
-        return response()->json($team->orders, 200);
+        return response()->json($request->header());
     }
 
     /**
