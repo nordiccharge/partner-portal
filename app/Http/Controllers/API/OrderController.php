@@ -16,7 +16,7 @@ class OrderController extends Controller
 
     private function apiAllowed(Request $request): bool {
         $team = Team::findOrFail($request->header('team_id'));
-        return $team->basic_api && $team->secret_key == $request->header('secret_key');
+        return $team->basic_api && $team->secret_key == $request->header('key');
     }
     /**
      * Display a listing of the resource.
@@ -49,7 +49,7 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-            'team_id' => $request->header('team_id'),
+            'team_id' => $request->header('team'),
             'id' => random_int(100000000, 999999999),
             'order_reference' => $request->post('order_reference'),
             'pipeline_id' => (int)$request->post('pipeline_id'),
@@ -85,7 +85,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-        $team_id = $request->header('team_id');
+        $team_id = $request->header('team');
         $order = Order::find($id);
         $result = [
             'meta' => $order,
