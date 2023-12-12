@@ -20,7 +20,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        $request->header('team_id');
+        return $request->header('team_id');
     }
 
     /**
