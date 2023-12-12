@@ -5,13 +5,8 @@ namespace App\Http\Controllers\API;
 use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use App\Models\OrderItem;
-use App\Models\Product;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use MongoDB\BSON\Int64;
-use Ramsey\Uuid\Type\Integer;
-use function Laravel\Prompts\error;
 
 class OrderController extends Controller
 {
@@ -25,12 +20,7 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
-        if(!$this->apiAllowed($request)) {
-            return response()->json('Unauthorized', 401);
-        }
-
-        $team = Team::find($request->header('team_id'));
-        return response()->json($team->orders, 200);
+        $request->header('team_id');
     }
 
     /**
