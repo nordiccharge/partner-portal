@@ -27,7 +27,6 @@ class InventoriesRelationManager extends RelationManager
                     ->required()
                     ->searchable()
                     ->preload()
-                    ->unique()
                     ->options(Product::query()->select([DB::raw("CONCAT(name, '  –  ', sku) as name"), 'id'])->pluck('name', 'id')),
                 Forms\Components\TextInput::make('quantity')
                     ->required()
