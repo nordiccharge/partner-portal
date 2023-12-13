@@ -125,7 +125,16 @@ class ProductResource extends Resource
                         Forms\Components\Textarea::make('delivery_information')
                             ->helperText('This will be shown at purchase orders and can be used to inform the B2B customer about delivery times and such.'),
                     ])
-                    ->columns(2)
+                    ->columns(2),
+                Forms\Components\Section::make('Advanced')
+                    ->description('This is used for API configuration. These settings are crucial for shipping integration.')
+                    ->schema([
+                        Forms\Components\TextInput::make('serial_prefix')
+                            ->required()
+                            ->unique(ignoreRecord: true)
+                            ->helperText('For example, with Zaptec you would type "ZAP" for ZAP123456.')
+                    ])->columns(2)
+
             ]);
     }
 

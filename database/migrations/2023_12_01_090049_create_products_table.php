@@ -37,6 +37,9 @@ return new class extends Migration
                 ->default(0);
             $table->boolean('is_active')
                 ->default(false);
+
+            $table->string('serial_prefix')
+                ->unique();
             $table->timestamps();
         });
     }

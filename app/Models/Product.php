@@ -24,7 +24,8 @@ class Product extends Model
         'image_url',
         'delivery_information',
         'quantity',
-        'is_active'
+        'is_active',
+        'serial_prefix'
     ];
 
     public function brand(): BelongsTo {

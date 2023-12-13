@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory()->create([
             'name' => 'Sebastian Bak Lundahl',
             'email' => 'sebastian@nordiccharge.com',
-            'password' => bcrypt('123sebHnj88mts??'),
+            'password' => bcrypt('password'),
             'is_admin' => 1
         ]);
 
