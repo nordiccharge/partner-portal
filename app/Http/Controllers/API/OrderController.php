@@ -92,7 +92,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-        $team_id = $request->header('team_id');
+        $team_id = $request->header('team');
         $order = Order::find($id);
         $result = [
             'meta' => $order,
