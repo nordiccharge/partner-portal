@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\OrderCreated;
+use App\Models\Inventory;
 use App\Models\Product;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -30,8 +31,9 @@ class SendOrderCreatedNotification
 
         if ($allow_shipping == 1 && $pipeline == 1) {
             $items = array();
-            foreach ($order->items()->get(['product_id', 'quantity']) as $item) {
-                $sku = Product::find($item['product_id'])->sku;
+            foreach ($order->items()->get(['inventory_id', 'quantity']) as $item) {
+                $inventory_item = Inventory::find($item['inventory_id']);
+                $sku = Product::find($inventory_item['product_id'])->sku;
                 $qty = $item['quantity'];
                 array_push($items, ['sku' => $sku, 'qty' => $qty]);
             }
@@ -57,9 +59,9 @@ class SendOrderCreatedNotification
             'recipient' => [
                 'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
                 'street1' => $order->shipping_address,
-                'zipcode' => $order->postal,
-                'city' => $order->city,
-                'country' => $order->country,
+                'zipcode' => $order->postal()->postal,
+                'city' => $order->city()->name,
+                'country' => $order->country()->short_name,
                 'phone' => $order->customer_phone,
                 'email' => $order->customer_email
             ],
