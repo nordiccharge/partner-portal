@@ -17,8 +17,8 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $key = $request->header('secret_key');
-        $team_id = $request->header('team_id');
+        $key = $request->header('key');
+        $team_id = $request->header('team');
         $team = Team::find($team_id);
         if ($team->secret_key == $key) {
             return response()->json(Product::all(['id', 'sku', 'name', 'description']), 200);
