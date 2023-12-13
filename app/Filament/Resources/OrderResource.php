@@ -156,7 +156,10 @@ class OrderResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\Action::make('History')
+                    ->icon('heroicon-o-document-text')
+                    ->visible(auth()->user()->isAdmin())
+                    ->url(fn ($record) => OrderResource::getUrl('activities', ['record' => $record])),
                 Tables\Actions\EditAction::make()
                     ->visible(auth()->user()->isAdmin()),
             ])
@@ -181,6 +184,7 @@ class OrderResource extends Resource
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
+            'activities' => Pages\ListOrderActivities::route('/{record}/activities'),
             'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];

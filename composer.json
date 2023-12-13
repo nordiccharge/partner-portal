@@ -15,6 +15,7 @@
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/tinker": "^2.8",
+        "pxlrbt/filament-activity-log": "^1.0",
         "spatie/laravel-activitylog": "^4.7"
     },
     "require-dev": {
