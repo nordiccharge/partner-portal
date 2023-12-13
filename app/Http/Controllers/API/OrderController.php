@@ -15,7 +15,7 @@ class OrderController extends Controller
 {
 
     private function apiAllowed(Request $request): bool {
-        $team = Team::findOrFail($request->header('team_id'));
+        $team = Team::findOrFail($request->header('team'));
         return $team->basic_api && $team->secret_key == $request->header('key');
     }
     /**
@@ -28,7 +28,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-        $team = Team::findOrFail((int)$request->header('key'));
+        $team = Team::findOrFail($request->header('key'));
         return response()->json($team->orders, 200);
     }
 
