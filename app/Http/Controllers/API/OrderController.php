@@ -38,6 +38,8 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        return response()->json($request->header('key') . ' ' . $request->header('team'));
+
         if(!$this->apiAllowed($request)) {
             return response()->json('Unauthorized', 401);
         }
