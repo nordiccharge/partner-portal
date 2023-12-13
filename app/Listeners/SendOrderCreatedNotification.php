@@ -59,9 +59,9 @@ class SendOrderCreatedNotification
             'recipient' => [
                 'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
                 'street1' => $order->shipping_address,
-                'zipcode' => $order->postal()->postal,
-                'city' => $order->city()->name,
-                'country' => $order->country()->short_name,
+                'zipcode' => $order->postal->postal,
+                'city' => $order->city->name,
+                'country' => $order->country->short_name,
                 'phone' => $order->customer_phone,
                 'email' => $order->customer_email
             ],
