@@ -28,7 +28,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-        $team = Team::findOrFail($request->header('key'));
+        $team = Team::findOrFail((int)$request->header('key'));
         return response()->json($team->orders, 200);
     }
 
