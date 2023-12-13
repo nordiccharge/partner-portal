@@ -28,7 +28,7 @@ class OrderController extends Controller
             return response()->json('Unauthorized', 401);
         }
 
-        $team = Team::findOrFail($request->header('key'));
+        $team = Team::findOrFail($request->header('team'));
         return response()->json($team->orders, 200);
     }
 
@@ -56,7 +56,7 @@ class OrderController extends Controller
         }
 
         $order = Order::create([
-            'team_id' => $request->header('key'),
+            'team_id' => $request->header('team'),
             'id' => random_int(100000000, 999999999),
             'order_reference' => $request->post('order_reference'),
             'pipeline_id' => (int)$request->post('pipeline_id'),
