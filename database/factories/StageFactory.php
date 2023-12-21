@@ -17,7 +17,10 @@ class StageFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'pipeline_id' => 1,
+            'name' => 'Order Created',
+            'order' => 1,
+            'state' => 'step',
         ];
     }
 }

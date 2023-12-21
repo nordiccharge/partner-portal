@@ -13,6 +13,7 @@ class Charger extends Model
     protected $fillable = [
         'team_id',
         'order_id',
+        'product_id',
         'serial_number',
         'service'
     ];
@@ -23,6 +24,10 @@ class Charger extends Model
 
     public function order(): BelongsTo {
         return $this->belongsTo(Order::class);
+    }
+
+    public function product(): BelongsTo {
+        return $this->belongsTo(Product::class);
     }
 
 }

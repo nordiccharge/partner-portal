@@ -25,7 +25,17 @@ class Team extends Model
         'shipping_api_get',
         'woocommerce_api',
         'backend_api',
-        'backend_api_service'
+        'backend_api_service',
+        'cubs_api',
+        'allow_sendgrid',
+        'sendgrid_name',
+        'sendgrid_email',
+        'sendgrid_url',
+        'sendgrid_auto_installer_allow',
+        'sendgrid_order_created_allow',
+        'sendgrid_order_created_id',
+        'sendgrid_order_shipped_allow',
+        'sendgrid_order_shipped_id',
     ];
 
     public function users(): BelongsToMany {

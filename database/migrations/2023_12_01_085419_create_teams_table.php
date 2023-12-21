@@ -38,10 +38,38 @@ return new class extends Migration
                 ->default(false);
             $table->boolean('woocommerce_api')
                 ->default(false);
+            $table->boolean('shopify_api')
+                ->default(false);
             $table->boolean('backend_api')
                 ->default(false);
             $table->string('backend_api_service')
                 ->nullable();
+            $table->string('cubs_api')
+                ->default(false);
+
+            // SendGrid Configuration
+            $table->boolean('allow_sendgrid')
+                ->default(false);
+            $table->string('sendgrid_name')
+                ->nullable();
+            $table->string('sendgrid_email')
+                ->nullable();
+            $table->string('sendgrid_url')
+                ->nullable();
+            $table->boolean('sendgrid_auto_installer_allow')
+                ->default(false);
+
+                // SendGrid Order Created Email
+                $table->boolean('sendgrid_order_created_allow')
+                    ->default(false);
+                $table->string('sendgrid_order_created_id')
+                    ->nullable();
+
+                // SendGrid Package Shipped Email
+                $table->boolean('sendgrid_order_shipped_allow')
+                    ->default(false);
+                $table->string('sendgrid_order_shipped_id')
+                    ->nullable();
 
             // Other
             $table->timestamps();

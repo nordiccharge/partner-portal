@@ -39,9 +39,15 @@ class DatabaseSeeder extends Seeder
 
         Pipeline::factory()->create();
 
+        Stage::factory()->create();
+
         CompanyType::factory()->create();
 
+        Company::factory()->create();
+
         Country::factory()->create();
+
+
 
     }
 }

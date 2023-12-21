@@ -17,7 +17,13 @@ class CompanyFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'company_type_id' => 1,
+            'name' => 'Test Company',
+            'sender_name' => 'Test Company ApS',
+            'sender_address' => 'Addresse 12',
+            'sender_zip' => '1234',
+            'sender_city' => 'Herlev',
+            'sender_country' => 'DK',
         ];
     }
 }

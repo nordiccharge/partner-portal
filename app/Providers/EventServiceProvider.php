@@ -3,8 +3,11 @@
 namespace App\Providers;
 
 use App\Events\OrderCreated;
+use App\Events\OrderFulfilled;
 use App\Http\Controllers\API\OrderController;
+use App\Listeners\SendOrderCreatedEmail;
 use App\Listeners\SendOrderCreatedNotification;
+use App\Listeners\SendOrderFulfilledNotification;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Observers\OrderItemObserver;
@@ -26,7 +29,11 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         OrderCreated::class => [
-            SendOrderCreatedNotification::class
+            SendOrderCreatedNotification::class,
+            SendOrderCreatedEmail::class
+        ],
+        OrderFulfilled::class => [
+            SendOrderFulfilledNotification::class
         ]
     ];
 

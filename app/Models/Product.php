@@ -25,7 +25,6 @@ class Product extends Model
         'delivery_information',
         'quantity',
         'is_active',
-        'serial_prefix'
     ];
 
     public function brand(): BelongsTo {

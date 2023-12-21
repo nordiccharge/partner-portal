@@ -136,7 +136,10 @@ class OrdersRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->after(function (Order $order) {
+                        OrderCreated::dispatch($order);
+                    }),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ChargerResource\Pages;
 use App\Filament\Resources\ChargerResource\RelationManagers;
 use App\Models\Charger;
+use App\Models\Order;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -35,7 +36,23 @@ class ChargerResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\ImageColumn::make('product.image_url')
+                    ->label(''),
+                Tables\Columns\TextColumn::make('product.name')
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('order.customer_first_name')
+                    ->label('Full name')
+                    ->formatStateUsing(fn (Charger $record) => $record->order->customer_first_name . ' ' . $record->order->customer_last_name)
+                    ->searchable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('order.shipping_address')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('serial_number')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('order.id'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->sortable()
             ])
             ->filters([
                 //

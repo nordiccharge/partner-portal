@@ -18,6 +18,8 @@ return new class extends Migration
             $table->foreignId('order_id')
                 ->nullable()
                 ->constrained();
+            $table->foreignId('product_id')
+                ->constrained();
             $table->string('serial_number')
                 ->nullable();
             $table->string('service')
