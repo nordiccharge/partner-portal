@@ -25,6 +25,9 @@ return new class extends Migration
                 ->nullable();
             $table->string('contact_phone')
                 ->nullable();
+            $table->string('vat_number')
+                ->unique()
+                ->nullable();
             $table->string('invoice_email')
                 ->nullable();
 

@@ -44,6 +44,11 @@ return new class extends Migration
                 ->nullable();
 
             // Installation Details
+            $table->boolean('installation_required')
+                ->default(false);
+            $table->foreignId('installation_id')
+                ->nullable()
+                ->constrained();
             $table->date('wished_installation_date')
                 ->nullable();
             $table->date('installation_date')
@@ -51,6 +56,9 @@ return new class extends Migration
             $table->foreignId('installer_id')
                     ->nullable()
                     ->constrained();
+
+            $table->text('error_message')
+                ->nullable();
 
             // Other
             $table->timestamps();

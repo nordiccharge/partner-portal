@@ -53,14 +53,15 @@ class SendOrderCreatedNotification
                 'orderNo' => $order->id,
                 'referenceNo' => $order->order_reference,
                 'sender' => [
-                    'name' => 'Nordic Charge ApS',
-                    'attention' => $team->get('name')->first()->name,
-                    'street1' => 'Kantatevej 30',
-                    'zipcode' => '2730',
-                    'city' => 'Herlev',
-                    'country' => 'DK',
-                    'phone' => '+4531435950',
-                    'email' => 'dk@nordiccharge.com'
+                    'name' => $team->company()->get('sender_name')->first()->sender_name,
+                    'attention' => $team->company()->get('sender_attention')->first()->sender_attention,
+                    'street1' => $team->company()->get('sender_address')->first()->sender_address,
+                    'street2' => $team->company()->get('sender_address2')->first()->sender_address2,
+                    'zipcode' => $team->company()->get('sender_zip')->first()->sender_zip,
+                    'city' => $team->company()->get('sender_city')->first()->sender_city,
+                    'country' => $team->company()->get('sender_country')->first()->sender_country,
+                    'phone' => $team->company()->get('sender_phone')->first()->sender_phone,
+                    'email' => $team->company()->get('sender_email')->first()->sender_email
                 ],
                 'recipient' => [
                     'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
@@ -71,7 +72,7 @@ class SendOrderCreatedNotification
                     'phone' => $order->customer_phone,
                     'email' => $order->customer_email
                 ],
-                'deliveryMethod' => 'gls_private_delivery',
+                'deliveryMethod' => $order->pipeline()->get('shipping_type')->first()->shipping_type,
                 'items' => $items
             ]);
 

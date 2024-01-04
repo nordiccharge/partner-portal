@@ -26,18 +26,20 @@ class ShipmentController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, int $team_id)
+    public function store(Request $request)
     {
-        $team = Team::find($team_id);
+        $response = json_decode($request->getContent());
+        $data = $response->data[0];
+        $order_id = $data->order->orderNo;
+        $order = Order::findOrFail($order_id);
+        $team = $order->team;
+        $team_id = $team->id;
 
         // Check Team settings
         if ($team->shipping_api_get != 1) {
             return response()->json('Error. Fulfillment not allowed', 401);
         }
 
-        $response = json_decode($request->getContent());
-        $data = $response->data[0];
-        $order_id = $data->order->orderNo;
 
         $tracking_numbers = [];
         $chargers = [];
@@ -48,12 +50,20 @@ class ShipmentController extends Controller
             foreach($package->lines as $line) {
                 foreach ($line->serialNumbers as $serialNumber) {
                     $sku = $line->orderLine->item->sku;
-                    Charger::create([
-                        'team_id' => $team_id,
-                        'order_id' => $order_id,
-                        'product_id' => Product::where('sku', '=', $sku)->first()->id,
-                        'serial_number' => $serialNumber,
-                    ]);
+                    $product = Product::where('sku', '=', $sku)->first();
+
+                    if ($product === null) {
+                        Log::error('Product with SKU ' . $sku . ' not found');
+                        return response()->json('Error. Product with SKU ' . $sku . ' not found', 401);
+                    } else {
+                        Log::debug('Creating charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' for order ' . $order_id . ' and team ' . $team_id);
+                        Charger::create([
+                            'team_id' => $team_id,
+                            'order_id' => $order_id,
+                            'product_id' => $product->id,
+                            'serial_number' => $serialNumber,
+                        ]);
+                    }
                     array_push($chargers, ['sku' => $sku, 'serialNumber' => $serialNumber]);
                 }
             }
@@ -61,7 +71,7 @@ class ShipmentController extends Controller
 
         try {
             Log::debug('Adding tracking code to ' . implode(', ', $tracking_numbers) . ' on '. $order_id);
-            Order::find($order_id)->update(['tracking_code' => implode(', ', $tracking_numbers)]);
+            $order->update(['tracking_code' => implode(', ', $tracking_numbers)]);
         } catch (\Exception $e) {
             Log::error('Caught exception on emailNotification()' . $e->getMessage());
         }
@@ -76,6 +86,7 @@ class ShipmentController extends Controller
                     'trackingNumbers' => $tracking_numbers
                 ]
         ], 200);
+
     }
 
     /**

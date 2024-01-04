@@ -19,6 +19,8 @@ return new class extends Migration
                 ->unique();
             $table->foreignId('installer_id')
                 ->nullable();
+            $table->boolean('active')
+                ->default(false);
             $table->timestamps();
         });
     }

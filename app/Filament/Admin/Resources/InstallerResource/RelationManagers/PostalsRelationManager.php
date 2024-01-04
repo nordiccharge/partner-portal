@@ -2,6 +2,9 @@
 
 namespace App\Filament\Admin\Resources\InstallerResource\RelationManagers;
 
+use App\Filament\Imports\InstallerPostalImporter;
+use EightyNine\ExcelImport\ExcelImportAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -12,22 +15,17 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PostalsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'postals';
+    protected static string $relationship = 'installerPostals';
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('postal')
+                Forms\Components\Select::make('postal_id')
                     ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(255),
-                Forms\Components\Select::make('country_id')
-                    ->required()
-                    ->relationship('country', 'name'),
-                Forms\Components\Select::make('city_id')
-                    ->required()
-                    ->relationship('city', 'name')
+                    ->preload()
+                    ->searchable()
+                    ->relationship('postal', 'postal'),
             ]);
     }
 
@@ -36,14 +34,17 @@ class PostalsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('postal')
             ->columns([
-                Tables\Columns\TextColumn::make('postal'),
-                Tables\Columns\TextColumn::make('city.name'),
-                Tables\Columns\TextColumn::make('country.name')
+                Tables\Columns\TextColumn::make('postal.postal'),
+                Tables\Columns\TextColumn::make('postal.city.name'),
+                Tables\Columns\TextColumn::make('postal.country.name'),
             ])
             ->filters([
                 //
             ])
             ->headerActions([
+                Tables\Actions\ImportAction::make()
+                    ->importer(InstallerPostalImporter::class)
+                    ->options(['installer_id' => (int)$this->getOwnerRecord()->getKey()]),
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([

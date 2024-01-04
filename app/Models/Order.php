@@ -30,7 +30,8 @@ class Order extends Model
         'tracking_code',
         'wished_installation_date',
         'installation_date',
-        'note'
+        'note',
+        'installation_required'
     ];
 
     protected static $logAttributes = ['*'];
@@ -69,6 +70,10 @@ class Order extends Model
 
     public function postal(): BelongsTo {
         return $this->belongsTo(Postal::class);
+    }
+
+    public function installation(): BelongsTo {
+        return $this->belongsTo(Installation::class);
     }
 
     public function getActivitylogOptions(): LogOptions

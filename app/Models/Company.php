@@ -14,6 +14,7 @@ class Company extends Model
     protected $fillable = [
         'company_type_id',
         'name',
+        'vat_number', // 'cvr' in danish
         'description',
         'contact_email',
         'contact_phone',

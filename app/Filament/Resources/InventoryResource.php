@@ -29,7 +29,7 @@ class InventoryResource extends Resource
     protected static ?string $label = 'product';
     protected static ?string $slug = 'inventory';
 
-    protected static ?string $navigationGroup = 'Inventory Management';
+    protected static ?string $navigationGroup = 'Account';
 
     public static function getPluralLabel(): string
     {
@@ -47,6 +47,7 @@ class InventoryResource extends Resource
                     ->options(
                         Product::all()->pluck('detailed_name', 'id')
                     ),
+
                 Forms\Components\TextInput::make('quantity')
                     ->required()
                     ->integer(),
@@ -74,6 +75,10 @@ class InventoryResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('History')
+                    ->icon('heroicon-o-document-text')
+                    ->visible(auth()->user()->isAdmin())
+                    ->url(fn ($record) => InventoryResource::getUrl('activities', ['record' => $record])),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -95,6 +100,7 @@ class InventoryResource extends Resource
         return [
             'index' => Pages\ListInventories::route('/'),
             'create' => Pages\CreateInventory::route('/create'),
+            'activities' => Pages\ListInventoryActivities::route('/{record}/activities'),
             'edit' => Pages\EditInventory::route('/{record}/edit'),
         ];
     }

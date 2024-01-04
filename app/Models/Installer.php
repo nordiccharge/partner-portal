@@ -23,10 +23,15 @@ class Installer extends Model
     }
 
     public function postals(): HasMany {
-        return $this->hasMany(Postal::class);
+        return $this->hasMany(InstallerPostal::class);
     }
 
     public function orders(): HasMany {
         return $this->hasMany(Order::class);
     }
+
+    public function installerPostals(): HasMany {
+        return $this->hasMany(InstallerPostal::class);
+    }
+
 }

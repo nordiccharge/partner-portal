@@ -11,6 +11,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Tabs;
@@ -62,11 +63,15 @@ class ViewOrder extends ViewRecord
                     ->columns(2),
                 \Filament\Infolists\Components\Section::make('Shipping & Installation')
                     ->schema([
-                        TextEntry::make('installation_date')
-                            ->default('Not available yet'),
                         TextEntry::make('tracking_code')
                             ->default('Not available yet')
-                            ->copyable()
+                            ->copyable(),
+                        IconEntry::make('installation_required')
+                            ->boolean()
+                            ->label('Installation included'),
+                        TextEntry::make('installation_date')
+                            ->visible(fn (Order $order) => $order->installation_required)
+                            ->default('Not available yet'),
                     ])->columns(4)
                     ->icon('heroicon-m-truck'),
                 \Filament\Infolists\Components\Section::make('Cart Details')

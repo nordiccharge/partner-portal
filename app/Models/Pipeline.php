@@ -11,7 +11,8 @@ class Pipeline extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        'shipping_type'
     ];
 
     public function stages(): HasMany {

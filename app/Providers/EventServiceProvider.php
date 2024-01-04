@@ -8,8 +8,10 @@ use App\Http\Controllers\API\OrderController;
 use App\Listeners\SendOrderCreatedEmail;
 use App\Listeners\SendOrderCreatedNotification;
 use App\Listeners\SendOrderFulfilledNotification;
+use App\Models\InstallerPostal;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Observers\InstallerPostalObserver;
 use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
 use Illuminate\Auth\Events\Registered;
@@ -43,6 +45,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         OrderItem::observe(OrderItemObserver::class);
+        InstallerPostal::observe(InstallerPostalObserver::class);
     }
 
 

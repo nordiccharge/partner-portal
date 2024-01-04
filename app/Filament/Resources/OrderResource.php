@@ -28,9 +28,27 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
+    protected static ?string $navigationIcon = 'heroicon-o-truck';
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationGroup = 'Management';
+
+    private static function getOrdersInProgress(): Collection
+    {
+        return static::getModel()::whereHas('stage', function (Builder $query) {
+            $query->where('state', '!=', 'completed')
+            ->where('state', '!=', 'aborted');
+        })->get();
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getOrdersInProgress()->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return static::getOrdersInProgress()->count() > 0 ? 'info' : 'primary';
+    }
 
     public static function form(Form $form): Form
     {
@@ -60,6 +78,19 @@ class OrderResource extends Resource
                                 ->pluck('name', 'id'))
                             ->default(1),
                     ])->columns(2),
+                Forms\Components\Section::make('Installation Details')
+                    ->schema([
+                        Forms\Components\Toggle::make('installation_required')
+                            ->label('Installation required')
+                            ->helperText('If the order requires installation, the installer might be notified about the order and the shipping address')
+                            ->default(false),
+                        Forms\Components\Select::make('installation_id')
+                            ->label('Installation')
+                            ->relationship('installation', 'name')
+                            ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
+                            ->required(fn (Forms\Get $get) => $get('installation_required')),
+                    ])->live()
+                    ->columns(2),
                 Forms\Components\Section::make('Customer Details')
                     ->schema([
                         Forms\Components\TextInput::make('customer_first_name')
@@ -139,7 +170,20 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('stage.name')
                     ->badge()
                     ->sortable()
-                    ->toggleable(),
+                    ->toggleable()
+                    ->color(
+                        function (Order $record) {
+                            if ($record->stage->state === 'completed') {
+                                return 'primary';
+                            }
+                            if ($record->stage->state === 'aborted') {
+                                return 'gray';
+                            }
+                            else {
+                                return 'info';
+                            }
+                        }
+                    ),
                 Tables\Columns\TextColumn::make('shipping_address')
                     ->label('Address'),
                 Tables\Columns\TextColumn::make('customer_first_name')
@@ -153,7 +197,10 @@ class OrderResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('stage')
+                    ->multiple()
+                    ->relationship('stage', 'name')
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\Action::make('History')

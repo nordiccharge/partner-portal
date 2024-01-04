@@ -18,6 +18,7 @@ class TeamResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
     protected static ?string $navigationGroup = 'Administration';
+    protected static ?int $navigationSort = 5;
 
 
     public static function form(Form $form): Form
@@ -75,7 +76,7 @@ class TeamResource extends Resource
                     ->schema([
                         Forms\Components\Toggle::make('shipping_api_send')
                             ->label('Send orders to shipping system')
-                            ->helperText('Only for "Private Installation" pipeline orders')
+                            ->helperText('Only for "Private Customer" pipeline orders')
                             ->default(false),
                         Forms\Components\Toggle::make('shipping_api_get')
                             ->label('Get fulfillment from shipping system')
@@ -188,7 +189,9 @@ class TeamResource extends Resource
             RelationManagers\UsersRelationManager::class,
             RelationManagers\OrdersRelationManager::class,
             RelationManagers\InventoriesRelationManager::class,
-            RelationManagers\PurchaseOrdersRelationManager::class
+            RelationManagers\PurchaseOrdersRelationManager::class,
+            RelationManagers\InstallationsRelationManager::class,
+            RelationManagers\ChargersRelationManager::class
         ];
     }
 

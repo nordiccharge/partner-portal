@@ -21,6 +21,7 @@ class InstallerResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationGroup = 'Flow & Process';
+    protected static ?int $navigationSort = 11;
 
     public static function form(Form $form): Form
     {
@@ -30,7 +31,9 @@ class InstallerResource extends Resource
                     ->label('Company')
                     ->required()
                     ->unique(ignoreRecord: true)
-                    ->relationship('company', 'name'),
+                    ->searchable()
+                    ->preload()
+                    ->options(Company::where('company_type_id', 1)->pluck('name', 'id')),
                 Forms\Components\TextInput::make('contact_email')
                     ->required()
                     ->email(),

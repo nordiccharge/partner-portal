@@ -19,13 +19,16 @@ class PipelineResource extends Resource
     protected static ?string $model = Pipeline::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
-    protected static ?string $navigationGroup = 'Flow & Process';
+    protected static ?string $navigationGroup = 'Backend';
+    protected static ?int $navigationSort = 14;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\TextInput::make('name'),
+                Forms\Components\TextInput::make('shipping_type')
+                    ->default('gls_business_delivery'),
             ]);
     }
 

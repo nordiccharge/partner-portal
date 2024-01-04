@@ -28,13 +28,13 @@ class StagesRelationManager extends RelationManager
                     ->required()
                     ->default(0)
                     ->options(range(0, 20))
-                    ->unique(),
+                    ->unique(ignoreRecord: true),
                 Forms\Components\Select::make('state')
                     ->options([
                         'step' => 'Step',
                         'aborted' => 'Aborted',
                         'completed' => 'Completed',
-                        'milestone' => 'warning'
+                        'action' => 'Action needed'
                     ])
                     ->default('step')
                     ->required()
@@ -55,7 +55,7 @@ class StagesRelationManager extends RelationManager
                         'step' => 'gray',
                         'aborted' => 'danger',
                         'completed' => 'success',
-                        'milestone' => 'warning'
+                        'action' => 'info'
                     })
             ])->defaultSort('order')
             ->filters([

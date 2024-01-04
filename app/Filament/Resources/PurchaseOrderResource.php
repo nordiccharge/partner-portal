@@ -28,9 +28,9 @@ class PurchaseOrderResource extends Resource
     protected static ?string $tenantRelationshipName = 'purchase_orders';
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
-    protected static ?string $navigationGroup = 'Inventory Management';
+    protected static ?string $navigationGroup = 'Account';
 
     public static function form(Form $form): Form
     {

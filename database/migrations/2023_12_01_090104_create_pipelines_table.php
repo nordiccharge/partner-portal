@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('pipelines', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('shipping_type');
             $table->timestamps();
             $table->softDeletes();
         });
+
     }
 
     /**

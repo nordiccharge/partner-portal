@@ -62,6 +62,10 @@ class Team extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function installations(): HasMany {
+        return $this->hasMany(Installation::class);
+    }
+
     public function allowSend(): bool {
         return $this->shipping_api_send;
     }

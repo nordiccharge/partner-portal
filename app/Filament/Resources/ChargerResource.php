@@ -23,12 +23,39 @@ class ChargerResource extends Resource
     protected static ?int $navigationSort = 2;
     protected static ?string $navigationGroup = 'Management';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'primary';
+    }
+
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Select::make('order_id')
+                    ->label('Order')
+                    ->preload()
+                    ->searchable()
+                    ->options(Order::all()->pluck('id', 'id')->toArray())
+                    ->nullable(),
+                Forms\Components\Select::make('product_id')
+                    ->label('Product')
+                    ->preload()
+                    ->searchable()
+                    ->options(\App\Models\Product::all()->pluck('name', 'id')->toArray())
+                    ->required(),
+                Forms\Components\TextInput::make('serial_number')
+                    ->nullable()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('service')
+                    ->nullable()
+                    ->maxLength(255),
             ]);
     }
 

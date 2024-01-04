@@ -19,6 +19,7 @@ class CompanyResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
     protected static ?string $navigationGroup = 'Administration';
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
@@ -35,9 +36,13 @@ class CompanyResource extends Resource
                         Forms\Components\TextInput::make('contact_email')
                             ->email(),
                         Forms\Components\TextInput::make('contact_phone'),
+                        Forms\Components\TextInput::make('vat_number')
+                            ->label('VAT (CVR)')
+                            ->unique(ignoreRecord: true),
                         Forms\Components\TextInput::make('invoice_email')
                             ->email(),
-                        Forms\Components\Textarea::make('description'),
+                        Forms\Components\Textarea::make('description')
+                            ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Shipping Details')
                     ->schema([
@@ -46,12 +51,14 @@ class CompanyResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('sender_attention')
                             ->label('Attention')
+                            ->default('')
                             ->nullable(),
                         Forms\Components\TextInput::make('sender_address')
                             ->label('Address')
                             ->required(),
                         Forms\Components\TextInput::make('sender_address2')
                             ->label('Secondary address')
+                            ->default('')
                             ->nullable(),
                         Forms\Components\TextInput::make('sender_zip')
                             ->label('Postcode')
@@ -67,9 +74,11 @@ class CompanyResource extends Resource
                             ->nullable(),
                         Forms\Components\TextInput::make('sender_phone')
                             ->label('Phone')
+                            ->required()
                             ->nullable(),
                         Forms\Components\TextInput::make('sender_email')
                             ->label('Email')
+                            ->required()
                             ->nullable()
                     ])->columns(2)
             ]);
