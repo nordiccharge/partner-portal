@@ -9,6 +9,7 @@ use App\Models\City;
 use App\Models\Company;
 use App\Models\CompanyType;
 use App\Models\Country;
+use App\Models\Installation;
 use App\Models\Installer;
 use App\Models\Inventory;
 use App\Models\Order;
