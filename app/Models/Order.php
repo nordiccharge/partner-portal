@@ -31,7 +31,9 @@ class Order extends Model
         'wished_installation_date',
         'installation_date',
         'note',
-        'installation_required'
+        'installation_required',
+        'installation_id',
+        'installation_price'
     ];
 
     protected static $logAttributes = ['*'];

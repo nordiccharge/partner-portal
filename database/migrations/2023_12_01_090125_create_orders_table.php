@@ -49,6 +49,8 @@ return new class extends Migration
             $table->foreignId('installation_id')
                 ->nullable()
                 ->constrained();
+            $table->decimal('installation_price')
+                ->nullable();
             $table->date('wished_installation_date')
                 ->nullable();
             $table->date('installation_date')

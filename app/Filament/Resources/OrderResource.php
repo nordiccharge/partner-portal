@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Models\Installation;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Pipeline;
@@ -88,7 +89,18 @@ class OrderResource extends Resource
                             ->label('Installation')
                             ->relationship('installation', 'name')
                             ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
-                            ->required(fn (Forms\Get $get) => $get('installation_required')),
+                            ->required(fn (Forms\Get $get) => $get('installation_required'))
+                            ->afterStateUpdated(
+                                function (Forms\Set $set, ?string $state) {
+                                    $installation = Installation::findOrFail($state);
+                                    $set('installation_price', $installation->price);
+                                }
+                            ),
+                        Forms\Components\TextInput::make('installation_price')
+                            ->label('Installation price')
+                            ->readOnly()
+                            ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
+                            ->required(fn (Forms\Get $get) => $get('installation_required'))
                     ])->live()
                     ->columns(2),
                 Forms\Components\Section::make('Customer Details')
@@ -145,12 +157,24 @@ class OrderResource extends Resource
                                         )
                                         ->required()
                                         ->searchable()
-                                        ->preload(),
+                                        ->preload()
+                                        ->afterStateUpdated(
+                                            function (Forms\Set $set, ?string $state) {
+                                                $inventory = Inventory::findOrFail($state);
+                                                $set('price', $inventory->sale_price);
+                                            }
+                                        ),
                                     Forms\Components\TextInput::make('quantity')
                                         ->numeric()
                                         ->default(1)
+                                        ->required(),
+                                    Forms\Components\TextInput::make('price')
                                         ->required()
-                                ])->columns(2)
+                                        ->live()
+                                        ->readOnly(),
+                                ])
+                                ->live()
+                                ->columns(3)
                         ])
             ]);
     }

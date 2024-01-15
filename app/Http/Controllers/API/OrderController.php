@@ -6,6 +6,8 @@ use App\Events\OrderCreated;
 use App\Http\Controllers\Controller;
 use App\Models\City;
 use App\Models\Country;
+use App\Models\Installation;
+use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Postal;
 use App\Models\Team;
@@ -50,33 +52,60 @@ class OrderController extends Controller
             foreach($products as $product) {
                 array_push($order_items, [
                     'inventory_id' => (int)$product['id'],
-                    'quantity' => (int)$product['quantity']
+                    'quantity' => (int)$product['quantity'],
+                    'price' => Inventory::findOrFail((int)$product['id'])->sale_price,
                 ]);
             }
         }
 
-        $order = Order::create([
-            'team_id' => $request->header('team'),
-            'id' => random_int(100000000, 999999999),
-            'order_reference' => $request->post('order_reference'),
-            'pipeline_id' => (int)$request->post('pipeline_id'),
-            'stage_id' => (int)$request->post('stage_id'),
-            'customer_first_name' => $request->post('customer_first_name'),
-            'customer_last_name' => $request->post('customer_last_name'),
-            'customer_email' => $request->post('customer_email'),
-            'customer_phone' => $request->post('customer_phone'),
-            'shipping_address' => $request->post('shipping_address'),
-            'postal_id' => Postal::where('postal', '=', $request->post('postal'))->first()->id,
-            'city_id' => City::where('name', '=', $request->post('city'))->first()->id,
-            'country_id' => Country::where('short_name', '=', $request->post('country'))->first()->id,
-            'wished_installation_date' => $request->post('wished_installation_date'),
-            'note' => $request->post('note'),
-        ]);
+        $order = null;
+
+        if ($request->post('installation_required') == 1) {
+            $order = Order::create([
+                'team_id' => $request->header('team'),
+                'id' => random_int(100000000, 999999999),
+                'order_reference' => $request->post('order_reference'),
+                'pipeline_id' => (int)$request->post('pipeline_id'),
+                'stage_id' => (int)$request->post('stage_id'),
+                'customer_first_name' => $request->post('customer_first_name'),
+                'customer_last_name' => $request->post('customer_last_name'),
+                'customer_email' => $request->post('customer_email'),
+                'customer_phone' => $request->post('customer_phone'),
+                'shipping_address' => $request->post('shipping_address'),
+                'postal_id' => Postal::where('postal', '=', $request->post('postal'))->first()->id,
+                'city_id' => City::where('name', '=', $request->post('city'))->first()->id,
+                'country_id' => Country::where('short_name', '=', $request->post('country'))->first()->id,
+                'installation_required' => $request->post('installation_required'),
+                'wished_installation_date' => $request->post('wished_installation_date'),
+                'installation_id' => (int)$request->post('installation_id'),
+                'installation_price' => Installation::findOrFail((int)$request->post('installation_id'))->price,
+                'note' => $request->post('note'),
+            ]);
+
+        }   else {
+            $order = Order::create([
+                'team_id' => $request->header('team'),
+                'id' => random_int(100000000, 999999999),
+                'order_reference' => $request->post('order_reference'),
+                'pipeline_id' => (int)$request->post('pipeline_id'),
+                'stage_id' => (int)$request->post('stage_id'),
+                'customer_first_name' => $request->post('customer_first_name'),
+                'customer_last_name' => $request->post('customer_last_name'),
+                'customer_email' => $request->post('customer_email'),
+                'customer_phone' => $request->post('customer_phone'),
+                'shipping_address' => $request->post('shipping_address'),
+                'postal_id' => Postal::where('postal', '=', $request->post('postal'))->first()->id,
+                'city_id' => City::where('name', '=', $request->post('city'))->first()->id,
+                'country_id' => Country::where('short_name', '=', $request->post('country'))->first()->id,
+                'note' => $request->post('note'),
+            ]);
+
+        }
 
         $order->items()->createMany($order_items);
-
         OrderCreated::dispatch($order);
 
+        unset($order['team']);
         return response()->json([
             'message' => 'Success',
             'data' => $order

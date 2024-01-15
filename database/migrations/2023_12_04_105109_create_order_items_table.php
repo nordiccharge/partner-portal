@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('inventories')
                 ->cascadeOnDelete();
             $table->unsignedBigInteger('quantity');
+            $table->decimal('price');
             $table->timestamps();
         });
     }

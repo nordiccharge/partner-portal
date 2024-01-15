@@ -105,7 +105,11 @@ class OrdersRelationManager extends RelationManager
                                 Forms\Components\TextInput::make('quantity')
                                     ->numeric()
                                     ->default(1)
+                                    ->required(),
+                                Forms\Components\TextInput::make('price')
                                     ->required()
+                                    ->live()
+                                    ->readOnly(),
                             ])->columns(2)
                     ])
                 ]);
