@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('user_id')
                 ->nullable()
                 ->constrained();
+            $table->boolean('active')
+                ->default(true);
             $table->string('name');
             $table->text('description')
                 ->nullable();

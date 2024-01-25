@@ -15,13 +15,18 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    private function apiAllowed(Request $request): bool {
+        $team = Team::findOrFail($request->header('team'));
+        return $team->basic_api && $team->secret_key == $request->header('key');
+    }
     public function index(Request $request)
     {
         $key = $request->header('key');
         $team_id = $request->header('team');
         $team = Team::find($team_id);
         if ($team->secret_key == $key) {
-            return response()->json(Product::all(['id', 'sku', 'name', 'description']), 200);
+            return response()->json(Product::all(['id', 'sku', 'image_url', 'name', 'description']), 200);
         }
 
         return response()->json('Unauthorized', 401);
@@ -38,9 +43,15 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Request $request, string $id)
     {
-        //
+        if(!$this->apiAllowed($request)) {
+            return response()->json('Unauthorized', 401);
+        }
+
+        $team_id = $request->header('team');
+        return Product::findOrFail($id)->get(['id', 'sku', 'image_url', 'name', 'description']);
+
     }
 
     /**

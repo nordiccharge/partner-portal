@@ -100,7 +100,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         Pipeline::create([
-            'name' => 'Private Costumer',
+            'name' => 'Private Costumer with Delivery',
             'shipping_type' => 'gls_private_delivery',
         ]);
 
