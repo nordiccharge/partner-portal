@@ -2,8 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Partner\RegisterTeam;
-use App\Filament\Pages\Partner\Settings;
+use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,7 +31,8 @@ class AppPanelProvider extends PanelProvider
             ->id('partner')
             ->path('partner')
             ->login()
-            ->registration()
+            ->registration(Register::class)
+            ->tenantRegistration(RegisterTeam::class)
             ->passwordReset()
             ->profile()
             ->brandName('Partner Portal')

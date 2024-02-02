@@ -16,7 +16,8 @@ class Stage extends Model
         'order',
         'pipeline_id',
         'state',
-        'description'
+        'description',
+        'automation_type'
     ];
 
     public function pipeline(): BelongsTo {

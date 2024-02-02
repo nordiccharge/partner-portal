@@ -59,6 +59,10 @@ return new class extends Migration
                     ->nullable()
                     ->constrained();
 
+            // NC Price Details
+            $table->decimal('nc_price')
+                ->default(0);
+
             $table->text('error_message')
                 ->nullable();
 

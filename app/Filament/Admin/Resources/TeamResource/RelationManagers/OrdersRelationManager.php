@@ -5,13 +5,16 @@ namespace App\Filament\Admin\Resources\TeamResource\RelationManagers;
 use App\Events\OrderCreated;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\Pipeline;
 use App\Models\Product;
 use App\Models\Stage;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class OrdersRelationManager extends RelationManager
@@ -35,9 +38,19 @@ class OrdersRelationManager extends RelationManager
                             ->label('Pipeline')
                             ->required()
                             ->preload()
-                            ->default(1)
                             ->live()
-                            ->relationship('pipeline', 'name'),
+                            ->relationship('pipeline', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', Filament::getTenant()))
+                            ->afterStateUpdated(
+                                function (Forms\Set $set, ?string $state) {
+                                    if ($state) {
+                                        $pipeline = Pipeline::findOrFail($state);
+                                        $set('nc_price', $pipeline->nc_price);
+                                    } else {
+                                        $set('nc_price', null);
+                                    }
+                                }
+                            )
+                            ->disabledOn('edit'),
                         Forms\Components\Select::make('stage_id')
                             ->label('Stage')
                             ->required()
@@ -45,6 +58,11 @@ class OrdersRelationManager extends RelationManager
                                 ->where('pipeline_id', $get('pipeline_id'))
                                 ->pluck('name', 'id'))
                             ->default(1),
+                        Forms\Components\TextInput::make('nc_price')
+                            ->readOnly()
+                            ->label('Nordic Charge Order Flow Price')
+                            ->helperText('Excluding taxes')
+                            ->suffix('DKK')
                     ])->columns(2),
                 Forms\Components\Section::make('Customer Details')
                     ->schema([

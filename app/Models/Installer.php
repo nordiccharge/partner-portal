@@ -16,6 +16,7 @@ class Installer extends Model
         'contact_email',
         'contact_phone',
         'invoice_email',
+        'contact_type',
     ];
 
     public function company(): BelongsTo {

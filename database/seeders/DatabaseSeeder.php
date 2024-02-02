@@ -99,53 +99,6 @@ class DatabaseSeeder extends Seeder
             'is_admin' => 1
         ]);
 
-        Pipeline::create([
-            'name' => 'Private Costumer with Delivery',
-            'shipping_type' => 'gls_private_delivery',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Order Created',
-            'order' => 1,
-            'state' => 'action',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Installer Contacted',
-            'order' => 2,
-            'state' => 'step',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Installation Date Confirmed',
-            'order' => 3,
-            'state' => 'action',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Installation Completed',
-            'order' => 3,
-            'state' => 'action',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Online & Completed',
-            'order' => 4,
-            'state' => 'completed',
-        ]);
-
-        Stage::create([
-            'pipeline_id' => 1,
-            'name' => 'Aborted',
-            'order' => 5,
-            'state' => 'aborted',
-        ]);
-
         CompanyType::create([
             'name' => 'Installer'
         ]);
@@ -172,6 +125,78 @@ class DatabaseSeeder extends Seeder
             'user_id' => 1,
             'secret_key' => Str::random(50),
         ])->users()->attach(User::find(1));
+
+        Pipeline::create([
+            'name' => 'Return Order',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 1,
+            'name' => 'Return Created',
+            'order' => 1,
+            'state' => 'return',
+        ]);
+
+        Pipeline::create([
+            'name' => 'Abort Order',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 2,
+            'name' => 'Order Aborted',
+            'order' => 1,
+            'state' => 'aborted',
+        ]);
+
+        Pipeline::create([
+            'team_id' => 1,
+            'name' => 'Private Costumer with Delivery',
+            'shipping' => true,
+            'shipping_type' => 'gls_private_delivery',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Order Created',
+            'order' => 1,
+            'state' => 'action',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Installer Contacted',
+            'order' => 2,
+            'state' => 'step',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Installation Date Confirmed',
+            'order' => 3,
+            'state' => 'action',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Installation Completed',
+            'order' => 3,
+            'state' => 'action',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Online & Completed',
+            'order' => 4,
+            'state' => 'completed',
+        ]);
+
+        Stage::create([
+            'pipeline_id' => 3,
+            'name' => 'Aborted',
+            'order' => 5,
+            'state' => 'aborted',
+        ]);
+
 
         Country::create([
             'short_name' => 'DK',

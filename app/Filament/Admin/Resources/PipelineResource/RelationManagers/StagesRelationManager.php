@@ -25,19 +25,27 @@ class StagesRelationManager extends RelationManager
                 Forms\Components\Textarea::make('description')
                     ->string(),
                 Forms\Components\Select::make('order')
-                    ->required()
-                    ->default(0)
                     ->options(range(0, 20))
-                    ->unique(ignoreRecord: true),
+                    ->required(),
                 Forms\Components\Select::make('state')
                     ->options([
                         'step' => 'Step',
                         'aborted' => 'Aborted',
                         'completed' => 'Completed',
-                        'action' => 'Action needed'
+                        'action' => 'Action needed',
+                        'return' => 'Return'
                     ])
-                    ->default('step')
-                    ->required()
+                    ->required(),
+                Forms\Components\Select::make('automation_type')
+                    ->label('Automation')
+                    ->options([
+                        'none' => 'None',
+                        'auto' => 'Auto',
+                        'manual' => 'Manual'
+                    ])
+                    ->unique(ignoreRecord: true)
+                    ->default('none')
+                    ->selectablePlaceholder(false),
             ]);
     }
 
@@ -55,7 +63,8 @@ class StagesRelationManager extends RelationManager
                         'step' => 'gray',
                         'aborted' => 'danger',
                         'completed' => 'success',
-                        'action' => 'info'
+                        'action' => 'info',
+                        'return' => 'gray',
                     })
             ])->defaultSort('order')
             ->filters([

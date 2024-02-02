@@ -3,10 +3,10 @@
 namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\OrderResource\Pages;
-use App\Filament\Admin\Resources\OrderResource\RelationManagers;
 use App\Models\Installation;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\Pipeline;
 use App\Models\Stage;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -81,8 +81,20 @@ class OrderResource extends Resource
                             ->required()
                             ->preload()
                             ->default(1)
-                            ->live()
-                            ->relationship('pipeline', 'name'),
+                            ->disabledOn('edit')
+                            ->relationship('pipeline', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
+                            ->searchable()
+                            ->afterStateUpdated(
+                                function (Forms\Set $set, ?string $state) {
+                                    if ($state) {
+                                        $pipeline = Pipeline::findOrFail($state);
+                                        $set('nc_price', $pipeline->nc_price);
+                                    } else {
+                                        $set('nc_price', null);
+                                    }
+                                }
+                            )
+                            ->live(),
                         Forms\Components\Select::make('stage_id')
                             ->label('Stage')
                             ->required()
@@ -90,6 +102,11 @@ class OrderResource extends Resource
                                 ->where('pipeline_id', $get('pipeline_id'))
                                 ->pluck('name', 'id'))
                             ->default(1),
+                        Forms\Components\TextInput::make('nc_price')
+                            ->readOnly()
+                            ->label('Nordic Charge Order Flow Price')
+                            ->helperText('Excluding taxes')
+                            ->suffix('DKK'),
                         Forms\Components\Textarea::make('note')
                             ->columnSpanFull()
                     ])->columns(2),
@@ -227,12 +244,15 @@ class OrderResource extends Resource
                             if ($record->stage->state === 'aborted') {
                                 return 'danger';
                             }
-                            if ($record->stage->state === 'step') {
+                            if ($record->stage->state === 'step' || $record->stage->state === 'return') {
                                 return 'gray';
                             }
                         }
                     )
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('installer.company.name')
+                    ->label('Installer')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('shipping_address')
                     ->label('Address'),
                 Tables\Columns\TextColumn::make('customer_first_name')

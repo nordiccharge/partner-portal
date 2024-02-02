@@ -40,8 +40,16 @@ class InstallerResource extends Resource
                 Forms\Components\TextInput::make('contact_phone')
                     ->required(),
                 Forms\Components\TextInput::make('invoice_email')
-                    ->required()
                     ->email(),
+                Forms\Components\Select::make('contact_type')
+                    ->label('Contact Type')
+                    ->required()
+                    ->default('email')
+                    ->selectablePlaceholder(false)
+                    ->options([
+                        'email' => 'Email',
+                        'jublo' => 'Jublo',
+                    ]),
             ]);
     }
 

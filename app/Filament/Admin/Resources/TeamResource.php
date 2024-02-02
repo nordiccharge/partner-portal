@@ -187,9 +187,6 @@ class TeamResource extends Resource
     {
         return [
             RelationManagers\UsersRelationManager::class,
-            RelationManagers\OrdersRelationManager::class,
-            RelationManagers\InventoriesRelationManager::class,
-            RelationManagers\PurchaseOrdersRelationManager::class,
             RelationManagers\InstallationsRelationManager::class,
             RelationManagers\ChargersRelationManager::class
         ];

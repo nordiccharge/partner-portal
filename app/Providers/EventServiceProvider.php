@@ -11,9 +11,11 @@ use App\Listeners\SendOrderFulfilledNotification;
 use App\Models\InstallerPostal;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\ReturnOrder;
 use App\Observers\InstallerPostalObserver;
 use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
+use App\Observers\ReturnOrderObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -46,6 +48,8 @@ class EventServiceProvider extends ServiceProvider
     {
         OrderItem::observe(OrderItemObserver::class);
         InstallerPostal::observe(InstallerPostalObserver::class);
+        ReturnOrder::observe(ReturnOrderObserver::class);
+        Order::observe(OrderObserver::class);
     }
 
 

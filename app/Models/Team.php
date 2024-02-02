@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 
 class Team extends Model
 {
@@ -72,6 +73,10 @@ class Team extends Model
 
     public function purchase_orders(): HasMany {
         return $this->hasMany(PurchaseOrder::class);
+    }
+
+    public function pipelines(): HasMany {
+        return $this->hasMany(Pipeline::class);
     }
 
 }

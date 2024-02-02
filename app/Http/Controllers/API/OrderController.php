@@ -9,9 +9,12 @@ use App\Models\Country;
 use App\Models\Installation;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\Pipeline;
 use App\Models\Postal;
+use App\Models\Stage;
 use App\Models\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -31,7 +34,31 @@ class OrderController extends Controller
         }
 
         $team = Team::findOrFail($request->header('team'));
-        return response()->json($team->orders, 200);
+        return response()->json($team->orders->map(function ($order) {
+            return [
+                'id' => $order->id,
+                'team_id' => $order->team_id,
+                'pipeline_id' => $order->pipeline_id,
+                'stage_id' => $order->stage_id,
+                'order_reference' => $order->order_reference,
+                'note' => $order->note,
+                'customer_first_name' => $order->customer_first_name,
+                'customer_last_name' => $order->customer_last_name,
+                'customer_email' => $order->customer_email,
+                'customer_phone' => $order->customer_phone,
+                'shipping_address' => $order->shipping_address,
+                'postal' => $order->postal->postal,
+                'city' => $order->city->name,
+                'country' => $order->country->short_name,
+                'installation_required' => $order->installation_required,
+                'wished_installation_date' => $order->wished_installation_date,
+                'installation_id' => $order->installation_id,
+                'installation_price' => $order->installation_price,
+                'installation_date' => $order->installation_date,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+            ];
+        }), 200);
     }
 
     /**
@@ -60,13 +87,16 @@ class OrderController extends Controller
 
         $order = null;
 
+        $pipeline = Pipeline::findOrFail((int)$request->post('pipeline_id'));
+
         if ($request->post('installation_required') == 1) {
             $order = Order::create([
                 'team_id' => $request->header('team'),
                 'id' => random_int(100000000, 999999999),
                 'order_reference' => $request->post('order_reference'),
-                'pipeline_id' => (int)$request->post('pipeline_id'),
-                'stage_id' => (int)$request->post('stage_id'),
+                'pipeline_id' => $pipeline->id,
+                'nc_price' => $pipeline->nc_price,
+                'stage_id' => Stage::where('pipeline_id', '=', $pipeline->id)->where('order', '=', 1)->first()->id,
                 'customer_first_name' => $request->post('customer_first_name'),
                 'customer_last_name' => $request->post('customer_last_name'),
                 'customer_email' => $request->post('customer_email'),
@@ -87,7 +117,8 @@ class OrderController extends Controller
                 'team_id' => $request->header('team'),
                 'id' => random_int(100000000, 999999999),
                 'order_reference' => $request->post('order_reference'),
-                'pipeline_id' => (int)$request->post('pipeline_id'),
+                'pipeline_id' => $pipeline->id,
+                'nc_price' => $pipeline->nc_price,
                 'stage_id' => (int)$request->post('stage_id'),
                 'customer_first_name' => $request->post('customer_first_name'),
                 'customer_last_name' => $request->post('customer_last_name'),
@@ -108,7 +139,29 @@ class OrderController extends Controller
         unset($order['team']);
         return response()->json([
             'message' => 'Success',
-            'data' => $order
+            'data' => [
+                'id' => $order->id,
+                'team_id' => $order->team_id,
+                'pipeline_id' => $order->pipeline_id,
+                'stage_id' => $order->stage_id,
+                'order_reference' => $order->order_reference,
+                'note' => $order->note,
+                'customer_first_name' => $order->customer_first_name,
+                'customer_last_name' => $order->customer_last_name,
+                'customer_email' => $order->customer_email,
+                'customer_phone' => $order->customer_phone,
+                'shipping_address' => $order->shipping_address,
+                'postal' => $order->postal->postal,
+                'city' => $order->city->name,
+                'country' => $order->country->short_name,
+                'installation_required' => $order->installation_required,
+                'wished_installation_date' => $order->wished_installation_date,
+                'installation_id' => $order->installation_id,
+                'installation_price' => $order->installation_price,
+                'installation_date' => $order->installation_date,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+            ]
             ], 200);
     }
 
@@ -124,8 +177,31 @@ class OrderController extends Controller
         $team_id = $request->header('team');
         $order = Order::find($id);
         $result = [
-            'meta' => $order,
-            'items' => $order->items()->get(['id', 'order_id', 'inventory_id', 'quantity']),
+            'order' => [
+                    'id' => $order->id,
+                    'team_id' => $order->team_id,
+                    'pipeline_id' => $order->pipeline_id,
+                    'stage_id' => $order->stage_id,
+                    'nc_price' => $order->nc_price,
+                    'order_reference' => $order->order_reference,
+                    'note' => $order->note,
+                    'customer_first_name' => $order->customer_first_name,
+                    'customer_last_name' => $order->customer_last_name,
+                    'customer_email' => $order->customer_email,
+                    'customer_phone' => $order->customer_phone,
+                    'shipping_address' => $order->shipping_address,
+                    'postal' => $order->postal->postal,
+                    'city' => $order->city->name,
+                    'country' => $order->country->short_name,
+                    'installation_required' => $order->installation_required,
+                    'wished_installation_date' => $order->wished_installation_date,
+                    'installation_id' => $order->installation_id,
+                    'installation_price' => $order->installation_price,
+                    'installation_date' => $order->installation_date,
+                    'created_at' => $order->created_at,
+                    'updated_at' => $order->updated_at,
+                ],
+            'items' => $order->items()->get(['id', 'inventory_id', 'quantity', 'price']),
         ];
 
         if ($order->team_id == $team_id) {

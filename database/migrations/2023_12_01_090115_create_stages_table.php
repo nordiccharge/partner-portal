@@ -22,6 +22,8 @@ return new class extends Migration
             $table->timestamps();
             $table->string('description')
                 ->nullable();
+            $table->string('automation_type')
+                ->nullable();
             $table->softDeletes();
         });
     }

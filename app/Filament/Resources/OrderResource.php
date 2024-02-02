@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\Pipeline;
 use App\Models\Product;
 use App\Models\Stage;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
@@ -37,7 +38,8 @@ class OrderResource extends Resource
     {
         return static::getModel()::whereHas('stage', function (Builder $query) {
             $query->where('state', '!=', 'completed')
-            ->where('state', '!=', 'aborted');
+            ->where('state', '!=', 'aborted')
+            ->where('state', '!=', 'return');
         })->get();
     }
 
@@ -70,7 +72,18 @@ class OrderResource extends Resource
                             ->preload()
                             ->default(1)
                             ->live()
-                            ->relationship('pipeline', 'name'),
+                            ->relationship('pipeline', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', Filament::getTenant()->id))
+                            ->afterStateUpdated(
+                                function (Forms\Set $set, ?string $state) {
+                                    if ($state) {
+                                        $pipeline = Pipeline::findOrFail($state);
+                                        $set('nc_price', $pipeline->nc_price);
+                                    } else {
+                                        $set('nc_price', null);
+                                    }
+                                }
+                            )
+                            ->disabledOn('edit'),
                         Forms\Components\Select::make('stage_id')
                             ->label('Stage')
                             ->required()
@@ -78,6 +91,11 @@ class OrderResource extends Resource
                                 ->where('pipeline_id', $get('pipeline_id'))
                                 ->pluck('name', 'id'))
                             ->default(1),
+                        Forms\Components\TextInput::make('nc_price')
+                            ->readOnly()
+                            ->label('Nordic Charge Order Flow Price')
+                            ->helperText('Excluding taxes')
+                            ->suffix('DKK')
                     ])->columns(2),
                 Forms\Components\Section::make('Installation Details')
                     ->schema([
@@ -200,7 +218,7 @@ class OrderResource extends Resource
                             if ($record->stage->state === 'completed') {
                                 return 'primary';
                             }
-                            if ($record->stage->state === 'aborted') {
+                            if ($record->stage->state === 'aborted' || $record->stage->state === 'return') {
                                 return 'gray';
                             }
                             else {

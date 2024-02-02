@@ -3,7 +3,10 @@
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
 use App\Filament\Admin\Resources\OrderResource;
+use App\Filament\Admin\Resources\ReturnOrderResource;
 use App\Models\Order;
+use App\Models\ReturnOrder;
+use App\Models\Stage;
 use Filament\Actions;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
@@ -11,6 +14,7 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Log;
 
 class ViewOrder extends ViewRecord
 {
@@ -87,6 +91,35 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Create Return')
+                ->icon('heroicon-o-arrow-path')
+                ->link()
+                ->hidden(fn (Order $record) => $record->stage->state == 'return')
+                ->color('warning')
+                ->requiresConfirmation()
+                ->form([
+                    \Filament\Forms\Components\Textarea::make('reason')
+                        ->required()
+                        ->autofocus()
+                        ->placeholder('Specify a reason'),
+                    \Filament\Forms\Components\Select::make('shipping_label')
+                        ->options([
+                            'true' => 'Create Shipping Label Automatically',
+                            'false' => 'No Label',
+                        ])
+                        ->required()
+                ])
+                ->action(function (Order $record, array $data) {
+                    ReturnOrder::create([
+                        'team_id' => $record->team->id,
+                        'order_id' => $record->id,
+                        'reason' => $data['reason'],
+                        'shipping_label' => $data['shipping_label'],
+                        'state' => 'pending']);
+                    $record->update(['pipeline_id' => 1, 'stage_id' => 1]);
+                    $this->redirect(ReturnOrderResource::getUrl());
+                })
+                ->modalIcon('heroicon-o-arrow-path'),
             Actions\EditAction::make(),
         ];
     }

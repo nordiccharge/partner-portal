@@ -33,7 +33,9 @@ class Order extends Model
         'note',
         'installation_required',
         'installation_id',
-        'installation_price'
+        'installation_price',
+        'nc_price',
+        'installer_id'
     ];
 
     protected static $logAttributes = ['*'];

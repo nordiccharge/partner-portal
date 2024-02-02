@@ -11,16 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('installers', function (Blueprint $table) {
+        Schema::create('return_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('company_id')
+            $table->foreignId('team_id')
                 ->constrained();
-            $table->string('contact_type')
-                ->default('email');
-            $table->string('contact_email');
-            $table->string('contact_phone');
-            $table->string('invoice_email')
-                ->nullable();
+            $table->foreignId('order_id')
+                ->unique()
+                ->constrained();
+            $table->text('reason');
+            $table->string('state');
+            $table->boolean('shipping_label')
+                ->default(false);
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('installers');
+        Schema::dropIfExists('return_orders');
     }
 };

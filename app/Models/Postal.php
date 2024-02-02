@@ -35,4 +35,8 @@ class Postal extends Model
     public function installerPostals(): HasMany {
         return $this->hasMany(InstallerPostal::class);
     }
+
+    public function orders(): HasMany {
+        return $this->hasMany(Order::class);
+    }
 }

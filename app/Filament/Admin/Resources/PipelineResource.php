@@ -26,9 +26,43 @@ class PipelineResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name'),
-                Forms\Components\TextInput::make('shipping_type')
-                    ->default('gls_business_delivery'),
+                Forms\Components\Section::make('General')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\Select::make('team_id')
+                            ->label('Team')
+                            ->relationship('team', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                            ->columnSpanFull(),
+                        Forms\Components\TextInput::make('name')
+                            ->autofocus()
+                            ->required(),
+                        Forms\Components\TextInput::make('nc_price')
+                            ->label('Nordic Charge Order Price')
+                            ->numeric()
+                            ->helperText('Excluding taxes')
+                            ->suffix('DKK')
+                            ->default(0),
+                        Forms\Components\Select::make('automation_type')
+                            ->options([
+                                'none' => 'None',
+                                'auto' => 'Auto',
+                                'manual' => 'Manual'
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Shipping')
+                    ->schema([
+                        Forms\Components\TextInput::make('shipping_type'),
+                        Forms\Components\TextInput::make('shipping_price')
+                            ->default(0)
+                            ->numeric()
+                            ->helperText('Excluding taxes')
+                            ->suffix('DKK'),
+                    ])
+
+                    ->columns(2),
             ]);
     }
 
@@ -37,6 +71,14 @@ class PipelineResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
+                    ->searchable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('team.name'),
+                Tables\Columns\ToggleColumn::make('shipping')
+                    ->disabled(),
+                Tables\Columns\TextColumn::make('stages_count')
+                    ->label('Stages')
+                    ->counts('stages'),
             ])
             ->filters([
                 //
