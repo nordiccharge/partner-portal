@@ -2,13 +2,17 @@
 
 namespace App\Filament\Resources\OrderResource\Pages;
 
+use App\Events\TicketCreated;
 use App\Filament\Resources\OrderResource;
 use App\Models\Inventory;
 use App\Models\Order;
 use Faker\Provider\Text;
 use Filament\Actions;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
@@ -18,6 +22,9 @@ use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 
 class ViewOrder extends ViewRecord
 {
@@ -30,13 +37,14 @@ class ViewOrder extends ViewRecord
                 \Filament\Infolists\Components\Section::make('Overview')
                     ->schema([
                         TextEntry::make('shipping_address'),
+                        TextEntry::make('postal.postal'),
                         TextEntry::make('city.name'),
                         TextEntry::make('country.name'),
                         \Filament\Infolists\Components\Section::make([
                             TextEntry::make('note')
                                 ->default('No note stated')
                         ])
-                    ])->columns(3),
+                    ])->columns(4),
                 \Filament\Infolists\Components\Section::make('Order Details')
                     ->schema([
                         TextEntry::make('id')
@@ -87,9 +95,55 @@ class ViewOrder extends ViewRecord
                                     ->label('')
                             ])->columns(2)
                     ])
-                    ->icon('heroicon-m-shopping-bag')
+                    ->icon('heroicon-m-shopping-bag'),
+                \Filament\Infolists\Components\Section::make('Comments')
+                    ->schema([
+                        CommentsEntry::make('comments')
+
+                    ])
+                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                    ->columns(1),
             ]);
     }
 
+    public function getHeaderActions(): array
+    {
+        return [
+            Actions\Action::make('Support')
+                ->color('primary')
+                ->icon('heroicon-o-question-mark-circle')
+                ->modalIcon('heroicon-o-question-mark-circle')
+                ->modalHeading('Create Support Ticket')
+                ->modalDescription('Please provide a detailed description of your issue or question')
+                ->modalSubmitActionLabel('Create Ticket')
+                ->modalWidth('xl')
+                ->form([
+                    Select::make('type')
+                        ->options([
+                            'Question' => 'Question',
+                            'Incident' => 'Incident',
+                            'Problem' => 'Problem',
+                            'Return' => 'Return',
+                            'Feature Request' => 'Feature Request',
+                        ])
+                        ->required()
+                        ->placeholder('Select a type'),
+                    Select::make('priority')
+                        ->options([
+                            1 => 'Low',
+                            2 => 'Medium',
+                            3 => 'High',
+                            4 => 'Urgent',
+                        ])
+                        ->required()
+                        ->placeholder('Select a type'),
+                    RichEditor::make('message')
+                        ->required(),
+                ])
+                ->action( function (Order $record, array $data) {
+                    TicketCreated::dispatch($record, $data, 'Order');
+                })
+        ];
+    }
 
 }

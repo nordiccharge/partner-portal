@@ -6,15 +6,17 @@ use App\Filament\Admin\Resources\OrderResource;
 use App\Filament\Admin\Resources\ReturnOrderResource;
 use App\Models\Order;
 use App\Models\ReturnOrder;
-use App\Models\Stage;
 use Filament\Actions;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Log;
+use Parallax\FilamentComments\Actions\CommentsAction;
+use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
+use Parallax\FilamentComments\Models\FilamentComment;
 
 class ViewOrder extends ViewRecord
 {
@@ -27,13 +29,14 @@ class ViewOrder extends ViewRecord
                 \Filament\Infolists\Components\Section::make('Overview')
                     ->schema([
                         TextEntry::make('shipping_address'),
+                        TextEntry::make('postal.postal'),
                         TextEntry::make('city.name'),
                         TextEntry::make('country.name'),
                         \Filament\Infolists\Components\Section::make([
                             TextEntry::make('note')
                                 ->default('No note stated')
                         ])
-                    ])->columns(3),
+                    ])->columns(4),
                 \Filament\Infolists\Components\Section::make('Order Details')
                     ->schema([
                         TextEntry::make('id')
@@ -84,7 +87,14 @@ class ViewOrder extends ViewRecord
                                     ->label('')
                             ])->columns(2)
                     ])
-                    ->icon('heroicon-m-shopping-bag')
+                    ->icon('heroicon-m-shopping-bag'),
+                Section::make('Comments')
+                    ->schema([
+                        CommentsEntry::make('comments')
+
+                    ])
+                    ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                    ->columns(1),
             ]);
     }
 
@@ -104,19 +114,30 @@ class ViewOrder extends ViewRecord
                         ->placeholder('Specify a reason'),
                     \Filament\Forms\Components\Select::make('shipping_label')
                         ->options([
-                            'true' => 'Create Shipping Label Automatically',
-                            'false' => 'No Label',
+                            1 => 'Create Shipping Label Automatically',
+                            0 => 'No Label',
                         ])
                         ->required()
                 ])
                 ->action(function (Order $record, array $data) {
-                    ReturnOrder::create([
+                    FilamentComment::create([
+                        'user_id' => auth()->user()->id,
+                        'subject_type' => 'App\Models\Order',
+                        'subject_id' => $record->id,
+                        'comment' => '<p><i>Return created:<br>' . $data['reason'] . '</i></p>',
+                    ]);
+                    $return_order = ReturnOrder::create([
                         'team_id' => $record->team->id,
                         'order_id' => $record->id,
                         'reason' => $data['reason'],
                         'shipping_label' => $data['shipping_label'],
-                        'state' => 'pending']);
+                        'state' => 'pending'
+                    ]);
                     $record->update(['pipeline_id' => 1, 'stage_id' => 1]);
+
+                    /*if ($data['shipping_label'] == 1) {
+                        $return_order->update(['state' => 'processing']);
+                    }*/
                     $this->redirect(ReturnOrderResource::getUrl());
                 })
                 ->modalIcon('heroicon-o-arrow-path'),

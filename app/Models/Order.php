@@ -6,12 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Order extends Model
 {
-    use HasFactory, LogsActivity;
+    use HasFactory, LogsActivity, HasFilamentComments;
 
     protected $fillable = [
         'team_id',
@@ -35,7 +36,9 @@ class Order extends Model
         'installation_id',
         'installation_price',
         'nc_price',
-        'installer_id'
+        'installer_id',
+        'pending_action',
+        'action'
     ];
 
     protected static $logAttributes = ['*'];

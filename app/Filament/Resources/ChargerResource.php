@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Events\TicketCreated;
 use App\Filament\Resources\ChargerResource\Pages;
 use App\Filament\Resources\ChargerResource\RelationManagers;
 use App\Models\Charger;
 use App\Models\Order;
 use Filament\Forms;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -14,6 +17,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ChargerResource extends Resource
 {
@@ -85,6 +90,41 @@ class ChargerResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\Action::make('Support')
+                    ->color('primary')
+                    ->icon('heroicon-o-question-mark-circle')
+                    ->modalIcon('heroicon-o-question-mark-circle')
+                    ->modalHeading('Create Support Ticket')
+                    ->modalDescription('Please provide a detailed description of your issue or question')
+                    ->modalSubmitActionLabel('Create Ticket')
+                    ->modalWidth('xl')
+                    ->form([
+                        Select::make('type')
+                            ->options([
+                                'Question' => 'Question',
+                                'Incident' => 'Incident',
+                                'Problem' => 'Problem',
+                                'Return' => 'Return',
+                                'Feature Request' => 'Feature Request',
+                            ])
+                            ->required()
+                            ->placeholder('Select a type'),
+                        Select::make('priority')
+                            ->options([
+                                1 => 'Low',
+                                2 => 'Medium',
+                                3 => 'High',
+                                4 => 'Urgent',
+                            ])
+                            ->required()
+                            ->placeholder('Select a type'),
+                        RichEditor::make('message')
+                            ->required(),
+                    ])
+                    ->action( function (Charger $record, array $data) {
+                        // Send support ticket
+                        TicketCreated::dispatch($record, $data, 'Charger');
+                    }),
                 Tables\Actions\EditAction::make()
                     ->visible(auth()->user()->isAdmin()),
             ])

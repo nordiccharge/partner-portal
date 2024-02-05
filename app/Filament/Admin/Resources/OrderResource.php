@@ -134,6 +134,7 @@ class OrderResource extends Resource
                                 ->readOnly()
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
                                 ->required(fn (Forms\Get $get) => $get('installation_required'))
+
                         ])->live()
                         ->columns(2),
                     Forms\Components\Section::make('Customer Details')

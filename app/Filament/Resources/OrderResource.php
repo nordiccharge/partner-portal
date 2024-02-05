@@ -93,6 +93,7 @@ class OrderResource extends Resource
                             ->default(1),
                         Forms\Components\TextInput::make('nc_price')
                             ->readOnly()
+                            ->hidden(!auth()->user()->isTeamManager())
                             ->label('Nordic Charge Order Flow Price')
                             ->helperText('Excluding taxes')
                             ->suffix('DKK')

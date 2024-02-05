@@ -74,8 +74,8 @@ class ReturnOrderResource extends Resource
                     ->required(),
                 Forms\Components\Select::make('shipping_label')
                     ->options([
-                        'true' => 'Create Shipping Label Automatically',
-                        'false' => 'No Label',
+                        1 => 'Create Shipping Label Automatically',
+                        0 => 'No Label',
                     ])
                     ->required()
             ]);
@@ -109,6 +109,9 @@ class ReturnOrderResource extends Resource
                     )
                     ->searchable(),
                 Tables\Columns\TextColumn::make('reason'),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->searchable()
+                    ->sortable(),
             ])
             ->filters([
                 //

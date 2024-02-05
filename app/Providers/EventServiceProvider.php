@@ -4,14 +4,16 @@ namespace App\Providers;
 
 use App\Events\OrderCreated;
 use App\Events\OrderFulfilled;
-use App\Http\Controllers\API\OrderController;
+use App\Events\TicketCreated;
 use App\Listeners\SendOrderCreatedEmail;
 use App\Listeners\SendOrderCreatedNotification;
 use App\Listeners\SendOrderFulfilledNotification;
+use App\Listeners\SendTicketCreatedNotification;
 use App\Models\InstallerPostal;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ReturnOrder;
+use App\Observers\CommentObserver;
 use App\Observers\InstallerPostalObserver;
 use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
@@ -19,7 +21,7 @@ use App\Observers\ReturnOrderObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
+use Parallax\FilamentComments\Models\FilamentComment;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderFulfilled::class => [
             SendOrderFulfilledNotification::class
+        ],
+        TicketCreated::class => [
+            SendTicketCreatedNotification::class
         ]
     ];
 
@@ -50,6 +55,7 @@ class EventServiceProvider extends ServiceProvider
         InstallerPostal::observe(InstallerPostalObserver::class);
         ReturnOrder::observe(ReturnOrderObserver::class);
         Order::observe(OrderObserver::class);
+        FilamentComment::observe(CommentObserver::class);
     }
 
 

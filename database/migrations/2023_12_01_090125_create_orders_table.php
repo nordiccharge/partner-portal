@@ -66,6 +66,12 @@ return new class extends Migration
             $table->text('error_message')
                 ->nullable();
 
+            // Actions
+            $table->boolean('pending_action')
+                ->default('false');
+            $table->string('action')
+                ->nullable();
+
             // Other
             $table->timestamps();
             $table->softDeletes();
