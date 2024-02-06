@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Events\OrderCreated;
 use App\Events\OrderFulfilled;
 use App\Events\TicketCreated;
+use App\Listeners\SendInstallationEmail;
 use App\Listeners\SendOrderCreatedEmail;
 use App\Listeners\SendOrderCreatedNotification;
 use App\Listeners\SendOrderFulfilledNotification;
@@ -21,7 +22,6 @@ use App\Observers\ReturnOrderObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Parallax\FilamentComments\Models\FilamentComment;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -36,14 +36,15 @@ class EventServiceProvider extends ServiceProvider
         ],
         OrderCreated::class => [
             SendOrderCreatedNotification::class,
-            SendOrderCreatedEmail::class
+            SendOrderCreatedEmail::class,
+            SendInstallationEmail::class
         ],
         OrderFulfilled::class => [
             SendOrderFulfilledNotification::class
         ],
         TicketCreated::class => [
             SendTicketCreatedNotification::class
-        ]
+        ],
     ];
 
     /**
