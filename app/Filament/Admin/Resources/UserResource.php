@@ -48,7 +48,6 @@ class UserResource extends Resource
                         0 => 'Standard User',
                         1 => 'Administrator Privileges'
                     ])
-                    ->default(0)
                     ->helperText('Do not give administrator permissions unless they are Nordic Charge employees'),
             ]);
     }
@@ -62,7 +61,6 @@ class UserResource extends Resource
                     ->formatStateUsing(fn (User $record) => $record->name . ' ' . $record->last_name),
                 Tables\Columns\TextColumn::make('email'),
                 Tables\Columns\ToggleColumn::make('is_admin')
-                    ->disabled()
             ])
             ->filters([
                 //
