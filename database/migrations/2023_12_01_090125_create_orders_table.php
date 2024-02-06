@@ -68,7 +68,7 @@ return new class extends Migration
 
             // Actions
             $table->boolean('pending_action')
-                ->default('false');
+                ->default(0);
             $table->string('action')
                 ->nullable();
 

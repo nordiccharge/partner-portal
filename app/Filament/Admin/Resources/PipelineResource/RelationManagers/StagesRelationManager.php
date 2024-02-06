@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\PipelineResource\RelationManagers;
 
+use App\Enums\StageAutomation;
 use App\Models\Stage;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -38,14 +39,8 @@ class StagesRelationManager extends RelationManager
                     ->required(),
                 Forms\Components\Select::make('automation_type')
                     ->label('Automation')
-                    ->options([
-                        'none' => 'None',
-                        'auto' => 'Auto',
-                        'manual' => 'Manual'
-                    ])
-                    ->unique(ignoreRecord: true)
-                    ->default('none')
-                    ->selectablePlaceholder(false),
+                    ->options(StageAutomation::class)
+                    ->required(),
             ]);
     }
 
@@ -65,7 +60,8 @@ class StagesRelationManager extends RelationManager
                         'completed' => 'success',
                         'action' => 'info',
                         'return' => 'gray',
-                    })
+                    }),
+                Tables\Columns\TextColumn::make('automation_type')
             ])->defaultSort('order')
             ->filters([
                 //

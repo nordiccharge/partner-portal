@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('description')
                 ->nullable();
             $table->string('automation_type')
-                ->nullable();
+                ->default('none');
             $table->softDeletes();
         });
     }

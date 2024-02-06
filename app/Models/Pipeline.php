@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PipelineAutomation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,10 @@ class Pipeline extends Model
         'nc_price',
         'team_id',
         'shipping'
+    ];
+
+    protected $casts = [
+        'automation_type' => PipelineAutomation::class
     ];
 
     public function stages(): HasMany {

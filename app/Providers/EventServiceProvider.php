@@ -55,7 +55,6 @@ class EventServiceProvider extends ServiceProvider
         InstallerPostal::observe(InstallerPostalObserver::class);
         ReturnOrder::observe(ReturnOrderObserver::class);
         Order::observe(OrderObserver::class);
-        FilamentComment::observe(CommentObserver::class);
     }
 
 

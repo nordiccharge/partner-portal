@@ -76,7 +76,7 @@ class TeamResource extends Resource
                     ->schema([
                         Forms\Components\Toggle::make('shipping_api_send')
                             ->label('Send orders to shipping system')
-                            ->helperText('Only for Pipelines with Shipping automation')
+                            ->helperText('Only for "Private Customer" pipeline orders')
                             ->default(false),
                         Forms\Components\Toggle::make('shipping_api_get')
                             ->label('Get fulfillment from shipping system')

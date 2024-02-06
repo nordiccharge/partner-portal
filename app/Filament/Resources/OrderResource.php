@@ -84,13 +84,6 @@ class OrderResource extends Resource
                                 }
                             )
                             ->disabledOn('edit'),
-                        Forms\Components\Select::make('stage_id')
-                            ->label('Stage')
-                            ->required()
-                            ->options(fn (Forms\Get $get): Collection => Stage::query()
-                                ->where('pipeline_id', $get('pipeline_id'))
-                                ->pluck('name', 'id'))
-                            ->default(1),
                         Forms\Components\TextInput::make('nc_price')
                             ->readOnly()
                             ->hidden(!auth()->user()->isTeamManager())

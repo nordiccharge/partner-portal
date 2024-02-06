@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Order;
+use App\Models\Pipeline;
 use App\Models\Postal;
 use App\Models\Product;
 use App\Models\Team;
@@ -25,7 +26,7 @@ class OrderObserver
      */
     public function created(Order $order): void
     {
-        Log::debug('Adding installer to Order');
+        Log::debug('Adding Installer to Order');
         $order->update(['installer_id' => Postal::findOrFail($order->postal->id)->installer_id]);
     }
 

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('shipping_type')
                 ->nullable();
             $table->string('automation_type')
-                ->nullable();
+                ->default('none');
             $table->decimal('shipping_price')
                 ->default(0);
             $table->decimal('nc_price')

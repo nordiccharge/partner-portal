@@ -9,6 +9,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -50,7 +51,13 @@ class AppPanelProvider extends PanelProvider
                 'profile' => MenuItem::make()
                     ->label('Edit profile'),
             ])
-
+            ->navigationItems([
+                NavigationItem::make('Support & Guides')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->url('https://support.nordiccharge.com', shouldOpenInNewTab: true)
+                        ->group('External')
+                        ->sort(20),
+            ])
             ->brandLogo(asset('images/logo.svg'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

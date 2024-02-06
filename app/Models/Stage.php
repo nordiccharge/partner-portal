@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\StageAutomation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,10 @@ class Stage extends Model
         'state',
         'description',
         'automation_type'
+    ];
+
+    protected $casts = [
+        'automation_type' => StageAutomation::class
     ];
 
     public function pipeline(): BelongsTo {

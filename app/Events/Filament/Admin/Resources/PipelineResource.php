@@ -2,7 +2,6 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Enums\PipelineAutomation;
 use App\Filament\Admin\Resources\PipelineResource\Pages;
 use App\Filament\Admin\Resources\PipelineResource\RelationManagers;
 use App\Models\Pipeline;
@@ -33,6 +32,7 @@ class PipelineResource extends Resource
                         Forms\Components\Select::make('team_id')
                             ->label('Team')
                             ->relationship('team', 'name')
+                            ->required()
                             ->preload()
                             ->searchable()
                             ->columnSpanFull(),
@@ -46,8 +46,11 @@ class PipelineResource extends Resource
                             ->suffix('DKK')
                             ->default(0),
                         Forms\Components\Select::make('automation_type')
-                            ->options(PipelineAutomation::class)
-                            ->required(),
+                            ->options([
+                                'none' => 'None',
+                                'auto' => 'Auto',
+                                'manual' => 'Manual'
+                            ]),
                     ]),
                 Forms\Components\Section::make('Shipping')
                     ->schema([

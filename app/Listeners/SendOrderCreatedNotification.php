@@ -2,7 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Enums\PipelineAutomation;
 use App\Events\OrderCreated;
+use App\Models\Company;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Product;
@@ -33,9 +35,13 @@ class SendOrderCreatedNotification
     private function shippingNotification(Order $order): void {
         $team = $order->team();
         $allow_shipping = $team->get('shipping_api_send')->first()->shipping_api_send;
-        $pipeline = $order->pipeline()->get('id')->first()->id;
+        $pipeline_id = $order->pipeline()->get('id')->first()->id;
+        $pipeline_automation = $order->pipeline()->get('automation_type')->first()->automation_type;
 
-        if ($allow_shipping == 1 && $pipeline == 1) {
+        Log::debug('Starting Shipping Automation');
+
+        if ($allow_shipping == 1 && $pipeline_automation == PipelineAutomation::Shipping) {
+            Log::debug('Pipeline automation is set to shipping');
             $items = array();
             foreach ($order->items()->get(['inventory_id', 'quantity']) as $item) {
                 $inventory_item = Inventory::find($item['inventory_id']);
@@ -43,6 +49,8 @@ class SendOrderCreatedNotification
                 $qty = $item['quantity'];
                 array_push($items, ['sku' => $sku, 'qty' => $qty]);
             }
+
+            $company = Company::findOrFail($team->get('company_id')->first()->company_id);
 
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Accept' => 'application/json',
@@ -53,15 +61,15 @@ class SendOrderCreatedNotification
                 'orderNo' => $order->id,
                 'referenceNo' => $order->order_reference,
                 'sender' => [
-                    'name' => $team->company()->get('sender_name')->first()->sender_name,
-                    'attention' => $team->company()->get('sender_attention')->first()->sender_attention,
-                    'street1' => $team->company()->get('sender_address')->first()->sender_address,
-                    'street2' => $team->company()->get('sender_address2')->first()->sender_address2,
-                    'zipcode' => $team->company()->get('sender_zip')->first()->sender_zip,
-                    'city' => $team->company()->get('sender_city')->first()->sender_city,
-                    'country' => $team->company()->get('sender_country')->first()->sender_country,
-                    'phone' => $team->company()->get('sender_phone')->first()->sender_phone,
-                    'email' => $team->company()->get('sender_email')->first()->sender_email
+                    'name' => $company->sender_name,
+                    'attention' => $company->sender_attention,
+                    'street1' => $company->sender_address,
+                    'street2' => $company->sender_address2,
+                    'zipcode' => $company->sender_zip,
+                    'city' => $company->sender_city,
+                    'country' => $company->sender_country,
+                    'phone' => $company->sender_phone,
+                    'email' => $company->sender_email
                 ],
                 'recipient' => [
                     'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
@@ -75,6 +83,8 @@ class SendOrderCreatedNotification
                 'deliveryMethod' => $order->pipeline()->get('shipping_type')->first()->shipping_type,
                 'items' => $items
             ]);
+
+            Log::debug('Shipping Automation Response: ' . $response->status() . ' ' . $response->body());
 
         }
     }
