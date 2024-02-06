@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CategoryResource\RelationManagers;
 
+use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -44,8 +45,29 @@ class ProductsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('name')
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('sku')
+                Tables\Columns\ImageColumn::make('image_url')
+                    ->label(''),
+                Tables\Columns\TextColumn::make('name')
+                    ->description(fn (Product $record): string => $record->description ?: 'No description'),
+                Tables\Columns\TextColumn::make('quantity')
+                    ->badge()
+                    ->color(function ($record) {
+                        $quantity = $record->quantity;
+                        if ($quantity > 0) {
+                            return 'success';
+                        }
+
+                        if ($quantity < 0) {
+                            return 'danger';
+                        }
+
+                        return 'primary';
+                    }),
+                Tables\Columns\TextColumn::make('category.name'),
+                Tables\Columns\TextColumn::make('retail_price')
+                    ->money('dkk'),
+                Tables\Columns\TextColumn::make('purchase_price')
+                    ->money('dkk'),
             ])
             ->filters([
                 //
@@ -54,6 +76,9 @@ class ProductsRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('View Product')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn ($record) => ProductResource::getUrl() . '/' . $record->id . '/edit'),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
             ]);
