@@ -60,17 +60,7 @@ class SendOrderCreatedNotification
             ])->post('https://muramura.smartpack.dk/api/v1/order/create', [
                 'orderNo' => $order->id,
                 'referenceNo' => $order->order_reference,
-                'sender' => [
-                    'name' => $company->sender_name,
-                    'attention' => $company->sender_attention,
-                    'street1' => $company->sender_address,
-                    'street2' => $company->sender_address2,
-                    'zipcode' => $company->sender_zip,
-                    'city' => $company->sender_city,
-                    'country' => $company->sender_country,
-                    'phone' => $company->sender_phone,
-                    'email' => $company->sender_email
-                ],
+                'sender' => $this->getSender($company),
                 'recipient' => [
                     'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
                     'street1' => $order->shipping_address,
@@ -86,6 +76,34 @@ class SendOrderCreatedNotification
 
             Log::debug('Shipping Automation Response: ' . $response->status() . ' ' . $response->body());
 
+        }
+    }
+
+    private function getSender(Company $company) {
+        Log::debug('Getting Sender on ' . $company->name . ' ' . $company->companyType()->name);
+        if ($company->companyType()->name == 'Partner') {
+            return [
+                'name' => $company->sender_name,
+                'attention' => $company->sender_attention,
+                'street1' => $company->sender_address,
+                'street2' => $company->sender_address2,
+                'zipcode' => $company->sender_zip,
+                'city' => $company->sender_city,
+                'country' => $company->sender_country,
+                'phone' => $company->sender_phone,
+                'email' => $company->sender_email
+            ];
+        } else {
+            return [
+                'name' => 'Nordic Charge ApS',
+                'street1' => 'Kantatevej 30',
+                'street2' => '',
+                'zipcode' => '2730',
+                'city' => 'Herlev',
+                'country' => 'DK',
+                'phone' => '+45 31 43 59 50',
+                'email' => 'sales@nordiccharge.com'
+            ];
         }
     }
 }
