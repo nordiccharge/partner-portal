@@ -76,7 +76,10 @@ class ListOrders extends ListRecords
                 ->icon('heroicon-o-user')
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->whereNull('installer_id')
-                        ->join('stages', 'orders.stage_id', '=', 'stages.id')->where('stages.state', '!=', 'completed')->where('stages.state', '!=', 'aborted')
+                        ->join('stages', 'orders.stage_id', '=', 'stages.id')
+                        ->where('stages.state', '!=', 'completed')
+                        ->where('stages.state', '!=', 'aborted')
+                        ->where('stages.state', '!=', 'return')
                         ->select('orders.*');
                 })
                 ->badge(function () {
@@ -94,7 +97,10 @@ class ListOrders extends ListRecords
                 ->modifyQueryUsing(function (Builder $query) {
 
                     $query->whereNull('installation_date')
-                        ->join('stages', 'stages.id', '=', 'orders.stage_id')->where('stages.state', '!=', 'completed')->where('stages.state', '!=', 'aborted')
+                        ->join('stages', 'stages.id', '=', 'orders.stage_id')
+                        ->where('stages.state', '!=', 'completed')
+                        ->where('stages.state', '!=', 'aborted')
+                        ->where('stages.state', '!=', 'return')
                         ->select('orders.*');
                 })
                 ->badge(function () {
@@ -111,7 +117,10 @@ class ListOrders extends ListRecords
                 ->icon('heroicon-o-truck')
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->whereNull('tracking_code')
-                        ->join('stages', 'stages.id', '=', 'orders.stage_id')->where('stages.state', '!=', 'completed')->where('stages.state', '!=', 'aborted')
+                        ->join('stages', 'stages.id', '=', 'orders.stage_id')
+                        ->where('stages.state', '!=', 'completed')
+                        ->where('stages.state', '!=', 'aborted')
+                        ->where('stages.state', '!=', 'return')
                         ->select('orders.*');
                 })
                 ->badge(function () {
