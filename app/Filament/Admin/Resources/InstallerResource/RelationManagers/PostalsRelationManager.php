@@ -34,8 +34,11 @@ class PostalsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('postal')
             ->columns([
-                Tables\Columns\TextColumn::make('postal.postal'),
-                Tables\Columns\TextColumn::make('postal.city.name'),
+                Tables\Columns\TextColumn::make('postal.postal')
+                    ->sortable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('postal.city.name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('postal.country.name'),
             ])
             ->filters([

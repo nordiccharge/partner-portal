@@ -58,8 +58,10 @@ class UserResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Full name')
+                    ->searchable()
                     ->formatStateUsing(fn (User $record) => $record->name . ' ' . $record->last_name),
-                Tables\Columns\TextColumn::make('email'),
+                Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
                 Tables\Columns\ToggleColumn::make('is_admin')
             ])
             ->filters([

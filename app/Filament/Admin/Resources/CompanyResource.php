@@ -88,7 +88,8 @@ class CompanyResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('companyType.name'),
                 Tables\Columns\TextColumn::make('contact_email')
             ])

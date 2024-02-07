@@ -255,7 +255,8 @@ class OrderResource extends Resource
                     ->label('Installer')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('shipping_address')
-                    ->label('Address'),
+                    ->label('Address')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('customer_first_name')
                     ->label('Full name')
                     ->formatStateUsing(fn (Order $record) => $record->customer_first_name . ' ' . $record->customer_last_name)
