@@ -47,7 +47,9 @@ class ProductsRelationManager extends RelationManager
             ->recordTitleAttribute('name')
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label(''),
+                    ->label('')
+                    ->size(40)
+                    ->extraImgAttributes(['style' => 'object-fit: contain !important;']),
                 Tables\Columns\TextColumn::make('name')
                     ->description(fn (Product $record): string => $record->description ?: 'No description')
                     ->searchable(),

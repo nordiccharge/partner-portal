@@ -61,6 +61,9 @@ class ProductResource extends Resource
                         Forms\Components\FileUpload::make('image_url')
                             ->directory('products')
                             ->image()
+                            ->imageEditor()
+                            ->imageEditorMode(1)
+                            ->imageCropAspectRatio('1:1')
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Product Economy')
@@ -136,7 +139,9 @@ class ProductResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ImageColumn::make('image_url')
-                    ->label(''),
+                    ->label('')
+                    ->size(40)
+                    ->extraImgAttributes(['style' => 'object-fit: contain !important;']),
                 Tables\Columns\TextColumn::make('name')
                     ->description(fn (Product $record): string => $record->description ?: 'No description')
                     ->searchable(),
