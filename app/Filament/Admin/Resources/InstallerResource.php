@@ -31,7 +31,6 @@ class InstallerResource extends Resource
                     ->label('Company')
                     ->required()
                     ->unique(ignoreRecord: true)
-                    ->searchable()
                     ->preload()
                     ->options(Company::where('company_type_id', 1)->pluck('name', 'id')),
                 Forms\Components\TextInput::make('contact_email')
@@ -57,7 +56,8 @@ class InstallerResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('company.name'),
+                Tables\Columns\TextColumn::make('company.name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('contact_email'),
                 Tables\Columns\TextColumn::make('contact_phone'),
                 Tables\Columns\TextColumn::make('invoice_email'),

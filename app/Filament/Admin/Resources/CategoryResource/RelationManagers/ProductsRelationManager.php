@@ -49,7 +49,8 @@ class ProductsRelationManager extends RelationManager
                 Tables\Columns\ImageColumn::make('image_url')
                     ->label(''),
                 Tables\Columns\TextColumn::make('name')
-                    ->description(fn (Product $record): string => $record->description ?: 'No description'),
+                    ->description(fn (Product $record): string => $record->description ?: 'No description')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('quantity')
                     ->badge()
                     ->color(function ($record) {
