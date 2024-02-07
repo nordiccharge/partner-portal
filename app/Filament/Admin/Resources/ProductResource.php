@@ -62,8 +62,6 @@ class ProductResource extends Resource
                             ->directory('products')
                             ->image()
                             ->imageEditor()
-                            ->imageEditorMode(1)
-                            ->imageCropAspectRatio('1:1')
                             ->columnSpanFull(),
                     ])->columns(2),
                 Forms\Components\Section::make('Product Economy')
