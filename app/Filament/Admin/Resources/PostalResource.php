@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PhpParser\Node\Expr\Ternary;
 
 class PostalResource extends Resource
 {
@@ -80,7 +81,11 @@ class PostalResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('installer')
+                    ->label('Has Installer')
+                    ->attribute('installer_id')
+                    ->placeholder('All Installers')
+                    ->nullable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

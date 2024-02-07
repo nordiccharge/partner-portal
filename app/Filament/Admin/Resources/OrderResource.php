@@ -29,7 +29,9 @@ class OrderResource extends Resource
     private static function getActionOrders(): Collection
     {
         return static::getModel()::whereHas('stage', function (Builder $query) {
-            $query->where('state', '=', 'action');
+            $query->where('state', '!=', 'completed')
+            ->where('state', '!=', 'aborted')
+            ->where('state', '!=', 'return');
         })->get();
     }
 
@@ -286,6 +288,10 @@ class OrderResource extends Resource
                     ->multiple()
                     ->relationship('stage', 'name')
                     ->preload(),
+                Tables\Filters\TernaryFilter::make('tracking_code')
+                    ->label('Has Tracking Code')
+                    ->placeholder('All Orders')
+                    ->nullable(),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -300,6 +306,8 @@ class OrderResource extends Resource
                 ]),
             ]);
     }
+
+
 
     public static function getRelations(): array
     {
