@@ -27,7 +27,9 @@ class OrderObserver
     public function created(Order $order): void
     {
         Log::debug('Adding Installer to Order');
-        $order->update(['installer_id' => Postal::findOrFail($order->postal->id)->installer_id]);
+        if ($order->installation_required && $order->installation_id != null) {
+            $order->update(['installer_id' => Postal::findOrFail($order->postal->id)->installer_id]);
+        }
     }
 
     /**

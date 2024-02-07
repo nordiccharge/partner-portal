@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\CategoryResource\RelationManagers;
 
+use App\Filament\Admin\Resources\ProductResource;
 use App\Models\Product;
 use Filament\Forms;
 use Filament\Forms\Form;

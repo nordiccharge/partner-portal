@@ -2,8 +2,11 @@
 
 namespace App\Listeners;
 
+use App\Enums\StageAutomation;
 use App\Events\OrderCreated;
 use App\Models\Installer;
+use App\Models\Pipeline;
+use App\Models\Stage;
 use Illuminate\Support\Facades\Log;
 use SendGrid\Mail\Mail;
 
@@ -43,8 +46,7 @@ class SendInstallationEmail
             } else {
                 Log::debug('No items in order');
             }
-
-            if ($order->postal->installation_id != null) {
+            if ($order->postal->installer_id != null) {
                 Log::debug('Sending Installation Email to Installer');
                 $email = new Mail();
                 $email->setFrom('service@nordiccharge.com', 'Nordic Charge');
@@ -63,14 +65,22 @@ class SendInstallationEmail
                     'order_items' => $order_items
                 ]);
 
-                $email->setSubject('Ny installation til ' . $order->team->sendgrid_name);
-                $installer = Installer::findOrFail($order->installation_id);
+                $email->setSubject('Ny installation til ' . $order->team->name);
+                $installer = Installer::findOrFail($order->installer_id);
                 $email->addTo($installer->contact_email);
                 $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
 
                 try {
                     $response = $sendgrid->send($email);
-                    Log::debug($response->body());
+                    if ($response->statusCode() == 202) {
+                        Log::debug('Email sent to installer');
+                        $new_stage_id = Stage::where('pipeline_id', '=', $order->pipeline_id)
+                            ->where('automation_type', '=', StageAutomation::InstallerContacted)
+                            ->first()->id;
+                        $order->update(['stage_id' => $new_stage_id]);
+                    } else {
+                        Log::error('Email not sent to installer');
+                    }
                 } catch (\Exception $e) {
                     Log::error('Caught exception on email' . $e->getMessage());
                 }
