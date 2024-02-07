@@ -90,11 +90,14 @@ class CompanyResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('companyType.name'),
+                Tables\Columns\TextColumn::make('companyType.name')
+                    ->label('Type'),
                 Tables\Columns\TextColumn::make('contact_email')
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('company_type_id')
+                    ->label('Type')
+                    ->relationship('companyType', 'name')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
