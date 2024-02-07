@@ -157,8 +157,6 @@ class ProductResource extends Resource
                 Tables\Columns\TextColumn::make('category.name'),
                 Tables\Columns\TextColumn::make('retail_price')
                     ->money('dkk'),
-                Tables\Columns\TextColumn::make('purchase_price')
-                    ->money('dkk'),
                 Tables\Columns\ToggleColumn::make('is_active')
                     ->label('Active')
             ])

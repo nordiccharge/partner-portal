@@ -68,8 +68,6 @@ class ProductsRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('category.name'),
                 Tables\Columns\TextColumn::make('retail_price')
                     ->money('dkk'),
-                Tables\Columns\TextColumn::make('purchase_price')
-                    ->money('dkk'),
             ])
             ->filters([
                 //
