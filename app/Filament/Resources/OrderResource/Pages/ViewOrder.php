@@ -20,6 +20,7 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Http;
@@ -34,6 +35,13 @@ class ViewOrder extends ViewRecord
     {
         return $infolist
             ->schema([
+                \Filament\Infolists\Components\Section::make('Status')
+                    ->schema([
+                        ViewEntry::make('flow')
+                            ->view('filament.forms.components.flow')
+                            ->columnSpanFull(),
+                    ])
+                    ->icon('heroicon-m-clipboard-document-list'),
                 \Filament\Infolists\Components\Section::make('Overview')
                     ->schema([
                         TextEntry::make('shipping_address'),
@@ -57,18 +65,6 @@ class ViewOrder extends ViewRecord
                     ])
                     ->icon('heroicon-m-information-circle')
                     ->columns(4),
-                \Filament\Infolists\Components\Section::make('Status Details')
-                    ->schema([
-                        TextEntry::make('stage.name')
-                            ->badge()
-                            ->colors([
-
-                            ]),
-                        TextEntry::make('pipeline.name')
-                            ->label('Order type'),
-                    ])
-                    ->icon('heroicon-m-clipboard-document-list')
-                    ->columns(2),
                 \Filament\Infolists\Components\Section::make('Shipping & Installation')
                     ->schema([
                         TextEntry::make('tracking_code')

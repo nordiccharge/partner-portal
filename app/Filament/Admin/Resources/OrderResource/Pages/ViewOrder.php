@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
 use App\Filament\Admin\Resources\OrderResource;
 use App\Filament\Admin\Resources\ReturnOrderResource;
+use App\Forms\Components\Flow;
 use App\Models\Order;
 use App\Models\ReturnOrder;
 use Filament\Actions;
@@ -13,10 +14,11 @@ use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\View;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Log;
-use Parallax\FilamentComments\Actions\CommentsAction;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 use Parallax\FilamentComments\Models\FilamentComment;
 use SendGrid\Mail\Mail;
@@ -29,18 +31,25 @@ class ViewOrder extends ViewRecord
     {
         return $infolist
             ->schema([
-                \Filament\Infolists\Components\Section::make('Overview')
+                Section::make('Status')
+                    ->schema([
+                        ViewEntry::make('flow')
+                            ->view('filament.forms.components.flow')
+                            ->columnSpanFull(),
+                    ])
+                    ->icon('heroicon-m-clipboard-document-list'),
+                Section::make('Overview test')
                     ->schema([
                         TextEntry::make('shipping_address'),
                         TextEntry::make('postal.postal'),
                         TextEntry::make('city.name'),
                         TextEntry::make('country.name'),
-                        \Filament\Infolists\Components\Section::make([
+                        Section::make([
                             TextEntry::make('note')
                                 ->default('No note stated')
                         ])
                     ])->columns(4),
-                \Filament\Infolists\Components\Section::make('Order Details')
+                Section::make('Order Details')
                     ->schema([
                         TextEntry::make('id')
                             ->label('Order ID')
@@ -52,19 +61,7 @@ class ViewOrder extends ViewRecord
                     ])
                     ->icon('heroicon-m-information-circle')
                     ->columns(4),
-                \Filament\Infolists\Components\Section::make('Status Details')
-                    ->schema([
-                        TextEntry::make('stage.name')
-                            ->badge()
-                            ->colors([
-
-                            ]),
-                        TextEntry::make('pipeline.name')
-                            ->label('Order type'),
-                    ])
-                    ->icon('heroicon-m-clipboard-document-list')
-                    ->columns(2),
-                \Filament\Infolists\Components\Section::make('Shipping & Installation')
+                Section::make('Shipping & Installation')
                     ->schema([
                         TextEntry::make('installer.company.name'),
                         TextEntry::make('tracking_code')
@@ -78,7 +75,7 @@ class ViewOrder extends ViewRecord
                             ->default('Not available yet'),
                     ])->columns(4)
                     ->icon('heroicon-m-truck'),
-                \Filament\Infolists\Components\Section::make('Cart Details')
+                Section::make('Cart Details')
                     ->schema([
                         RepeatableEntry::make('items')
                             ->schema([
