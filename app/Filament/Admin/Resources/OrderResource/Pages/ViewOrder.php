@@ -9,6 +9,7 @@ use App\Models\Order;
 use App\Models\ReturnOrder;
 use Filament\Actions;
 use Filament\Forms\Components\Toggle;
+use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -63,17 +64,22 @@ class ViewOrder extends ViewRecord
                     ->columns(4),
                 Section::make('Shipping & Installation')
                     ->schema([
-                        TextEntry::make('installer.company.name'),
                         TextEntry::make('tracking_code')
                             ->default('Not available yet')
                             ->copyable(),
-                        IconEntry::make('installation_required')
-                            ->boolean()
-                            ->label('Installation included'),
-                        TextEntry::make('installation_date')
-                            ->visible(fn (Order $order) => $order->installation_required)
-                            ->default('Not available yet'),
-                    ])->columns(4)
+                        Group::make([
+                            IconEntry::make('installation_required')
+                                ->boolean()
+                                ->label('Installation included'),
+                            TextEntry::make('installer.company.name'),
+                            TextEntry::make('installation_date')
+                                ->visible(fn (Order $order) => $order->installation_required)
+                                ->default('Not available yet'),
+                            TextEntry::make('installation.price')
+                                ->label('Price')
+                                ->suffix(' DKK')
+                        ])->columns(4),
+                    ])->columns(1)
                     ->icon('heroicon-m-truck'),
                 Section::make('Cart Details')
                     ->schema([
@@ -84,6 +90,9 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('quantity'),
                                 TextEntry::make('inventory.product.sku')
                                     ->label('SKU'),
+                                TextEntry::make('price')
+                                    ->suffix(' DKK')
+                                    ->label('Price'),
                                 ImageEntry::make('inventory.product.image_url')
                                     ->label('')
                             ])->columns(2)

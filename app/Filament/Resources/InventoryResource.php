@@ -43,6 +43,7 @@ class InventoryResource extends Resource
                 Forms\Components\Select::make('product_id')
                     ->preload()
                     ->searchable()
+                    ->disabledOn('edit')
                     ->required()
                     ->options(
                         Product::all()->pluck('detailed_name', 'id')
@@ -50,8 +51,10 @@ class InventoryResource extends Resource
 
                 Forms\Components\TextInput::make('quantity')
                     ->required()
+                    ->disabledOn('edit')
                     ->integer(),
                 Forms\Components\TextInput::make('sale_price')
+                    ->disabledOn('edit')
                     ->required()
             ])->columns(3);
     }

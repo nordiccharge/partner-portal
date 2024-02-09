@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Models\Activity;
 use Spatie\Activitylog\Traits\LogsActivity;
 
 class Inventory extends Model
@@ -24,10 +25,7 @@ class Inventory extends Model
 
     public function getActivitylogOptions(): LogOptions
     {
-        return LogOptions::defaults()
-            ->logAll()
-            ->logExcept(['updated_at'])
-            ->logOnlyDirty();
+        return LogOptions::defaults();
     }
 
     public function team(): BelongsTo {

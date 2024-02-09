@@ -63,6 +63,10 @@ class ShipmentController extends Controller
                             'product_id' => $product->id,
                             'serial_number' => $serialNumber,
                         ]);
+                        activity()
+                            ->performedOn($order)
+                            ->event('system')
+                            ->log('Charger added with S/N ' . $serialNumber);
                     }
                     array_push($chargers, ['sku' => $sku, 'serialNumber' => $serialNumber]);
                 }

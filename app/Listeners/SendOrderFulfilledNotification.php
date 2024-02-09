@@ -22,5 +22,9 @@ class SendOrderFulfilledNotification
     public function handle(OrderFulfilled $event): void
     {
         $order = $event->order;
+        activity()
+            ->performedOn($order)
+            ->event('system')
+            ->log('Order fulfilled by shipping company');
     }
 }

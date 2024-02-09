@@ -78,6 +78,10 @@ class SendInstallationEmail
                             ->where('automation_type', '=', StageAutomation::InstallerContacted)
                             ->first()->id;
                         $order->update(['stage_id' => $new_stage_id]);
+                        activity()
+                            ->performedOn($order)
+                            ->event('system')
+                            ->log('Email sent to installer on ' . $installer->contact_email);
                     } else {
                         Log::error('Email not sent to installer');
                     }

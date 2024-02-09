@@ -51,13 +51,57 @@ class InventoryResource extends Resource
                     ),
 
                 Forms\Components\Group::make([
-                    Forms\Components\TextInput::make('quantity')
-                        ->required()
-                        ->integer(),
                     Forms\Components\TextInput::make('sale_price')
                         ->required()
+                        ->suffix('DKK'),
+                    Forms\Components\TextInput::make('quantity')
+                        ->required()
+                        ->live(true)
+                        ->afterStateUpdated(fn ($state, callable $set) => $set('quantity', $state))
+                        ->default(0)
+                        ->disabled()
+                        ->helperText('Your changes will be automatically saved')
+                        ->suffixAction(
+                            Forms\Components\Actions\Action::make('addNewQuantity')
+                                ->icon('heroicon-m-arrow-path')
+                                ->form([
+                                    Forms\Components\Placeholder::make('helpText')
+                                        ->label('Your changes will be automatically saved'),
+                                    Forms\Components\Select::make('quantityMethod')
+                                        ->label('')
+                                        ->options([
+                                            'Add', 'Subtract'
+                                        ])
+                                        ->default(0),
+                                    Forms\Components\TextInput::make('newQuantity')
+                                        ->label('Amount')
+                                        ->default(0)
+                                        ->integer()
+                                ])
+                                ->action(function (Forms\Set $set, array $data, Inventory $record = null): void {
+                                    if ($record == null) {
+                                        $set('quantity', (int)$data['newQuantity']);
+                                        return;
+                                    }
+                                    $newQuantity = $record->quantity;
+                                    $oldQuantity = $record->quantity;
+                                    if ($data['quantityMethod'] == 0) {
+                                        $newQuantity = (int)$data['newQuantity'] + (int)$oldQuantity;
+                                        $record->quantity = (int)$data['newQuantity'] + (int)$oldQuantity;
+                                    } elseif ($data['quantityMethod'] == 1) {
+                                        $newQuantity = (int)$oldQuantity - (int)$data['newQuantity'];
+                                        $record->quantity = (int)$oldQuantity - (int)$data['newQuantity'];
+                                    }
+                                    $set('quantity', $newQuantity);
+
+                                    $record->update(['quantity']);
+                                    activity()
+                                        ->performedOn($record)
+                                        ->log('Quantity updated from ' . $oldQuantity . ' to ' . $newQuantity . ' by ' . auth()->user()->email);
+                                })->requiresConfirmation()
+                        )
                 ])->columns(2)
-            ])->columns(3);
+            ])->columns(2);
     }
 
     public static function table(Table $table): Table

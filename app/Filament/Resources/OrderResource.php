@@ -110,6 +110,7 @@ class OrderResource extends Resource
                             ),
                         Forms\Components\TextInput::make('installation_price')
                             ->label('Installation price')
+                            ->hidden(!auth()->user()->isTeamManager())
                             ->readOnly()
                             ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
                             ->required(fn (Forms\Get $get) => $get('installation_required'))

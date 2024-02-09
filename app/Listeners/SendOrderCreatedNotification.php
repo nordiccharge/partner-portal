@@ -75,7 +75,12 @@ class SendOrderCreatedNotification
             ]);
 
             Log::debug('Shipping Automation Response: ' . $response->status() . ' ' . $response->body());
-
+            if ($response->status() == 200) {
+                activity()
+                    ->performedOn($order)
+                    ->event('system')
+                    ->log('Order sent to MuraMura');
+            }
         }
     }
 

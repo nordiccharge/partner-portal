@@ -133,7 +133,6 @@ class OrderResource extends Resource
                                 ),
                             Forms\Components\TextInput::make('installation_price')
                                 ->label('Installation price')
-                                ->readOnly()
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
                                 ->required(fn (Forms\Get $get) => $get('installation_required'))
 
@@ -209,7 +208,7 @@ class OrderResource extends Resource
                                             ->default(1)
                                             ->required(),
                                         Forms\Components\TextInput::make('price')
-                                            ->readOnly()
+                                            ->suffix('DKK')
                                             ->required(),
                                     ])
                                     ->live()

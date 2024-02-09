@@ -85,6 +85,10 @@ class SendOrderCreatedEmail
         try {
             $response = $sendgrid->send($email);
             Log::debug($response->body());
+            activity()
+                ->performedOn($order)
+                ->event('system')
+                ->log('Email sent to customer on ' . $order->customer_email);
         } catch (\Exception $e) {
             Log::error('Caught exception on emailNotification()' . $e->getMessage());
         }
