@@ -8,6 +8,7 @@ use App\Models\InvoiceItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use Illuminate\Support\Facades\Log;
 
@@ -53,11 +54,24 @@ class InvoiceObserver
 
                 $total_price += $order->installation->price;
             }
+        } elseif ($order instanceOf PurchaseOrder) {
+            Log::debug('Invoiceable is PurchaseOrder');
+            foreach ($order->items as $item) {
+                $product = Product::findOrFail($item->product_id);
+                InvoiceItem::create([
+                    'invoice_id' => $invoice->id,
+                    'title' => $product->name . ' | ' . $product->sku,
+                    'price' => 0,
+                    'quantity' => $item->quantity
+                ]);
+            }
         }
 
-        $invoice->update([
-            'total_price' => $total_price
-        ]);
+        if ($invoice->total_price != $total_price) {
+            $invoice->update([
+                'total_price' => $total_price
+            ]);
+        }
     }
 
     /**
@@ -68,7 +82,7 @@ class InvoiceObserver
      */
     public function updated(Invoice $invoice)
     {
-
+        //
     }
 
     /**

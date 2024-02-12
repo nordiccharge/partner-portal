@@ -12,11 +12,13 @@ use App\Listeners\SendOrderFulfilledNotification;
 use App\Listeners\SendTicketCreatedNotification;
 use App\Models\InstallerPostal;
 use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ReturnOrder;
 use App\Observers\CommentObserver;
 use App\Observers\InstallerPostalObserver;
+use App\Observers\InvoiceItemObserver;
 use App\Observers\InvoiceObserver;
 use App\Observers\OrderItemObserver;
 use App\Observers\OrderObserver;
@@ -59,6 +61,7 @@ class EventServiceProvider extends ServiceProvider
         ReturnOrder::observe(ReturnOrderObserver::class);
         Order::observe(OrderObserver::class);
         Invoice::observe(InvoiceObserver::class);
+        InvoiceItem::observe(InvoiceItemObserver::class);
     }
 
 

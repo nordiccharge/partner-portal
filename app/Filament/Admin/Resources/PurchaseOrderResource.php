@@ -48,6 +48,15 @@ class  PurchaseOrderResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Team Details')
+                    ->schema([
+                        Forms\Components\Select::make('team_id')
+                            ->label('Team')
+                            ->relationship('team', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                    ]),
                 Forms\Components\TextInput::make('status')
                     ->helperText('You can set whatever status you want to. Except "completed" or "aborted" will prevent further changes to the purchase order and notify the customer about that it is completed.')
                     ->default('pending'),

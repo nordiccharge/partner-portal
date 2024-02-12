@@ -83,8 +83,11 @@ class InvoiceResource extends Resource
                                     ->label('Description')
                                     ->columnSpanFull()
                                     ->rows(3)
+                                    ->nullable()
                             ])->columns(3)
                     ])
+                    ->disabledOn('create')
+                    ->hiddenOn('create')
                     ->columnSpanFull()
             ]);
     }
