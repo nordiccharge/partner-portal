@@ -132,6 +132,10 @@ class OrderController extends Controller
             ]);
 
         }
+        activity()
+            ->performedOn($order)
+            ->event('system')
+            ->log('Order created by API');
 
         $order->items()->createMany($order_items);
         OrderCreated::dispatch($order);

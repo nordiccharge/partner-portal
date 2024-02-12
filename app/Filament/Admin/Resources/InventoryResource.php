@@ -20,9 +20,9 @@ class InventoryResource extends Resource
     protected static ?string $model = Inventory::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cube';
-    protected static ?string $navigationGroup = 'Global Operations';
+    protected static ?string $navigationGroup = 'Products';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationBadge(): ?string
     {
@@ -59,7 +59,7 @@ class InventoryResource extends Resource
                         ->live(true)
                         ->afterStateUpdated(fn ($state, callable $set) => $set('quantity', $state))
                         ->default(0)
-                        ->disabled()
+                        ->readOnly()
                         ->helperText('Your changes will be automatically saved')
                         ->suffixAction(
                             Forms\Components\Actions\Action::make('addNewQuantity')

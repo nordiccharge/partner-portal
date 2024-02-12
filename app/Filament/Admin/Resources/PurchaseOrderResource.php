@@ -17,13 +17,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use SendGrid\Mail\Section;
 
-class PurchaseOrderResource extends Resource
+class  PurchaseOrderResource extends Resource
 {
     protected static ?string $model = PurchaseOrder::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-list';
     protected static ?string $navigationGroup = 'Global Operations';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     private static function getNonFulfilledOrders(): Collection
     {
