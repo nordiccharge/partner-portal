@@ -108,12 +108,12 @@ class InventoryResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('product.image_url')
+                    ->label(''),
                 Tables\Columns\TextColumn::make('team.name')
                     ->label('Team')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\ImageColumn::make('product.image_url')
-                    ->label(''),
                 Tables\Columns\TextColumn::make('product.name'),
                 Tables\Columns\TextColumn::make('product.sku')
                     ->searchable()
