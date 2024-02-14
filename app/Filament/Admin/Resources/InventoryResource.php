@@ -140,6 +140,39 @@ class InventoryResource extends Resource
                     ->preload(),
             ])
             ->actions([
+                Tables\Actions\Action::make('Quantity')
+                    ->icon('heroicon-m-arrow-path')
+                    ->requiresConfirmation()
+                    ->form([
+                        Forms\Components\Placeholder::make('helpText')
+                            ->label('Your changes will be automatically saved'),
+                        Forms\Components\Select::make('quantityMethod')
+                            ->label('')
+                            ->options([
+                                'Add', 'Subtract'
+                            ])
+                            ->default(0),
+                        Forms\Components\TextInput::make('newQuantity')
+                            ->label('Amount')
+                            ->default(0)
+                            ->integer()
+                    ])
+                    ->action(function (array $data, Inventory $record = null): void {
+                        $newQuantity = $record->quantity;
+                        $oldQuantity = $record->quantity;
+                        if ($data['quantityMethod'] == 0) {
+                            $newQuantity = (int)$data['newQuantity'] + (int)$oldQuantity;
+                            $record->quantity = (int)$data['newQuantity'] + (int)$oldQuantity;
+                        } elseif ($data['quantityMethod'] == 1) {
+                            $newQuantity = (int)$oldQuantity - (int)$data['newQuantity'];
+                            $record->quantity = (int)$oldQuantity - (int)$data['newQuantity'];
+                        }
+
+                        $record->update(['quantity']);
+                        activity()
+                            ->performedOn($record)
+                            ->log('Quantity updated from ' . $oldQuantity . ' to ' . $newQuantity . ' by ' . auth()->user()->email);
+                    }),
                 Tables\Actions\Action::make('History')
                     ->icon('heroicon-o-document-text')
                     ->url(fn ($record) => InventoryResource::getUrl('activities', ['record' => $record])),
