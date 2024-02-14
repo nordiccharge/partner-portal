@@ -176,7 +176,6 @@ class InventoryResource extends Resource
                 Tables\Actions\Action::make('History')
                     ->icon('heroicon-o-document-text')
                     ->url(fn ($record) => InventoryResource::getUrl('activities', ['record' => $record])),
-                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
