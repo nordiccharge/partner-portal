@@ -48,10 +48,6 @@ class ViewOrder extends ViewRecord
                         TextEntry::make('postal.postal'),
                         TextEntry::make('city.name'),
                         TextEntry::make('country.name'),
-                        \Filament\Infolists\Components\Section::make([
-                            TextEntry::make('note')
-                                ->default('No note stated')
-                        ])
                     ])->columns(4),
                 \Filament\Infolists\Components\Section::make('Order Details')
                     ->schema([

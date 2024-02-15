@@ -22,16 +22,13 @@ class ListCompanies extends ListRecords
 
     public function getTabs(): array
     {
-        return [
-            'all' => Tab::make('All Companies'),
-            'partners' => Tab::make('Partners')
-                ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('company_type_id', CompanyType::where('name', 'Partner')->first()->id);
-                }),
-            'installers' => Tab::make('Installers')
-                ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('company_type_id', CompanyType::where('name', 'Installer')->first()->id);
-                })
-        ];
+        $tabs = ['all' => Tab::make('All Companies')];
+        foreach (CompanyType::all() as $companyType) {
+            $tabs[strtolower($companyType->name)] = Tab::make($companyType->name)
+                ->modifyQueryUsing(function (Builder $query) use ($companyType) {
+                    $query->where('company_type_id', $companyType->id);
+                });
+        }
+        return $tabs;
     }
 }
