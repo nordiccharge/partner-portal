@@ -100,7 +100,15 @@ class InventoryResource extends Resource
                                         ->log('Quantity updated from ' . $oldQuantity . ' to ' . $newQuantity . ' by ' . auth()->user()->email);
                                 })->requiresConfirmation()
                         )
-                ])->columns(2)
+                ])->columns(2),
+                Forms\Components\Select::make('global')
+                    ->label('Scope')
+                    ->options([
+                        0 => 'Only show on assigned Team',
+                        1 => 'Show on all Teams'
+                    ])
+                    ->default(0)
+                    ->required()
             ])->columns(2);
     }
 
@@ -126,6 +134,10 @@ class InventoryResource extends Resource
                     ->money('DKK')
                     ->sortable()
                     ->searchable(),
+                Tables\Columns\ToggleColumn::make('global')
+                    ->label('Scope')
+                    ->disabled()
+                    ->sortable()
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('team')

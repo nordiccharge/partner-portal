@@ -19,6 +19,7 @@ class Inventory extends Model
         'product_id',
         'quantity',
         'sale_price',
+        'global'
     ];
 
     protected static $logAttributes = ['*'];

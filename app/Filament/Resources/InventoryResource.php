@@ -6,16 +6,11 @@ use App\Filament\Resources\InventoryResource\Pages;
 use App\Filament\Resources\InventoryResource\RelationManagers;
 use App\Models\Inventory;
 use App\Models\Product;
-use App\Models\User;
-use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Log;
 
 class InventoryResource extends Resource
 {
@@ -35,6 +30,7 @@ class InventoryResource extends Resource
     {
         return 'products';
     }
+
 
     public static function form(Form $form): Form
     {
@@ -72,7 +68,8 @@ class InventoryResource extends Resource
                 Tables\Columns\TextColumn::make('sale_price')
                     ->label('Price')
                     ->money('DKK')
-                    ->visible(auth()->user()->isTeamManager() || auth()->user()->isAdmin())
+                    ->visible(auth()->user()->isTeamManager() || auth()->user()->isAdmin()),
+
             ])
             ->filters([
                 //

@@ -190,6 +190,7 @@ class OrderResource extends Resource
                                                     return
                                                         Inventory::join('products', 'inventories.product_id', '=', 'products.id')
                                                             ->where('inventories.team_id', '=', (int)$get('../../team_id'))
+                                                            ->orWhere('inventories.global', '=', true)
                                                             ->pluck('products.detailed_name', 'inventories.id');
                                                 }
                                             )
