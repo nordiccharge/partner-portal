@@ -27,7 +27,7 @@ class Pipeline extends Model
     ];
 
     public function stages(): HasMany {
-        return $this->hasMany(Stage::class);
+        return $this->hasMany(Stage::class)->orderBy('order', 'ASC');
     }
 
     public function orders(): HasMany {

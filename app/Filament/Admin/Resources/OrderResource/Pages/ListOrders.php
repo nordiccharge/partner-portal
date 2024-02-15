@@ -33,6 +33,7 @@ class ListOrders extends ListRecords
         if ($tab === 'missing_installation_date') {
             return Order::query()->whereNull('installation_date')
                 ->join('stages', 'stages.id', '=', 'orders.stage_id')
+                ->where("orders.created_at", "<", now()->subDays(1))
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
                 ->where('stages.state', '!=', 'return')
@@ -45,6 +46,7 @@ class ListOrders extends ListRecords
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
                 ->where('stages.state', '!=', 'return')
+                ->where("orders.created_at", "<", now()->subDays(1))
                 ->select('orders.*');
         }
 
@@ -101,6 +103,7 @@ class ListOrders extends ListRecords
                         ->where('stages.state', '!=', 'completed')
                         ->where('stages.state', '!=', 'aborted')
                         ->where('stages.state', '!=', 'return')
+                        ->where("orders.created_at", "<", now()->subDays(1))
                         ->select('orders.*');
                 })
                 ->badge(function () {
@@ -121,6 +124,7 @@ class ListOrders extends ListRecords
                         ->where('stages.state', '!=', 'completed')
                         ->where('stages.state', '!=', 'aborted')
                         ->where('stages.state', '!=', 'return')
+                        ->where("orders.created_at", "<", now()->subDays(1))
                         ->select('orders.*');
                 })
                 ->badge(function () {
