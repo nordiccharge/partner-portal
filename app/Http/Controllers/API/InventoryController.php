@@ -26,7 +26,8 @@ class InventoryController extends Controller
         return response()->json($team->inventories->map(function ($inventory) {
             return [
                 'id' => $inventory->id,
-                'product_id' => $inventory->name,
+                'global' => $inventory->global,
+                'product_id' => $inventory->product->id,
                 'quantity' => $inventory->quantity,
                 'sale_price' => $inventory->sale_price,
             ];

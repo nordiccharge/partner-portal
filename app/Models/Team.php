@@ -48,7 +48,9 @@ class Team extends Model
     }
 
     public function inventories(): HasMany {
-        return $this->hasMany(Inventory::class);
+        return $this->hasMany(Inventory::class)
+            ->where('team_id', '=', $this->id)
+            ->orWhere('global', '=', true);
     }
 
     public function orders(): HasMany {

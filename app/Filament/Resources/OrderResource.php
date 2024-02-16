@@ -163,9 +163,15 @@ class OrderResource extends Resource
                                         ->label('Product')
                                         ->options(
                                             function () {
-                                                return
-                                                    Inventory::join('products', 'inventories.product_id', '=', 'products.id')
-                                                        ->pluck('products.detailed_name', 'inventories.id');
+                                                return Inventory::all()->mapWithKeys(
+                                                    function ($inventory) {
+                                                        $owner = $inventory->team->name;
+                                                        if ($inventory->global == 1) {
+                                                            $owner = 'Nordic Charge';
+                                                        }
+                                                        return [$inventory->id => $owner . ' – ' . $inventory->product->name . ' (' . $inventory->product->sku . ')'];
+                                                    }
+                                                );
                                             }
                                         )
                                         ->required()
