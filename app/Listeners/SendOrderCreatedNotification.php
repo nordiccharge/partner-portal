@@ -86,8 +86,8 @@ class SendOrderCreatedNotification
     }
 
     private function getSender(Company $company) {
-        Log::debug('Getting Sender on ' . $company->name . ' ' . $company->companyType()->name);
-        if ($company->companyType()->name == 'Customer') {
+        Log::debug('Getting Sender on ' . $company->name . ' ' . $company->companyType->name);
+        if ($company->companyType->name == 'Customer') {
             return [
                 'name' => $company->sender_name,
                 'attention' => $company->sender_attention,
