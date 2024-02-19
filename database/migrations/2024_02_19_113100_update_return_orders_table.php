@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('inventories', function (Blueprint $table) {
-            $table->boolean('global')
-                ->default(false);
+        Schema::table('return_orders', function (Blueprint $table) {
+            $table->foreignId('pipeline_id')
+                ->nullable()
+                ->constrained();
         });
     }
 

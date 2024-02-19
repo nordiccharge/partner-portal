@@ -61,9 +61,36 @@ class InventoryResource extends Resource
             ->columns([
                 Tables\Columns\ImageColumn::make('product.image_url')
                     ->label(''),
+                Tables\Columns\TextColumn::make('team.name')
+                    ->label('Team')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('product.name'),
                 Tables\Columns\TextColumn::make('product.sku'),
                 Tables\Columns\TextColumn::make('quantity')
+                    ->state(
+                        function (Inventory $inventory) {
+                            if ($inventory->global) {
+                                if ($inventory->quantity <= 0) {
+                                    return '0';
+                                }
+                                if ($inventory->quantity < 5) {
+                                    return '1+';
+                                }
+                                if ($inventory->quantity < 10) {
+                                    return '5+';
+                                }
+                                if ($inventory->quantity < 50) {
+                                    return '10+';
+                                }
+                                if ($inventory->quantity < 100) {
+                                    return '50+';
+                                };
+                            }
+
+                            return $inventory->quantity;
+                        }
+                    )
                     ->visible(auth()->user()->isTeamManager() || auth()->user()->isAdmin()),
                 Tables\Columns\TextColumn::make('sale_price')
                     ->label('Price')

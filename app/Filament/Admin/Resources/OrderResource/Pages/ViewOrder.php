@@ -196,6 +196,7 @@ class ViewOrder extends ViewRecord
                     $return_order = ReturnOrder::create([
                         'team_id' => $record->team->id,
                         'order_id' => $record->id,
+                        'pipeline_id' => $record->pipeline_id,
                         'reason' => $data['reason'],
                         'shipping_label' => $data['shipping_label'],
                         'state' => 'pending'

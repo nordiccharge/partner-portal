@@ -37,4 +37,8 @@ class Pipeline extends Model
     public function team(): BelongsTo {
         return $this->belongsTo(Team::class);
     }
+
+    public function returnOrders(): HasMany {
+        return $this->hasMany(ReturnOrder::class);
+    }
 }

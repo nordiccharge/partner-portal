@@ -14,7 +14,8 @@ class ReturnOrder extends Model
         'team_id',
         'reason',
         'state',
-        'shipping_label'
+        'shipping_label',
+        'pipeline_id'
     ];
 
     public function order()
@@ -25,6 +26,11 @@ class ReturnOrder extends Model
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function pipeline()
+    {
+        return $this->belongsTo(Pipeline::class);
     }
 
 }

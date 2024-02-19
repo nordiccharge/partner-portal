@@ -163,7 +163,15 @@ class OrderResource extends Resource
                                         ->label('Product')
                                         ->options(
                                             function () {
-                                                return Inventory::all()->mapWithKeys(
+                                                return Inventory::all()->filter(
+                                                    function ($inventory) {
+                                                        if ($inventory->quantity > 0) {
+                                                            return true;
+                                                        }
+
+                                                        return false;
+                                                    })
+                                                    ->mapWithKeys(
                                                     function ($inventory) {
                                                         $owner = $inventory->team->name;
                                                         if ($inventory->global == 1) {
@@ -185,9 +193,20 @@ class OrderResource extends Resource
                                         ),
                                     Forms\Components\TextInput::make('quantity')
                                         ->numeric()
+                                        ->minValue(1)
+                                        ->maxValue(function (Forms\Get $get) {
+                                            if ($get('inventory_id') > 0) {
+                                                $inventory = Inventory::findOrFail($get('inventory_id'));
+                                                return $inventory->quantity;
+                                            }
+
+                                            return 0;
+                                        })
+                                        ->rules(['required', 'numeric', 'min:1'])
                                         ->default(1)
                                         ->required(),
                                     Forms\Components\TextInput::make('price')
+                                        ->label('Price per item')
                                         ->required()
                                         ->live()
                                         ->readOnly(),

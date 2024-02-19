@@ -6,6 +6,7 @@ use App\Filament\Admin\Resources\InventoryResource\Pages;
 use App\Filament\Admin\Resources\InventoryResource\RelationManagers;
 use App\Models\Inventory;
 use App\Models\Product;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -135,7 +136,7 @@ class InventoryResource extends Resource
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\ToggleColumn::make('global')
-                    ->label('Scope')
+                    ->label('Global')
                     ->disabled()
                     ->sortable()
             ])
@@ -161,9 +162,18 @@ class InventoryResource extends Resource
                         Forms\Components\Select::make('quantityMethod')
                             ->label('')
                             ->options([
-                                'Add', 'Subtract'
+                                'Add', 'Subtract', 'Move'
                             ])
+                            ->live()
                             ->default(0),
+                        Forms\Components\Select::make('new_inventory')
+                            ->label('Move to')
+                            ->disabled(fn (Forms\Get $get) => $get('quantityMethod') != 2)
+                            ->hidden(fn (Forms\Get $get) => $get('quantityMethod') != 2)
+                            ->options(fn (Inventory $record) => Inventory::where('product_id', '=', $record->product_id)->where('id', '!=', $record->id)->get()->pluck('id', 'id'))
+                            ->reactive()
+                            ->preload()
+                            ->searchable(),
                         Forms\Components\TextInput::make('newQuantity')
                             ->label('Amount')
                             ->default(0)

@@ -55,14 +55,24 @@ class ReturnOrderResource extends Resource
                 Forms\Components\Select::make('team_id')
                     ->relationship('team', 'name')
                     ->searchable()
+                    ->live()
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('order_id')
                     ->relationship('order', 'id', fn (Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
+                    ->disabled(fn (Forms\Get $get) => !$get('team_id'))
                     ->searchable()
                     ->required()
                     ->unique(ignoreRecord: true)
+                    ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('pipeline_id', Order::find($state['order_id'])->pipeline_id))
+                    ->live()
+                    ->reactive()
                     ->preload(),
+                Forms\Components\Select::make('pipeline_id')
+                    ->relationship('pipeline', 'name')
+                    ->disabled(fn (Forms\Get $get) => !$get('order_id'))
+                    ->reactive()
+                    ->required(),
                 Forms\Components\Textarea::make('reason')
                     ->required()
                     ->columnSpanFull(),

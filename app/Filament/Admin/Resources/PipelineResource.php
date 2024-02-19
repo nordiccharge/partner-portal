@@ -81,6 +81,9 @@ class PipelineResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ReplicateAction::make('replicate')
+                    ->excludeAttributes(['stages_count'])
+                    ->visible(fn () => auth()->user()->isAdmin()),
                 Tables\Actions\EditAction::make()
                     ->visible(auth()->user()->isAdmin()),
             ])

@@ -81,4 +81,8 @@ class Team extends Model
         return $this->hasMany(Pipeline::class);
     }
 
+    public function returnOrders(): HasMany {
+        return $this->hasMany(ReturnOrder::class);
+    }
+
 }

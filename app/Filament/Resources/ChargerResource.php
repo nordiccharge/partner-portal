@@ -79,10 +79,12 @@ class ChargerResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('order.shipping_address')
+                    ->label('Address')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('serial_number')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('order.id'),
+                Tables\Columns\TextColumn::make('order.id')
+                    ->label('Order ID'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
             ])

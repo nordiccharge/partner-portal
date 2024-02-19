@@ -18,6 +18,9 @@ return new class extends Migration
             $table->foreignId('order_id')
                 ->unique()
                 ->constrained();
+            $table->foreignId('pipeline_id')
+                ->nullable()
+                ->constrained();
             $table->text('reason');
             $table->string('state');
             $table->boolean('shipping_label')

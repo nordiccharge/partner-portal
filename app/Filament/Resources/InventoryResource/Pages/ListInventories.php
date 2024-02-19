@@ -29,13 +29,13 @@ class ListInventories extends ListRecords
     {
         return [
             'all' => Tab::make('All'),
-            'company' => Tab::make('Company')
+            'company' => Tab::make(Filament::getTenant()->name)
                 ->modifyQueryUsing(function (Builder $query) {
                     $query
                         ->where('team_id', '=', Filament::getTenant()->id)
                         ->where('global', '=', 0);
                 }),
-            'global' => Tab::make('Global')
+            'global' => Tab::make('Nordic Charge')
                 ->modifyQueryUsing(function (Builder $query) {
                     $query
                         ->where('global', '=', 1);
