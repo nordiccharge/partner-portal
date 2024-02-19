@@ -50,8 +50,9 @@ class SendOrderCreatedNotification
                 array_push($items, ['sku' => $sku, 'qty' => $qty]);
             }
 
+            Log::debug('Items: ' . json_encode($items));
             $company = Company::findOrFail($team->get('company_id')->first()->company_id);
-
+            Log::debug('Company: ' . $company->name);
             $response = \Illuminate\Support\Facades\Http::withHeaders([
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
