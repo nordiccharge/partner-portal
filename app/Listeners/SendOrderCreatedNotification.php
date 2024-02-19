@@ -86,7 +86,7 @@ class SendOrderCreatedNotification
 
     private function getSender(Company $company) {
         Log::debug('Getting Sender on ' . $company->name . ' ' . $company->companyType()->name);
-        if ($company->companyType()->name == 'Partner') {
+        if ($company->companyType()->name == 'Customer') {
             return [
                 'name' => $company->sender_name,
                 'attention' => $company->sender_attention,
@@ -98,17 +98,18 @@ class SendOrderCreatedNotification
                 'phone' => $company->sender_phone,
                 'email' => $company->sender_email
             ];
-        } else {
-            return [
-                'name' => 'Nordic Charge ApS',
-                'street1' => 'Kantatevej 30',
-                'street2' => '',
-                'zipcode' => '2730',
-                'city' => 'Herlev',
-                'country' => 'DK',
-                'phone' => '+45 31 43 59 50',
-                'email' => 'sales@nordiccharge.com'
-            ];
         }
+
+        return [
+            'name' => 'Nordic Charge ApS',
+            'attention' => '',
+            'street1' => 'Kantatevej 30',
+            'street2' => '',
+            'zipcode' => '2730',
+            'city' => 'Herlev',
+            'country' => 'DK',
+            'phone' => '+45 31 43 59 50',
+            'email' => 'sales@nordiccharge.com'
+        ];
     }
 }
