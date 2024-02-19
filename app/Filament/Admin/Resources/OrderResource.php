@@ -122,7 +122,7 @@ class OrderResource extends Resource
                                 ->default(false),
                             Forms\Components\Select::make('installation_id')
                                 ->label('Installation')
-                                ->relationship('installation', 'name')
+                                ->relationship('installation', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
                                 ->required(fn (Forms\Get $get) => $get('installation_required'))
                                 ->afterStateUpdated(

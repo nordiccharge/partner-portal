@@ -99,6 +99,7 @@ class ReturnOrderResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->url(fn ($record) => OrderResource::getUrl() . '/' . $record->order->id),
+                Tables\Columns\TextColumn::make('pipeline.name'),
                 Tables\Columns\TextColumn::make('team.name')
                     ->badge(),
                 Tables\Columns\TextColumn::make('state')
