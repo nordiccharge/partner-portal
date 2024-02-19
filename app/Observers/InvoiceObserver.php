@@ -54,6 +54,15 @@ class InvoiceObserver
 
                 $total_price += $order->installation->price;
             }
+
+            InvoiceItem::create([
+                'invoice_id' => $invoice->id,
+                'title' => 'Nordic Charge fee',
+                'price' => $order->pipeline->nc_price,
+                'quantity' => 1
+            ]);
+
+            $total_price += $order->pipeline->nc_price;
         } elseif ($order instanceOf PurchaseOrder) {
             Log::debug('Invoiceable is PurchaseOrder');
             foreach ($order->items as $item) {
