@@ -130,6 +130,19 @@ class InventoryResource extends Resource
                     ->toggleable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('quantity')
+                    ->badge()
+                    ->color(function ($record) {
+                        $quantity = $record->quantity;
+                        if ($quantity > 0) {
+                            return 'success';
+                        }
+
+                        if ($quantity < 0) {
+                            return 'danger';
+                        }
+
+                        return 'primary';
+                    })
                     ->sortable(),
                 Tables\Columns\TextColumn::make('sale_price')
                     ->label('Price')

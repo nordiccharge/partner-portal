@@ -69,6 +69,19 @@ class InventoryResource extends Resource
                     ->description(fn (Inventory $record): string => $record->product->description ?: 'No description'),
                 Tables\Columns\TextColumn::make('product.sku'),
                 Tables\Columns\TextColumn::make('quantity')
+                    ->badge()
+                    ->color(function ($record) {
+                        $quantity = $record->quantity;
+                        if ($quantity > 0) {
+                            return 'success';
+                        }
+
+                        if ($quantity < 0) {
+                            return 'danger';
+                        }
+
+                        return 'primary';
+                    })
                     ->state(
                         function (Inventory $inventory) {
                             if ($inventory->global) {
