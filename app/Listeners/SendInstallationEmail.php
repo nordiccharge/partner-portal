@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Enums\StageAutomation;
 use App\Events\OrderCreated;
+use App\Models\Company;
 use App\Models\Installer;
 use App\Models\Pipeline;
 use App\Models\Stage;
@@ -38,6 +39,10 @@ class SendInstallationEmail
 
             $order_items = '';
 
+            $company = Company::findOrFail($order->team->company_id);
+
+            Log::debug('Company: ' . $company->name);
+
             if($order->items != null && $order->items != '' && count($order->items) > 0) {
                 Log::debug($order->items);
                 foreach ($order->items as $item) {
@@ -53,6 +58,7 @@ class SendInstallationEmail
                 $email->setTemplateId('d-537e166a52e845aaabcdbe9653c574ad');
                 $email->addDynamicTemplateDatas([
                     'order_id' => $order->id,
+                    'company_name' => $company->name,
                     'full_name' => $order->customer_first_name . ' ' . $order->customer_last_name,
                     'email' => $order->customer_email,
                     'phone' => $order->customer_phone,
