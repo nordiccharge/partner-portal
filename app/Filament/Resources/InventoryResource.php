@@ -102,7 +102,7 @@ class InventoryResource extends Resource
                                 };
                             }
 
-                            return $inventory->quantity;
+                            return '100+';
                         }
                     )
                     ->visible(auth()->user()->isTeamManager() || auth()->user()->isAdmin()),
