@@ -56,17 +56,22 @@ class ShipmentController extends Controller
                         Log::error('Product with SKU ' . $sku . ' not found');
                         return response()->json('Error. Product with SKU ' . $sku . ' not found', 401);
                     } else {
-                        Log::debug('Creating charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' for order ' . $order_id . ' and team ' . $team_id);
-                        Charger::create([
-                            'team_id' => $team_id,
-                            'order_id' => $order_id,
-                            'product_id' => $product->id,
-                            'serial_number' => $serialNumber,
-                        ]);
-                        activity()
-                            ->performedOn($order)
-                            ->event('system')
-                            ->log('Charger added with S/N ' . $serialNumber);
+                        $charger = Charger::where('serial_number', '=', $serialNumber)->first();
+                        if ($charger === null) {
+                            Log::debug('Creating charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' for order ' . $order_id . ' and team ' . $team_id);
+                            Charger::create([
+                                'team_id' => $team_id,
+                                'order_id' => $order_id,
+                                'product_id' => $product->id,
+                                'serial_number' => $serialNumber,
+                            ]);
+                            activity()
+                                ->performedOn($order)
+                                ->event('system')
+                                ->log('Charger added with S/N ' . $serialNumber);
+                        }
+
+                        Log::debug('Charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' already exists');
                     }
                     array_push($chargers, ['sku' => $sku, 'serialNumber' => $serialNumber]);
                 }

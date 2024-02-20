@@ -64,7 +64,6 @@ class ViewOrder extends ViewRecord
                 \Filament\Infolists\Components\Section::make('Shipping & Installation')
                     ->schema([
                         TextEntry::make('tracking_code')
-                            ->default('Not available yet')
                             ->copyable(),
                         IconEntry::make('installation_required')
                             ->boolean()

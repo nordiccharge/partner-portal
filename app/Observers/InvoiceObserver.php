@@ -32,6 +32,7 @@ class InvoiceObserver
         if ($order instanceof Order) {
             Log::debug('Invoiceable is OrderItem');
             foreach ($order->items as $item) {
+                Log::debug('OrderItem: ' . $item->product->sku . ' | ' . $item->global);
                 $product = Product::findOrFail($item->inventory->product_id);
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,

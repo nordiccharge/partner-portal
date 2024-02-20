@@ -35,4 +35,14 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceItem::class);
     }
+
+    public function getTotalPriceAttribute()
+    {
+        $total_price = 0;
+        foreach ($this->items as $item) {
+            $total_price += $item->price * $item->quantity;
+        }
+
+        return $total_price;
+    }
 }
