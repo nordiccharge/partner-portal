@@ -118,6 +118,7 @@ class OrderResource extends Resource
                                 ->columnSpanFull(),
                             Forms\Components\Toggle::make('installation_required')
                                 ->label('Installation required')
+                                ->default(true)
                                 ->helperText('If the order requires installation, the installer might be notified about the order and the shipping address')
                                 ->default(false),
                             Forms\Components\Select::make('installation_id')
