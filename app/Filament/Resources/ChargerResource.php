@@ -105,9 +105,7 @@ class ChargerResource extends Resource
                             ->options([
                                 'Question' => 'Question',
                                 'Incident' => 'Incident',
-                                'Problem' => 'Problem',
                                 'Return' => 'Return',
-                                'Feature Request' => 'Feature Request',
                             ])
                             ->required()
                             ->placeholder('Select a type'),
