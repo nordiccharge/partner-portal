@@ -45,9 +45,9 @@ class InvoiceResource extends Resource
                             ->label('Order to Invoice')
                             ->types([
                                 Forms\Components\MorphToSelect\Type::make(Order::class)
-                                    ->titleAttribute('id'),
+                                    ->getOptionLabelFromRecordUsing(fn (Order $order) => "Order #{$order->id} – " . $order->team->name),
                                 Forms\Components\MorphToSelect\Type::make(PurchaseOrder::class)
-                                    ->titleAttribute('id')
+                                    ->getOptionLabelFromRecordUsing(fn (PurchaseOrder $purchaseOrder) => "Purchase Order #{$purchaseOrder->id} – " . $purchaseOrder->team->name)
                             ])
                             ->preload()
                             ->required()
