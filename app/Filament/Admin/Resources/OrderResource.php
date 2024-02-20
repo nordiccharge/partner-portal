@@ -119,8 +119,7 @@ class OrderResource extends Resource
                             Forms\Components\Toggle::make('installation_required')
                                 ->label('Installation required')
                                 ->default(true)
-                                ->helperText('If the order requires installation, the installer might be notified about the order and the shipping address')
-                                ->default(false),
+                                ->helperText('If the order requires installation, the installer might be notified about the order and the shipping address'),
                             Forms\Components\Select::make('installation_id')
                                 ->label('Installation')
                                 ->relationship('installation', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
