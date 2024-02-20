@@ -73,7 +73,7 @@ class SendInstallationEmail
                 try {
                     $response = $sendgrid->send($email);
                     if ($response->statusCode() == 202) {
-                        Log::debug('Email sent to installer');
+                        Log::debug('Email sent to installer ' . $installer->contact_email . ' successfully');
                         $new_stage_id = Stage::where('pipeline_id', '=', $order->pipeline_id)
                             ->where('automation_type', '=', StageAutomation::InstallerContacted)
                             ->first()->id;

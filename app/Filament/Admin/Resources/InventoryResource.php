@@ -123,7 +123,8 @@ class InventoryResource extends Resource
                     ->label('Team')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('product.name'),
+                Tables\Columns\TextColumn::make('product.name')
+                    ->description(fn (Inventory $record): string => $record->product->description ?: 'No description'),
                 Tables\Columns\TextColumn::make('product.sku')
                     ->searchable()
                     ->toggleable()
