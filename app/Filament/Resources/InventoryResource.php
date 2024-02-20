@@ -100,9 +100,11 @@ class InventoryResource extends Resource
                                 if ($inventory->quantity < 100) {
                                     return '50+';
                                 };
+
+                                return '100+';
                             }
 
-                            return '100+';
+                            return $inventory->quantity;
                         }
                     )
                     ->visible(auth()->user()->isTeamManager() || auth()->user()->isAdmin()),
