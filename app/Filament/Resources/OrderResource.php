@@ -190,7 +190,8 @@ class OrderResource extends Resource
                                                 $inventory = Inventory::findOrFail($state);
                                                 $set('price', $inventory->sale_price);
                                             }
-                                        ),
+                                        )
+                                        ->columnSpan(5),
                                     Forms\Components\TextInput::make('quantity')
                                         ->numeric()
                                         ->minValue(1)
@@ -204,15 +205,19 @@ class OrderResource extends Resource
                                         })
                                         ->rules(['required', 'numeric', 'min:1'])
                                         ->default(1)
-                                        ->required(),
+                                        ->required()
+                                        ->columnSpan(1),
                                     Forms\Components\TextInput::make('price')
                                         ->label('Price per item')
                                         ->required()
                                         ->live()
-                                        ->readOnly(),
+                                        ->readOnly()
+                                        ->columnSpan(2)
+                                        ->extraInputAttributes(['style' => 'text-align: right'])
+                                        ->suffix('DKK'),
                                 ])
                                 ->live()
-                                ->columns(3)
+                                ->columns(8)
                         ])
             ]);
     }

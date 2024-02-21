@@ -220,18 +220,22 @@ class OrderResource extends Resource
                                                     $inventory = Inventory::findOrFail($state);
                                                     $set('price', $inventory->sale_price);
                                                 }
-                                            ),
+                                            )
+                                            ->columnSpan(5),
                                         Forms\Components\TextInput::make('quantity')
                                             ->numeric()
                                             ->default(1)
+                                            ->columnSpan(1)
                                             ->required(),
                                         Forms\Components\TextInput::make('price')
-                                            ->suffix('DKK')
-                                            ->required(),
+                                            ->columnSpan(2)
+                                            ->required()
+                                            ->extraInputAttributes(['style' => 'text-align: right'])
+                                            ->suffix('DKK'),
                                     ])
                                     ->live()
                                     ->default([])
-                                    ->columns(3)
+                                    ->columns(8)
                             ])
                             ->columnSpanFull()
                             ->disabled(fn (Forms\Get $get) => $get('team_id') === null),
