@@ -16,7 +16,7 @@
                                 <div class="flex flex-col text-left">
 
                                     <span class="font-medium">{{ $activityItem->description }}</span>
-                                    <span class="text-xs">{{ $activityItem->causer?->name }}</span>
+                                    <span class="text-xs">{{ $activityItem->causer?->name }} – {{ $activityItem->causer?->email }}</span>
                                     <span class="text-xs text-gray-500">
                                     {{ $activityItem->created_at->format(__('filament-activity-log::activities.default_datetime_format')) }}
                                 </span>
@@ -52,7 +52,7 @@
                                 <div class="flex flex-col text-left">
                                     <span class="font-bold">
                                         @if($activityItem->event != 'system')
-                                            {{ $activityItem->causer?->name }}
+                                            {{ $activityItem->causer?->name }} – {{ $activityItem->causer?->email }}
                                         @else
                                             System Automation
                                         @endif
