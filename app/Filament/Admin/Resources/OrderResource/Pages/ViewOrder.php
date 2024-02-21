@@ -43,10 +43,14 @@ class ViewOrder extends ViewRecord
                 Section::make('Overview test')
                     ->schema([
                         Group::make([
-                            TextEntry::make('customer_first_name'),
-                            TextEntry::make('customer_last_name'),
-                            TextEntry::make('customer_email'),
+                            TextEntry::make('customer_first_name')
+                                ->copyable(),
+                            TextEntry::make('customer_last_name')
+                                ->copyable(),
+                            TextEntry::make('customer_email')
+                                ->copyable(),
                             TextEntry::make('customer_phone')
+                                ->copyable()
                         ])->columns(4),
                         Group::make([
                             TextEntry::make('shipping_address'),
