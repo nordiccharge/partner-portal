@@ -37,7 +37,11 @@ class OrderObserver
      */
     public function updated(Order $order): void
     {
-
+        if ($order->isDirty('installation_required')) {
+            $order->update(['installer_id' => null]);
+            $order->update(['installation_id' => null]);
+            $order->update(['installation_price' => null]);
+        }
     }
 
     /**
