@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
+use App\Events\SendEmailToInstaller;
 use App\Filament\Admin\Resources\OrderResource;
 use App\Filament\Admin\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
@@ -111,6 +112,15 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Notify Installer')
+                ->icon('heroicon-o-paper-airplane')
+                ->link()
+                ->requiresConfirmation()
+                ->modalSubmitActionLabel('Send')
+                ->action(function (Order $record) {
+                    SendEmailToInstaller::dispatch($record);
+                })
+                ->hidden(fn (Order $record) => $record->installation_required == 0 || $record->installer_id == null),
             Actions\Action::make('Assign Installer')
                 ->icon('heroicon-o-user-plus')
                 ->link()
@@ -139,33 +149,7 @@ class ViewOrder extends ViewRecord
                         $order_items = $order_items . '<div style="width: 100%; text-align: right;"><p><strong>' . $item->quantity . 'x</strong> ' . $item->inventory->product->name . '</p></div>';
                     }
                     if ($data['send_email'] == 1) {
-                        $email = new Mail();
-                        $email->setFrom('service@nordiccharge.com', 'Nordic Charge');
-                        $email->setTemplateId('d-537e166a52e845aaabcdbe9653c574ad');
-                        $email->addDynamicTemplateDatas([
-                            'order_id' => $order->id,
-                            'full_name' => $order->customer_first_name . ' ' . $order->customer_last_name,
-                            'email' => $order->customer_email,
-                            'phone' => $order->customer_phone,
-                            'address' => $order->shipping_address,
-                            'city' => $order->city->name,
-                            'postal' => $order->postal->postal,
-                            'country' => $order->country->short_name,
-                            'kw' => $order->installation->kw,
-                            'note' => $order->note,
-                            'order_items' => $order_items
-                        ]);
-
-                        $email->setSubject('Ny installation til ' . $order->team->sendgrid_name);
-                        $email->addTo($order->installer->contact_email);
-                        $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
-
-                        try {
-                            $response = $sendgrid->send($email);
-                            Log::debug($response->body());
-                        } catch (\Exception $e) {
-                            Log::error('Caught exception on email' . $e->getMessage());
-                        }
+                        SendEmailToInstaller::dispatch($order);
                     }
                 }),
             Actions\Action::make('Create Return')
@@ -209,7 +193,9 @@ class ViewOrder extends ViewRecord
                     $this->redirect(ReturnOrderResource::getUrl());
                 })
                 ->modalIcon('heroicon-o-arrow-path'),
-            Actions\EditAction::make(),
+            Actions\EditAction::make()
+                ->icon('heroicon-o-pencil-square')
+                ->label('Edit Order'),
         ];
     }
 }

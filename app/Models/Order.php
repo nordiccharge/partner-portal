@@ -96,4 +96,18 @@ class Order extends Model
     {
         return $this->morphMany(Invoice::class, 'invoiceable');
     }
+
+    public function setInstallationRequiredAttribute($value): void
+    {
+        if (!$value) {
+            $this->attributes['installation_required'] = 0;
+            $this->attributes['installation_id'] = null;
+            $this->attributes['installer_id'] = null;
+            $this->attributes['installation_price'] = null;
+            $this->attributes['installation_date'] = null;
+            $this->attributes['wished_installation_date'] = null;
+        } else {
+            $this->attributes['installation_required'] = 1;
+        }
+    }
 }

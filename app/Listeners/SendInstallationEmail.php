@@ -24,7 +24,7 @@ class SendInstallationEmail
     /**
      * Handle the event.
      */
-    public function handle(OrderCreated $event): void
+    public function handle($event): void
     {
         Log::debug('Order Shipping Event');
         $order = $event->order;

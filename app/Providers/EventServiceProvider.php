@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\OrderCreated;
 use App\Events\OrderFulfilled;
+use App\Events\SendEmailToInstaller;
 use App\Events\TicketCreated;
 use App\Listeners\SendInstallationEmail;
 use App\Listeners\SendOrderCreatedEmail;
@@ -49,6 +50,9 @@ class EventServiceProvider extends ServiceProvider
         TicketCreated::class => [
             SendTicketCreatedNotification::class
         ],
+        SendEmailToInstaller::class => [
+            SendInstallationEmail::class
+        ]
     ];
 
     /**

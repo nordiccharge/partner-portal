@@ -147,6 +147,12 @@ class OrderResource extends Resource
                                 )
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
                                 ->required(fn (Forms\Get $get) => $get('installation_required')),
+                            Forms\Components\DatePicker::make('wished_installation_date')
+                                ->label('Wished installation date')
+                                ->disabled(fn (Forms\Get $get) => !$get('installation_required')),
+                            Forms\Components\DatePicker::make('installation_date')
+                                ->label('Installation date')
+                                ->disabled(fn (Forms\Get $get) => !$get('installation_required')),
                         ])->live()
                         ->columns(2),
                     Forms\Components\Section::make('Customer Details')
