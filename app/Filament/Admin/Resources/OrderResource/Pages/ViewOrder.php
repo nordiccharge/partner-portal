@@ -42,15 +42,21 @@ class ViewOrder extends ViewRecord
                     ->icon('heroicon-m-clipboard-document-list'),
                 Section::make('Overview test')
                     ->schema([
-                        TextEntry::make('shipping_address'),
-                        TextEntry::make('postal.postal'),
-                        TextEntry::make('city.name'),
-                        TextEntry::make('country.name'),
-                        Section::make([
-                            TextEntry::make('note')
-                                ->default('No note stated')
-                        ])
-                    ])->columns(4),
+                        Group::make([
+                            TextEntry::make('customer_first_name'),
+                            TextEntry::make('customer_last_name'),
+                        ])->columns(4),
+                        Group::make([
+                            TextEntry::make('shipping_address'),
+                            TextEntry::make('postal.postal'),
+                            TextEntry::make('city.name'),
+                            TextEntry::make('country.name'),
+                            Section::make([
+                                TextEntry::make('note')
+                                    ->default('No note stated')
+                            ])
+                        ])->columns(4),
+                    ]),
                 Section::make('Order Details')
                     ->schema([
                         TextEntry::make('id')
