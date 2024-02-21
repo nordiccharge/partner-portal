@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\OrderResource\Pages;
 use App\Models\Installation;
+use App\Models\Installer;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Pipeline;
@@ -134,8 +135,18 @@ class OrderResource extends Resource
                             Forms\Components\TextInput::make('installation_price')
                                 ->label('Installation price')
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
-                                ->required(fn (Forms\Get $get) => $get('installation_required'))
-
+                                ->required(fn (Forms\Get $get) => $get('installation_required')),
+                            Forms\Components\Select::make('installer_id')
+                                ->label('Installer')
+                                ->options(
+                                    function (Forms\Get $get) {
+                                        return
+                                            Installer::join('companies', 'installers.company_id', '=', 'companies.id')
+                                                ->pluck('companies.name', 'installers.id');
+                                    }
+                                )
+                                ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
+                                ->required(fn (Forms\Get $get) => $get('installation_required')),
                         ])->live()
                         ->columns(2),
                     Forms\Components\Section::make('Customer Details')

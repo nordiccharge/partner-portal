@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Auth\Register;
+use App\Filament\Pages\Tenancy\EditTeamProfile;
 use App\Filament\Pages\Tenancy\RegisterTeam;
 use App\Http\Middleware\ApplyPartnerPanelScopes;
 use App\Models\Team;
@@ -35,6 +36,7 @@ class AppPanelProvider extends PanelProvider
             ->login()
             ->registration(Register::class)
             ->tenantRegistration(RegisterTeam::class)
+            ->tenantProfile(EditTeamProfile::class)
             ->tenantMiddleware([
                 ApplyPartnerPanelScopes::class,
             ], isPersistent: true)
