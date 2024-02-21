@@ -71,8 +71,7 @@ class PipelineResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('team.name'),
-                Tables\Columns\ToggleColumn::make('shipping')
-                    ->disabled(),
+                Tables\Columns\ToggleColumn::make('shipping'),
                 Tables\Columns\TextColumn::make('stages_count')
                     ->label('Stages')
                     ->counts('stages'),
