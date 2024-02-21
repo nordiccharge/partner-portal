@@ -47,6 +47,8 @@ class ViewOrder extends ViewRecord
                         Group::make([
                             TextEntry::make('customer_first_name'),
                             TextEntry::make('customer_last_name'),
+                            TextEntry::make('customer_email'),
+                            TextEntry::make('customer_phone')
                         ])->columns(4),
                         Group::make([
                             TextEntry::make('shipping_address'),
