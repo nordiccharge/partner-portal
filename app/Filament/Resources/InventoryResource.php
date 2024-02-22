@@ -118,15 +118,11 @@ class InventoryResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('History')
-                    ->icon('heroicon-o-document-text')
-                    ->visible(auth()->user()->isAdmin())
-                    ->url(fn ($record) => InventoryResource::getUrl('activities', ['record' => $record])),
-                Tables\Actions\EditAction::make(),
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+
                 ]),
             ]);
     }
@@ -142,9 +138,6 @@ class InventoryResource extends Resource
     {
         return [
             'index' => Pages\ListInventories::route('/'),
-            'create' => Pages\CreateInventory::route('/create'),
-            'activities' => Pages\ListInventoryActivities::route('/{record}/activities'),
-            'edit' => Pages\EditInventory::route('/{record}/edit'),
         ];
     }
 }

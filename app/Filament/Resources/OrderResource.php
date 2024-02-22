@@ -274,8 +274,6 @@ class OrderResource extends Resource
                     ->icon('heroicon-o-document-text')
                     ->visible(auth()->user()->isAdmin())
                     ->url(fn ($record) => OrderResource::getUrl('activities', ['record' => $record])),
-                Tables\Actions\EditAction::make()
-                    ->visible(auth()->user()->isAdmin()),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -300,7 +298,6 @@ class OrderResource extends Resource
             'create' => Pages\CreateOrder::route('/create'),
             'activities' => Pages\ListOrderActivities::route('/{record}/activities'),
             'view' => Pages\ViewOrder::route('/{record}'),
-            'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
 }
