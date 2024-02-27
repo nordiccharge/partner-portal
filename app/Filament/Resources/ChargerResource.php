@@ -7,6 +7,7 @@ use App\Filament\Resources\ChargerResource\Pages;
 use App\Filament\Resources\ChargerResource\RelationManagers;
 use App\Models\Charger;
 use App\Models\Order;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -30,7 +31,7 @@ class ChargerResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::count();
+        return Filament::getTenant()->chargers()->count();
     }
 
     public static function getNavigationBadgeColor(): ?string
