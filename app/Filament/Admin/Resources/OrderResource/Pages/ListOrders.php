@@ -22,9 +22,10 @@ class ListOrders extends ListRecords
 
     protected function tabQuery($tab) {
         if ($tab === 'missing_installer') {
-            return Order::query()->whereNull('installer_id')
-                ->join('stages', 'orders.stage_id', '=', 'stages.id')
+            return Order::query()
                 ->where('orders.installation_required', '=', 1)
+                ->whereNull('installer_id')
+                ->join('stages', 'orders.stage_id', '=', 'stages.id')
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
                 ->where('stages.state', '!=', 'return')
@@ -32,9 +33,10 @@ class ListOrders extends ListRecords
         }
 
         if ($tab === 'missing_installation_date') {
-            return Order::query()->whereNull('installation_date')
-                ->join('stages', 'stages.id', '=', 'orders.stage_id')
+            return Order::query()
                 ->where('orders.installation_required', '=', 1)
+                ->whereNull('installation_date')
+                ->join('stages', 'stages.id', '=', 'orders.stage_id')
                 ->where("orders.created_at", "<", now()->subDays(1))
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
