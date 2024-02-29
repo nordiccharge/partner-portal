@@ -24,7 +24,7 @@ class ListOrders extends ListRecords
         if ($tab === 'missing_installer') {
             return Order::query()->whereNull('installer_id')
                 ->join('stages', 'orders.stage_id', '=', 'stages.id')
-                ->where('installation_required', '=', 1)
+                ->where('orders.installation_required', '=', 1)
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
                 ->where('stages.state', '!=', 'return')
