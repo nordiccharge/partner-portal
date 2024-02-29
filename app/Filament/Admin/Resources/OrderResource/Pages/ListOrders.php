@@ -34,7 +34,7 @@ class ListOrders extends ListRecords
         if ($tab === 'missing_installation_date') {
             return Order::query()->whereNull('installation_date')
                 ->join('stages', 'stages.id', '=', 'orders.stage_id')
-                ->where('installation_required', '=', 1)
+                ->where('orders.installation_required', '=', 1)
                 ->where("orders.created_at", "<", now()->subDays(1))
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
