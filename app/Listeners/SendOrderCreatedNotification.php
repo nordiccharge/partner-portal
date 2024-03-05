@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Enums\PipelineAutomation;
 use App\Events\OrderCreated;
 use App\Models\Company;
+use App\Models\Installer;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Product;
@@ -27,7 +28,7 @@ class SendOrderCreatedNotification
     /**
      * Handle the event.
      */
-    public function handle(OrderCreated $event): void
+    public function handle($event): void
     {
         $this->shippingNotification($event->order);
     }
@@ -81,6 +82,23 @@ class SendOrderCreatedNotification
                     ->performedOn($order)
                     ->event('system')
                     ->log('Order sent to MuraMura');
+            } else {
+                activity()
+                    ->performedOn($order)
+                    ->event('system')
+                    ->log('Failed to send order to MuraMura Response:' . $response->status() . ' ' . $response->body());
+
+                $email = new Mail();
+                $email->setFrom('service@nordiccharge.com', 'Nordic Charge');
+                $email->setTemplateId('d-1020ffb3e4124400ac41653e3c4cc6bc');
+                $email->addDynamicTemplateDatas([
+                    'order_id' => $order->id,
+                    'error_message' => 'Failed to send order to MuraMura Response:' . $response->status() . ' ' . $response->body(),
+                ]);
+                $email->setSubject('ERROR on ' . $order->id);
+                $email->addTo('service@nordiccharge.com');
+                $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+                $response = $sendgrid->send($email);
             }
         }
     }

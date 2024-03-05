@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources\OrderResource\Pages;
 
+use App\Events\PushOrderToShipping;
 use App\Events\SendEmailToInstaller;
 use App\Filament\Admin\Resources\OrderResource;
 use App\Filament\Admin\Resources\ReturnOrderResource;
@@ -124,6 +125,14 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Push Shipment')
+                ->icon('heroicon-o-truck')
+                ->link()
+                ->requiresConfirmation()
+                ->modalSubmitActionLabel('Push')
+                ->action(function (Order $record) {
+                    PushOrderToShipping::dispatch($record);
+                }),
             Actions\Action::make('Notify Installer')
                 ->icon('heroicon-o-paper-airplane')
                 ->link()
