@@ -260,6 +260,7 @@ class OrderResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
+                    ->date()
                     ->searchable()
                     ->toggleable(),
             ])

@@ -251,10 +251,16 @@ class OrderResource extends Resource
                     ->label('ID')
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('installation_date')
+                    ->label('Installation Date')
+                    ->date()
+                    ->sortable()
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('order_reference')
                     ->label('Reference')
                     ->searchable()
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('stage.name')
                     ->badge()
                     ->sortable()
@@ -277,10 +283,13 @@ class OrderResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('installer.company.name')
                     ->label('Installer')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('shipping_address')
                     ->label('Address')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('customer_first_name')
                     ->label('Full name')
                     ->formatStateUsing(fn (Order $record) => $record->customer_first_name . ' ' . $record->customer_last_name)
@@ -297,7 +306,10 @@ class OrderResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Created')
                     ->sortable()
+                    ->date()
+                    ->since()
                     ->searchable()
                     ->toggleable(),
             ])

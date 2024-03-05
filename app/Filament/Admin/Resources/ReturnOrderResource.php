@@ -121,6 +121,7 @@ class ReturnOrderResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('reason'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->date()
                     ->searchable()
                     ->sortable(),
             ])
