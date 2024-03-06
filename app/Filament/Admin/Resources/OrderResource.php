@@ -106,7 +106,7 @@ class OrderResource extends Resource
                                 ->pluck('name', 'id'))
                             ->default(1),
                         Forms\Components\TextInput::make('nc_price')
-                            ->readOnly()
+                            ->readOnly(fn (string $operation): bool => $operation === 'create')
                             ->label('Nordic Charge Order Flow Price')
                             ->helperText('Excluding taxes')
                             ->suffix('DKK'),
