@@ -132,6 +132,7 @@ class ViewOrder extends ViewRecord
                             'Installation' => 'Installation (e.g. installation date)',
                             'Technical' => 'Technical (e.g. product issue)',
                             'Backend' => 'Backend (e.g. Monta issue)',
+                            'Partner Portal' => 'Partner Portal (e.g. role issue)',
                             'Return' => 'Return (e.g. refund)',
                             'Other' => 'Other'
                         ])

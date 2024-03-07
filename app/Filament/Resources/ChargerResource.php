@@ -107,6 +107,7 @@ class ChargerResource extends Resource
                                 'Delivery' => 'Delivery (e.g. shipping date)',
                                 'Installation' => 'Installation (e.g. installation date)',
                                 'Technical' => 'Technical (e.g. product issue)',
+                                'Partner Portal' => 'Partner Portal (e.g. role issue)',
                                 'Backend' => 'Backend (e.g. Monta issue)',
                                 'Return' => 'Return (e.g. refund)',
                                 'Other' => 'Other'
