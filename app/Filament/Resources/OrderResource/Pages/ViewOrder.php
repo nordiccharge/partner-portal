@@ -128,12 +128,10 @@ class ViewOrder extends ViewRecord
                     Select::make('type')
                         ->label('What type of ticket is this?')
                         ->options([
-                            'Delivery' => 'Delivery (e.g. shipping date)',
-                            'Installation' => 'Installation (e.g. installation date)',
-                            'Technical' => 'Technical (e.g. product issue)',
-                            'Monta' => 'Monta (e.g. Monta issue)',
-                            'Partner Portal' => 'Partner Portal (e.g. role issue)',
-                            'Return' => 'Return (e.g. refund)',
+                            'Delivery' => 'Delivery',
+                            'Installation' => 'Installation',
+                            'Technical Support' => 'Technical Support',
+                            'Return' => 'Return',
                             'Other' => 'Other'
                         ])
                         ->required()

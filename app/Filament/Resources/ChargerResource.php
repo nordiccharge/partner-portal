@@ -104,12 +104,10 @@ class ChargerResource extends Resource
                     ->form([
                         Select::make('type')
                             ->options([
-                                'Delivery' => 'Delivery (e.g. shipping date)',
-                                'Installation' => 'Installation (e.g. installation date)',
-                                'Technical' => 'Technical (e.g. product issue)',
-                                'Partner Portal' => 'Partner Portal (e.g. role issue)',
-                                'Backend' => 'Backend (e.g. Monta issue)',
-                                'Return' => 'Return (e.g. refund)',
+                                'Delivery' => 'Delivery',
+                                'Installation' => 'Installation',
+                                'Technical Support' => 'Technical Support',
+                                'Return' => 'Return',
                                 'Other' => 'Other'
                             ])
                             ->required()
