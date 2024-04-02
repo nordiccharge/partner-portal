@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\City;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect('/partner');
 });
+
+Route::get('/import', [\App\Http\Controllers\ImportController::class, 'import']);

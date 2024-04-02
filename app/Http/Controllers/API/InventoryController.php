@@ -24,6 +24,26 @@ class InventoryController extends Controller
         }
         $team = Team::findOrFail($request->header('team'));
         return response()->json($team->inventories->map(function ($inventory) {
+            $inventory_quantity = $inventory->quantity;
+            if ($inventory->global) {
+                if ($inventory->quantity <= 0) {
+                    $inventory_quantity = 0;
+                }
+                if ($inventory->quantity < 5) {
+                    $inventory_quantity = 1;
+                }
+                if ($inventory->quantity < 10) {
+                    $inventory_quantity = 5;
+                }
+                if ($inventory->quantity < 50) {
+                    $inventory_quantity = 10;
+                }
+                if ($inventory->quantity < 100) {
+                    $inventory_quantity = 50;
+                };
+
+                return '100+';
+            }
             return [
                 'id' => $inventory->id,
                 'global' => $inventory->global,
