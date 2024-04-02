@@ -11,7 +11,7 @@ class ImportController extends Controller
         if (!$request->run) {
             return 'Please add ?run=true to the URL to run the import';
         }
-        $file = fopen('orders-1711035148.csv', 'r');
+        $file = fopen(database_path('data/orders-1711035148.csv'), 'r');
         echo '<p>Importing ' . $request->number . '</p>';
         $max = 1;
         if($request->number) {
