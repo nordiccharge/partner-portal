@@ -7,6 +7,14 @@ use Parallax\FilamentComments\Models\FilamentComment;
 
 class FilamentCommentPolicy
 {
+
+    private function isAdmin(): bool {
+        if (auth()->user()->isAdmin()) {
+            return true;
+        }
+
+        return false;
+    }
     public function viewAny(User $user): bool
     {
         return true;
@@ -20,7 +28,7 @@ class FilamentCommentPolicy
     public function create(User $user): bool
     {
 
-        return $user->isTeamManager() || $user->isAdmin();
+        return $this->isAdmin() || auth()->user()->isTeamManager();
     }
 
     public function update(User $user, FilamentComment $filamentComment): bool
