@@ -28,7 +28,11 @@ class ReturnOrderObserver
             $orderItems = $returnOrder->order->items;
             foreach ($orderItems as $orderItem) {
                 $new_quantity = $orderItem->inventory->quantity + $orderItem->quantity;
-                Inventory::find($orderItem->inventory_id)->update(['quantity' => $new_quantity]);
+                $inventory = Inventory::find($orderItem->inventory_id);
+                $inventory->update(['quantity' => $new_quantity]);
+                activity()
+                    ->performedOn($inventory)
+                    ->log('Quantity updated from ' . $orderItem->inventory->quantity . ' to ' . $new_quantity . ' on #' . $orderItem->order_id);
             }
         }
     }
