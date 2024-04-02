@@ -20,7 +20,7 @@ class FilamentCommentPolicy
     public function create(User $user): bool
     {
 
-        return $user->isAdmin();
+        return $user->isTeamManager() || $user->isAdmin();
     }
 
     public function update(User $user, FilamentComment $filamentComment): bool
