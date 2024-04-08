@@ -11,7 +11,7 @@ class ImportController extends Controller
         if (!$request->run) {
             return 'Please add ?run=true to the URL to run the import';
         }
-        if (!$request->name || $request->name == '') {
+        if (!$request->name) {
             return 'Please add ?name=XXXX to the URL to run the import';
         }
         $file = fopen(database_path('data/' . $request->name), 'r');
