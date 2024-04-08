@@ -17,3 +17,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return redirect('/partner');
 });
+
+Route::get('/import', [\App\Http\Controllers\ImportController::class, 'index']);
