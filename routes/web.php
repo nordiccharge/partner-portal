@@ -18,4 +18,4 @@ Route::get('/', function () {
     return redirect('/partner');
 });
 
-Route::get('/import', [\App\Http\Controllers\ImportController::class, 'index']);
+Route::get('/import', [\App\Http\Controllers\ImportController::class, 'import']);
