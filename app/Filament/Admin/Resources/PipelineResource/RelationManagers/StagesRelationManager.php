@@ -26,7 +26,7 @@ class StagesRelationManager extends RelationManager
                 Forms\Components\Textarea::make('description')
                     ->string(),
                 Forms\Components\Select::make('order')
-                    ->options(range(0, 20))
+                    ->options(range(1, 20))
                     ->required(),
                 Forms\Components\Select::make('state')
                     ->options([

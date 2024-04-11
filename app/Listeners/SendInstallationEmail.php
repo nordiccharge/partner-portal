@@ -71,7 +71,7 @@ class SendInstallationEmail
                     'order_items' => $order_items
                 ]);
 
-                $email->setSubject('Ny installation til ' . $order->team->name);
+                $email->setSubject('Installation hos ' . $order->customer_first_name . ' ' . $order->customer_last_name . ' på ' . $order->shipping_address .' for ' . $order->team->name);
                 $installer = Installer::findOrFail($order->installer_id);
                 $email->addTo($installer->contact_email);
                 $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
