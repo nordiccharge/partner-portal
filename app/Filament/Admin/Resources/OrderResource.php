@@ -300,7 +300,7 @@ class OrderResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('postal_id')
+                Tables\Columns\TextColumn::make('postal.postal')
                     ->label('Postal')
                     ->sortable()
                     ->searchable()

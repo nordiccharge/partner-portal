@@ -137,7 +137,7 @@ class OrderResource extends Resource
                         Forms\Components\TextInput::make('shipping_address')
                             ->label('Address')
                             ->required(),
-                        Forms\Components\Select::make('postal_id')
+                        Forms\Components\Select::make('postal.postal')
                             ->label('Postal')
                             ->searchable()
                             ->preload()
