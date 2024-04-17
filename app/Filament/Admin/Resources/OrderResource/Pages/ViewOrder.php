@@ -223,7 +223,8 @@ class ViewOrder extends ViewRecord
                 ->modalIcon('heroicon-o-arrow-path'),
             Actions\EditAction::make()
                 ->icon('heroicon-o-pencil-square')
-                ->label('Edit Order'),
+                ->label('Edit')
+                ->link(),
             Actions\Action::make('Complete')
                 ->icon('heroicon-o-check-circle')
                 ->color('success')
