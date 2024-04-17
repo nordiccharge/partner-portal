@@ -6,16 +6,14 @@ use Filament\Support\Contracts\HasLabel;
 
 enum InvoiceStatus: string implements HasLabel {
 
-    case Draft = 'draft';
     case Pending = 'pending';
-    case Paid = 'Paid';
+    case Sent = 'Sent';
 
     public function getLabel(): ?string
     {
         return match ($this) {
-            self::Draft => 'Draft',
             self::Pending => 'Pending',
-            self::Paid => 'Paid',
+            self::Sent => 'Sent for payment',
         };
     }
 }

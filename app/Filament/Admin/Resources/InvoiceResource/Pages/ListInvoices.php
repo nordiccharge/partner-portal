@@ -25,13 +25,13 @@ class ListInvoices extends ListRecords
     {
         return [
             'unpaid' => Tab::make('Unpaid invoices')
-                ->badge(fn () => Invoice::all()->where('status', '!=', InvoiceStatus::Paid)->count())
+                ->badge(fn () => Invoice::all()->where('status', '!=', InvoiceStatus::Sent)->count())
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('status', '!=', InvoiceStatus::Paid);
+                    $query->where('status', '!=', InvoiceStatus::Sent);
                 }),
-            'paid' => Tab::make('Paid invoices')
+            'paid' => Tab::make('Sent invoices')
                 ->modifyQueryUsing(function (Builder $query) {
-                    $query->where('status', InvoiceStatus::Paid);
+                    $query->where('status', InvoiceStatus::Sent);
                 }),
             ];
     }

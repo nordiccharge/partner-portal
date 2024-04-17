@@ -7,8 +7,10 @@ use App\Events\SendEmailToInstaller;
 use App\Filament\Admin\Resources\OrderResource;
 use App\Filament\Admin\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
+use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\ReturnOrder;
+use App\Models\Stage;
 use Filament\Actions;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Group;
@@ -125,11 +127,14 @@ class ViewOrder extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('Push Shipment')
+            Actions\Action::make('Push')
                 ->icon('heroicon-o-truck')
                 ->link()
                 ->requiresConfirmation()
+                ->modalHeading('Push Order to Shipping')
+                ->modalDescription('Are you sure you want to push this order to shipping?')
                 ->modalSubmitActionLabel('Push')
+                ->hidden(fn (Order $record) => $record->stage->state == 'return' || $record->stage->state == 'completed')
                 ->action(function (Order $record) {
                     PushOrderToShipping::dispatch($record);
                 }),
@@ -142,7 +147,8 @@ class ViewOrder extends ViewRecord
                     SendEmailToInstaller::dispatch($record);
                 })
                 ->hidden(fn (Order $record) => $record->installation_required == 0 || $record->installer_id == null),
-            Actions\Action::make('Assign Installer')
+            Actions\Action::make('Installer')
+                ->modalHeading('Assign Installer')
                 ->icon('heroicon-o-user-plus')
                 ->link()
                 ->hidden(fn (Order $record) => $record->stage->state == 'return' || $record->installation_required == 0 || $record->installer_id != null)
@@ -154,6 +160,7 @@ class ViewOrder extends ViewRecord
                                     \App\Models\Installer::join('companies', 'installers.company_id', '=', 'companies.id')
                                         ->pluck('companies.name', 'installers.id');
                             })
+                        ->label('Installer')
                         ->required(),
                     Toggle::make('send_email')
                         ->label('Send email to installer')
@@ -173,7 +180,7 @@ class ViewOrder extends ViewRecord
                         SendEmailToInstaller::dispatch($order);
                     }
                 }),
-            Actions\Action::make('Create Return')
+            Actions\Action::make('Return')
                 ->icon('heroicon-o-arrow-path')
                 ->link()
                 ->hidden(fn (Order $record) => $record->stage->state == 'return')
@@ -217,6 +224,21 @@ class ViewOrder extends ViewRecord
             Actions\EditAction::make()
                 ->icon('heroicon-o-pencil-square')
                 ->label('Edit Order'),
+            Actions\Action::make('Complete')
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Complete order & create invoice')
+                ->modalDescription('Are you sure you want to complete this order?')
+                ->hidden(fn (Order $record) => $record->stage->state == 'return' || $record->stage->state == 'completed')
+                ->action(function (Order $record) {
+                    $record->update(['stage_id' => $record->pipeline->stages->where('state', 'completed')->first()->id]);
+                    Invoice::create([
+                        'invoiceable_id' => $record->id,
+                        'invoiceable_type' => Order::class,
+                        'status' => 'pending'
+                    ]);
+                }),
         ];
     }
 }

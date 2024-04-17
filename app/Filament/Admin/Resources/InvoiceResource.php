@@ -4,7 +4,6 @@ namespace App\Filament\Admin\Resources;
 
 use App\Enums\InvoiceStatus;
 use App\Filament\Admin\Resources\InvoiceResource\Pages;
-use App\Filament\Admin\Resources\InvoiceResource\RelationManagers;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\PurchaseOrder;
@@ -13,8 +12,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 class InvoiceResource extends Resource
@@ -28,12 +25,25 @@ class InvoiceResource extends Resource
 
     private static function getActionOrders(): Collection
     {
-        return static::getModel()::where('status', '!=', InvoiceStatus::Paid)->get();
+        return static::getModel()::where('status', '!=', InvoiceStatus::Sent)->get();
     }
 
     public static function getNavigationBadge(): ?string
     {
         return static::getActionOrders()->count();
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        if (static::getActionOrders()->count() > 0) {
+            return 'warning';
+        }
+        elseif (static::getActionOrders()->count() === 0) {
+            return 'primary';
+        }
+        else {
+            return 'info';
+        }
     }
     public static function form(Form $form): Form
     {
@@ -107,16 +117,42 @@ class InvoiceResource extends Resource
                         };
                     })
                     ->label('Type'),
-                Tables\Columns\SelectColumn::make('status')
-                    ->options(InvoiceStatus::class),
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(function ($record) {
+                        return match ($record->status) {
+                            InvoiceStatus::Pending => 'warning',
+                            InvoiceStatus::Sent => 'success',
+                        };
+                    }),
+                Tables\Columns\TextColumn::make('invoiceable.team.company.name')
+                    ->label('Company'),
                 Tables\Columns\TextColumn::make('total_price')
-                    ->suffix(' DKK')
+                    ->suffix(' DKK'),
+                Tables\Columns\TextColumn::make('updated_at')
+                    ->dateTime(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->dateTime()
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('Complete invoice')
+                    ->color('success')
+                    ->icon('heroicon-o-check-circle')
+                    ->requiresConfirmation()
+                    ->hidden(fn ($record) => $record->status == InvoiceStatus::Sent)
+                    ->action(fn ($record) => $record->update(['status' => InvoiceStatus::Sent])),
+                Tables\Actions\Action::make('Cancel invoice')
+                    ->color('warning')
+                    ->icon('heroicon-o-x-circle')
+                    ->requiresConfirmation()
+                    ->hidden(fn ($record) => $record->status == InvoiceStatus::Pending)
+                    ->action(fn ($record) => $record->update(['status' => InvoiceStatus::Pending])),
+                Tables\Actions\Action::make('History')
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn ($record) => InvoiceResource::getUrl('activities', ['record' => $record])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -137,6 +173,8 @@ class InvoiceResource extends Resource
         return [
             'index' => Pages\ListInvoices::route('/'),
             'create' => Pages\CreateInvoice::route('/create'),
+            'activities' => InvoiceResource\Pages\ListInvoiceActivities::route('/{record}/activities'),
+            'view' => Pages\ViewInvoice::route('/{record}'),
             'edit' => Pages\EditInvoice::route('/{record}/edit'),
         ];
     }

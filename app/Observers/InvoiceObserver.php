@@ -22,23 +22,25 @@ class InvoiceObserver
      */
     public function created(Invoice $invoice)
     {
-        if ($invoice->status == InvoiceStatus::Paid) {
+        if ($invoice->status == InvoiceStatus::Sent) {
             return;
         }
 
         Log::debug('Invoice created: ' . $invoice->id);
         $total_price = 0;
         $order = $invoice->invoiceable;
+        Log::debug($order);
         if ($order instanceof Order) {
-            Log::debug('Invoiceable is OrderItem');
+            Log::debug('Invoiceable is Order');
             foreach ($order->items as $item) {
-                Log::debug('OrderItem: ' . $item->product->sku . ' | ' . $item->global);
+                Log::debug($item);
                 $product = Product::findOrFail($item->inventory->product_id);
+                Log::debug($product);
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'title' => $product->name . ' | ' . $product->sku,
                     'price' => $item->price,
-                    'quantity' => $item->quantity
+                    'quantity' => $item->quantity,
                 ]);
 
                 $total_price += $item->price * $item->quantity;
@@ -48,7 +50,7 @@ class InvoiceObserver
                 Log::debug('Instalation required');
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
-                    'title' => $order->installation->kw . ' Instalation: ' . $order->installation->name,
+                    'title' => $order->installation->kw . 'kW Installation: ' . $order->installation->name,
                     'price' => $order->installation->price,
                     'quantity' => 1
                 ]);
