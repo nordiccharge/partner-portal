@@ -328,11 +328,9 @@ class OrderResource extends Resource
                     ->nullable(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
                 Tables\Actions\Action::make('History')
                     ->icon('heroicon-o-document-text')
                     ->url(fn ($record) => OrderResource::getUrl('activities', ['record' => $record])),
-                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
