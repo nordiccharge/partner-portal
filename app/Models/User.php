@@ -57,7 +57,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     ];
 
     public function isAdmin(): bool {
-        return $this->is_admin && str_ends_with($this->email, '@nordiccharge.com');
+        return $this->is_admin && (str_ends_with($this->email, '@nordiccharge.com') || str_ends_with($this->email, '@jvst.dk'));
     }
 
     public function canAccessPanel(Panel $panel): bool
