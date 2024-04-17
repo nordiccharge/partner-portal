@@ -22,6 +22,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\View;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Log;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
@@ -239,6 +240,10 @@ class ViewOrder extends ViewRecord
                         'invoiceable_type' => Order::class,
                         'status' => 'pending'
                     ]);
+                    Notification::make()
+                        ->title('Invoice created')
+                        ->success()
+                        ->send();
                 }),
         ];
     }
