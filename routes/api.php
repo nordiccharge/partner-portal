@@ -25,3 +25,4 @@ Route::get('pipelines/{id}', [\App\Http\Controllers\API\PipelineController::clas
 Route::get('inventory', [\App\Http\Controllers\API\InventoryController::class, 'index']);
 Route::get('installations', [\App\Http\Controllers\API\InstallationController::class, 'index']);
 Route::post('shipping', [\App\Http\Controllers\API\ShipmentController::class, 'store']);
+Route::post('dates', [\App\Http\Controllers\API\InstallationDateController::class, 'index']);
