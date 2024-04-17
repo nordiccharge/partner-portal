@@ -38,8 +38,11 @@ class ViewInvoice extends ViewRecord
                         TextEntry::make('invoiceable.team.company.invoice_email')
                             ->label('Invoice email')
                             ->copyable(),
+                        TextEntry::make('invoiceable.order_id')
+                            ->label('Order ID from Nordic Charge')
+                            ->copyable(),
                         TextEntry::make('invoiceable.order_reference')
-                            ->label('Order reference')
+                            ->label('Order reference from customer')
                             ->copyable(),
                         TextEntry::make('note')
                     ])
