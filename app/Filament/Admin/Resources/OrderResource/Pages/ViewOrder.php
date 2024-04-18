@@ -42,6 +42,7 @@ class ViewOrder extends ViewRecord
                         ViewEntry::make('flow')
                             ->view('filament.forms.components.flow')
                             ->columnSpanFull(),
+                        TextEntry::make('pipeline.name'),
                     ])
                     ->icon('heroicon-m-clipboard-document-list'),
                 Section::make('Overview test')
