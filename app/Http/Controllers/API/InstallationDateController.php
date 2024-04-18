@@ -20,21 +20,25 @@ class InstallationDateController extends Controller
 
         try {
             $order = Order::findOrFail((int)$request->order);
-            $installation_stage = Stage::where('pipeline_id', (int)$order->pipeline_id)->where('automation_type', StageAutomation::InstallationDateConfirmed)->first();
-            $new_stage = $order->stage;
-            if ($order->stage->order <= $installation_stage->order) {
-                $new_stage = $installation_stage;
-            }
-            $order->update([
-                'installation_date' => $request->date,
-                'stage_id' => $new_stage->id,
-            ]);
-            activity()
-                ->performedOn($order)
-                ->event('system')
-                ->log('New installation date added from API ' . $request->date);
+            if ($order->installation_required === true || $order->installation_required == 1) {
+                $installation_stage = Stage::where('pipeline_id', (int)$order->pipeline_id)->where('automation_type', StageAutomation::InstallationDateConfirmed)->first();
+                $new_stage = $order->stage;
+                if ($order->stage->order <= $installation_stage->order) {
+                    $new_stage = $installation_stage;
+                }
+                $order->update([
+                    'installation_date' => $request->date,
+                    'stage_id' => $new_stage->id,
+                ]);
+                activity()
+                    ->performedOn($order)
+                    ->event('system')
+                    ->log('New installation date added from API ' . $request->date);
 
-            return response()->json('Installation date updated', 200);
+                return response()->json('Installation date updated', 200);
+            } else {
+                return response()->json('Installation not required', 404);
+            }
         } catch (\Exception $e) {
             return response()->json('Installation date failed ' . $e->getMessage(), 404);
         }
