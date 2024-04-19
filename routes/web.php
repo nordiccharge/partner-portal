@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    if (auth()->user()->isAdmin) {
+    if (\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
         return redirect('/admin');
     }
     return redirect('/partner');
