@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -110,4 +111,11 @@ class Order extends Model
             $this->attributes['installation_required'] = 1;
         }
     }
+
+    protected function fullName(): Attribute {
+        return Attribute::make(
+            fn ($value, $attributes) => $attributes['customer_first_name'] . ' ' . $attributes['customer_last_name'],
+        );
+    }
+
 }

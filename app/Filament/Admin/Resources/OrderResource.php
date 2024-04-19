@@ -290,10 +290,11 @@ class OrderResource extends Resource
                     ->label('Address')
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('customer_first_name')
+                Tables\Columns\TextColumn::make('full_name')
                     ->label('Full name')
-                    ->formatStateUsing(fn (Order $record) => $record->customer_first_name . ' ' . $record->customer_last_name)
-                    ->searchable()
+                    ->searchable([
+                        'customer_first_name', 'customer_last_name'
+                    ])
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('team.name')
                     ->badge()

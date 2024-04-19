@@ -254,10 +254,11 @@ class OrderResource extends Resource
                 Tables\Columns\TextColumn::make('shipping_address')
                     ->label('Address')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('customer_first_name')
+                Tables\Columns\TextColumn::make('full_name')
                     ->label('Full name')
-                    ->formatStateUsing(fn (Order $record) => $record->customer_first_name . ' ' . $record->customer_last_name)
-                    ->searchable()
+                    ->searchable([
+                        'customer_first_name', 'customer_last_name'
+                    ])
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
