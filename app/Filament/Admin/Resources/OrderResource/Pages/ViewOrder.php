@@ -58,10 +58,14 @@ class ViewOrder extends ViewRecord
                                 ->copyable()
                         ])->columns(4),
                         Group::make([
-                            TextEntry::make('shipping_address'),
-                            TextEntry::make('postal.postal'),
-                            TextEntry::make('city.name'),
-                            TextEntry::make('country.name'),
+                            TextEntry::make('shipping_address')
+                                ->copyable(),
+                            TextEntry::make('postal.postal')
+                                ->copyable(),
+                            TextEntry::make('city.name')
+                                ->copyable(),
+                            TextEntry::make('country.name')
+                                ->copyable(),
                             Section::make([
                                 TextEntry::make('note')
                                     ->default('No note stated')

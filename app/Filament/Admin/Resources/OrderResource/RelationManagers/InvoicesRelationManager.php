@@ -1,51 +1,23 @@
 <?php
 
-namespace App\Filament\Admin\Resources;
+namespace App\Filament\Admin\Resources\OrderResource\RelationManagers;
 
 use App\Enums\InvoiceStatus;
-use App\Filament\Admin\Resources\InvoiceResource\Pages;
-use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\PurchaseOrder;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class InvoiceResource extends Resource
+class InvoicesRelationManager extends RelationManager
 {
-    protected static ?string $model = Invoice::class;
+    protected static string $relationship = 'invoices';
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
-
-    protected static ?int $navigationSort = 4;
-    protected static ?string $navigationGroup = 'Global Operations';
-
-    private static function getActionOrders(): Collection
-    {
-        return static::getModel()::where('status', '!=', InvoiceStatus::Sent)->get();
-    }
-
-    public static function getNavigationBadge(): ?string
-    {
-        return static::getActionOrders()->count();
-    }
-
-    public static function getNavigationBadgeColor(): ?string
-    {
-        if (static::getActionOrders()->count() > 0) {
-            return 'warning';
-        }
-        elseif (static::getActionOrders()->count() === 0) {
-            return 'primary';
-        }
-        else {
-            return 'info';
-        }
-    }
-    public static function form(Form $form): Form
+    public function form(Form $form): Form
     {
         return $form
             ->schema([
@@ -102,23 +74,13 @@ class InvoiceResource extends Resource
             ]);
     }
 
-    public static function table(Table $table): Table
+    public function table(Table $table): Table
     {
         return $table
+            ->recordTitleAttribute('id')
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Invoice ID'),
-                Tables\Columns\TextColumn::make('invoiceable_id')
-                    ->label('Order ID'),
-                Tables\Columns\TextColumn::make('invoiceable_type')
-                    ->formatStateUsing(function (string $state) {
-                        return match ($state) {
-                            Order::class => 'Order',
-                            PurchaseOrder::class => 'Purchase Order',
-                            default => $state,
-                        };
-                    })
-                    ->label('Type'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(function ($record) {
@@ -139,45 +101,18 @@ class InvoiceResource extends Resource
             ->filters([
                 //
             ])
+            ->headerActions([
+                Tables\Actions\CreateAction::make(),
+            ])
             ->actions([
-                Tables\Actions\Action::make('Complete invoice')
-                    ->color('success')
-                    ->icon('heroicon-o-check-circle')
-                    ->requiresConfirmation()
-                    ->hidden(fn ($record) => $record->status == InvoiceStatus::Sent)
-                    ->action(fn ($record) => $record->update(['status' => InvoiceStatus::Sent])),
-                Tables\Actions\Action::make('Cancel invoice')
-                    ->color('warning')
-                    ->icon('heroicon-o-x-circle')
-                    ->requiresConfirmation()
-                    ->hidden(fn ($record) => $record->status == InvoiceStatus::Pending)
-                    ->action(fn ($record) => $record->update(['status' => InvoiceStatus::Pending])),
-                Tables\Actions\Action::make('History')
-                    ->icon('heroicon-o-document-text')
-                    ->url(fn ($record) => InvoiceResource::getUrl('activities', ['record' => $record])),
+                Tables\Actions\Action::make('details')
+                    ->label('View')
+                    ->url(fn ($record): string => route('filament.admin.resources.invoices.view', ['record' => $record]))
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            //
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => Pages\ListInvoices::route('/'),
-            'create' => Pages\CreateInvoice::route('/create'),
-            'activities' => InvoiceResource\Pages\ListInvoiceActivities::route('/{record}/activities'),
-            'view' => Pages\ViewInvoice::route('/{record}'),
-            'edit' => Pages\EditInvoice::route('/{record}/edit'),
-        ];
     }
 }

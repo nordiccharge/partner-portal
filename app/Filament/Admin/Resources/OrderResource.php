@@ -345,7 +345,8 @@ class OrderResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            OrderResource\RelationManagers\ChargersRelationManager::class,
+            OrderResource\RelationManagers\InvoicesRelationManager::class,
         ];
     }
 
