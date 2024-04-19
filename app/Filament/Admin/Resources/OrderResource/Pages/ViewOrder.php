@@ -241,6 +241,16 @@ class ViewOrder extends ViewRecord
                         'invoiceable_type' => Order::class,
                         'status' => 'pending'
                     ]);
+                    FilamentComment::create([
+                        'user_id' => auth()->user()->id,
+                        'subject_type' => 'App\Models\Order',
+                        'subject_id' => $record->id,
+                        'comment' => '<p><i>Order Completed</i></p>',
+                    ]);
+                    activity()
+                        ->performedOn($record)
+                        ->event('system')
+                        ->log('Order completed by ' . auth()->user()->name);
                     Notification::make()
                         ->title('Invoice created')
                         ->success()
