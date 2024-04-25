@@ -9,6 +9,7 @@ use App\Models\Installer;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Product;
+use Filament\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
@@ -81,11 +82,19 @@ class SendOrderCreatedNotification
                     ->performedOn($order)
                     ->event('system')
                     ->log('Order sent to MuraMura');
+                Notification::make()
+                    ->title('Order sent to MuraMura')
+                    ->success()
+                    ->send();
             } else {
                 activity()
                     ->performedOn($order)
                     ->event('system')
                     ->log('Failed to send order to MuraMura Response:' . $response->status() . ' ' . $response->body());
+                Notification::make()
+                    ->title($response->body())
+                    ->danger()
+                    ->send();
 
                 $email = new Mail();
                 $email->setFrom('service@nordiccharge.com', 'Nordic Charge');
