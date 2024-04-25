@@ -61,7 +61,6 @@ class SendOrderCreatedNotification
                 'X-SmartPack-AccessToken' => 'H3xeH9pIrcJJy3R68RQx83jN1MwIK6KBhWCn6UccFDYtQs7yZ5GuW8FM/EVY2/cBcl0xJeYCRndmYoPtlMxZnQ=='
             ])->post('https://muramura.smartpack.dk/api/v1/order/create', [
                 'orderNo' => $order->id,
-                'referenceNo' => $order->order_reference,
                 'sender' => $this->getSender($company),
                 'recipient' => [
                     'name' => $order->customer_first_name . ' ' . $order->customer_last_name,
