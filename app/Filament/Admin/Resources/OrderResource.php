@@ -84,7 +84,6 @@ class OrderResource extends Resource
                             ->required()
                             ->preload()
                             ->default(1)
-                            ->disabledOn('edit')
                             ->relationship('pipeline', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
                             ->searchable()
                             ->afterStateUpdated(
