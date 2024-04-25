@@ -20,9 +20,8 @@ class ChargersRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('team_id')
-                    ->default($this->getOwnerRecord()->team_id)
-                    ->hidden(),
+                Forms\Components\Hidden::make('team_id')
+                    ->default($this->getOwnerRecord()->team_id),
                 Forms\Components\Select::make('product_id')
                     ->label('Product')
                     ->preload()
