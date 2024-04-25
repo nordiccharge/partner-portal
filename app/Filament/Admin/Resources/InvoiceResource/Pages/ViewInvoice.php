@@ -4,8 +4,10 @@ namespace App\Filament\Admin\Resources\InvoiceResource\Pages;
 
 use App\Enums\InvoiceStatus;
 use App\Filament\Admin\Resources\InvoiceResource;
+use App\Models\Order;
 use Filament\Actions;
 use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -38,15 +40,32 @@ class ViewInvoice extends ViewRecord
                         TextEntry::make('invoiceable.team.company.invoice_email')
                             ->label('Invoice email')
                             ->copyable(),
-                        TextEntry::make('invoiceable.id')
-                            ->label('Order ID from Nordic Charge')
-                            ->copyable(),
-                        TextEntry::make('invoiceable.order_reference')
-                            ->label('Order reference from customer')
-                            ->copyable(),
-                        TextEntry::make('note')
+                        TextEntry::make('note'),
+                        Section::make('Order Details')
+                            ->schema([
+                                TextEntry::make('invoiceable.id')
+                                    ->label('Order ID from Nordic Charge')
+                                    ->copyable(),
+                                TextEntry::make('invoiceable.order_reference')
+                                    ->label('Order reference from customer')
+                                    ->copyable(),
+                                TextEntry::make('invoiceable.created_at')
+                                    ->label('Order date')
+                                    ->copyable(),
+                                TextEntry::make('invoiceable.installer.company.name')
+                                    ->label('Installer'),
+                                TextEntry::make('full_name')
+                                    ->label('Full name')
+                                    ->default(fn ($record) => $record->invoiceable->customer_first_name . ' ' . $record->invoiceable->customer_last_name)
+                                    ->copyable(),
+                                TextEntry::make('shipping_address')
+                                    ->label('Address')
+                                    ->default(fn ($record) => $record->invoiceable->shipping_address . ', ' . $record->invoiceable->postal->postal . ' ' . $record->invoiceable->city->name . ' ' . $record->invoiceable->country->name)
+                                    ->copyable(),
+                            ])->columns(3),
                     ])
-                    ->columns(2),
+                    ->columns(2)
+                    ->hidden(fn ($record) => !$record->invoiceable instanceof Order),
                 Section::make('Invoice')
                     ->schema([
                         RepeatableEntry::make('items')
