@@ -130,8 +130,7 @@ class InvoiceResource extends Resource
                         };
                     }),
                 Tables\Columns\TextColumn::make('invoiceable.team.company.name')
-                    ->label('Company')
-                    ->searchable(),
+                    ->label('Company'),
                 Tables\Columns\TextColumn::make('total_price')
                     ->suffix(' DKK'),
                 Tables\Columns\TextColumn::make('updated_at')
