@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\ReturnOrder;
 use App\Models\Stage;
 use Filament\Actions;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
@@ -231,20 +232,60 @@ class ViewOrder extends ViewRecord
                 ->icon('heroicon-o-pencil-square')
                 ->label('Edit')
                 ->link(),
-            Actions\Action::make('Complete')
-                ->icon('heroicon-o-check-circle')
-                ->color('success')
+            Actions\Action::make('Invoice')
+                ->icon('heroicon-o-document-check')
+                ->color('info')
+                ->modalHeading('Create invoice for order')
+                ->modalDescription('Are you sure you want to create an invoice for order?')
+                ->form([
+                    \Filament\Forms\Components\View::make('filament.forms.components.invoices'),
+                ])
                 ->requiresConfirmation()
-                ->modalHeading('Complete order & create invoice')
-                ->modalDescription('Are you sure you want to complete this order?')
-                ->hidden(fn (Order $record) => $record->stage->state == 'return' || $record->stage->state == 'completed')
                 ->action(function (Order $record) {
-                    $record->update(['stage_id' => $record->pipeline->stages->where('state', 'completed')->first()->id]);
                     Invoice::create([
                         'invoiceable_id' => $record->id,
                         'invoiceable_type' => Order::class,
                         'status' => 'pending'
                     ]);
+                    Notification::make()
+                        ->title('Invoice created')
+                        ->success()
+                        ->send();
+                    activity()
+                        ->performedOn($record)
+                        ->event('system')
+                        ->log('Invoice created by ' . auth()->user()->name);
+                }),
+            Actions\Action::make('Complete')
+                ->icon('heroicon-o-check-circle')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Complete order')
+                ->modalDescription('Are you sure you want to complete this order?')
+                ->form([
+                    \Filament\Forms\Components\View::make('filament.forms.components.invoices'),
+                    Select::make('create_invoice')
+                        ->label('Do you want to create an invoice on this order?')
+                        ->options([
+                            1 => 'Yes',
+                            0 => 'No'
+                        ])
+                        ->required()
+                ])
+                ->hidden(fn (Order $record) => $record->stage->state == 'return' || $record->stage->state == 'completed')
+                ->action(function (array $data, Order $record) {
+                    $record->update(['stage_id' => $record->pipeline->stages->where('state', 'completed')->first()->id]);
+                    if ($data['create_invoice'] == 1) {
+                        Invoice::create([
+                            'invoiceable_id' => $record->id,
+                            'invoiceable_type' => Order::class,
+                            'status' => 'pending'
+                        ]);
+                        Notification::make()
+                            ->title('Invoice created')
+                            ->success()
+                            ->send();
+                    }
                     FilamentComment::create([
                         'user_id' => auth()->user()->id,
                         'subject_type' => 'App\Models\Order',
@@ -255,10 +296,6 @@ class ViewOrder extends ViewRecord
                         ->performedOn($record)
                         ->event('system')
                         ->log('Order completed by ' . auth()->user()->name);
-                    Notification::make()
-                        ->title('Invoice created')
-                        ->success()
-                        ->send();
                 }),
         ];
     }
