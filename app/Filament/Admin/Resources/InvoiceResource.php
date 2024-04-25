@@ -107,9 +107,11 @@ class InvoiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('id')
-                    ->label('Invoice ID'),
+                    ->label('Invoice ID')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_id')
-                    ->label('Order ID'),
+                    ->label('Order ID')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_type')
                     ->formatStateUsing(function (string $state) {
                         return match ($state) {
@@ -128,7 +130,8 @@ class InvoiceResource extends Resource
                         };
                     }),
                 Tables\Columns\TextColumn::make('invoiceable.team.company.name')
-                    ->label('Company'),
+                    ->label('Company')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('total_price')
                     ->suffix(' DKK'),
                 Tables\Columns\TextColumn::make('updated_at')
