@@ -318,9 +318,22 @@ class OrderResource extends Resource
                     ->multiple()
                     ->relationship('team', 'name')
                     ->preload(),
+                Tables\Filters\SelectFilter::make('pipeline')
+                    ->multiple()
+                    ->relationship('pipeline', 'name')
+                    ->preload(),
                 Tables\Filters\SelectFilter::make('stage')
                     ->multiple()
-                    ->relationship('stage', 'name')
+                    ->attribute('stage.name')
+                    ->options(function () {
+                        $stages = [];
+                        foreach (Stage::all() as $stage) {
+                            if (isset($stages[$stage->name])) {
+                                array_push($stages, $stage->name);
+                            }
+                        }
+                        return $stages;
+                    })
                     ->preload(),
                 Tables\Filters\TernaryFilter::make('tracking_code')
                     ->label('Has Tracking Code')
