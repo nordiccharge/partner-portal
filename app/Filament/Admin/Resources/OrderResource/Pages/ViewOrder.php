@@ -203,6 +203,14 @@ class ViewOrder extends ViewRecord
                             1 => 'Create Shipping Label Automatically',
                             0 => 'No Label',
                         ])
+                        ->required(),
+                    \Filament\Forms\Components\View::make('filament.forms.components.invoices'),
+                    Select::make('create_invoice')
+                        ->label('Do you want to create an invoice on this order?')
+                        ->options([
+                            1 => 'Yes',
+                            0 => 'No'
+                        ])
                         ->required()
                 ])
                 ->action(function (Order $record, array $data) {
@@ -221,11 +229,23 @@ class ViewOrder extends ViewRecord
                         'state' => 'pending'
                     ]);
                     $record->update(['pipeline_id' => 1, 'stage_id' => 1]);
-
                     /*if ($data['shipping_label'] == 1) {
                         $return_order->update(['state' => 'processing']);
                     }*/
+
                     $this->redirect(ReturnOrderResource::getUrl());
+
+                    if ($data['create_invoice'] == 1) {
+                        Invoice::create([
+                            'invoiceable_id' => $record->id,
+                            'invoiceable_type' => Order::class,
+                            'status' => 'pending'
+                        ]);
+                        Notification::make()
+                            ->title('Invoice created')
+                            ->success()
+                            ->send();
+                    }
                 })
                 ->modalIcon('heroicon-o-arrow-path'),
             Actions\EditAction::make()

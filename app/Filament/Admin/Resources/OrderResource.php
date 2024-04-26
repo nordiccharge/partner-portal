@@ -17,6 +17,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use SendGrid\Mail\Section;
 
 class OrderResource extends Resource
@@ -309,7 +310,6 @@ class OrderResource extends Resource
                     ->label('Created')
                     ->sortable()
                     ->date()
-                    ->since()
                     ->searchable()
                     ->toggleable(),
             ])
@@ -318,27 +318,55 @@ class OrderResource extends Resource
                     ->multiple()
                     ->relationship('team', 'name')
                     ->preload(),
-                Tables\Filters\SelectFilter::make('pipeline')
-                    ->multiple()
-                    ->relationship('pipeline', 'name')
-                    ->preload(),
-                Tables\Filters\SelectFilter::make('stage')
-                    ->multiple()
-                    ->attribute('stage.name')
-                    ->options(function () {
-                        $stages = [];
-                        foreach (Stage::all() as $stage) {
-                            if (isset($stages[$stage->name])) {
-                                array_push($stages, $stage->name);
-                            }
-                        }
-                        return $stages;
-                    })
-                    ->preload(),
+                Tables\Filters\Filter::make('pipeline_stage')
+                    ->form([
+                        Forms\Components\Select::make('pipeline_id')
+                            ->label('Pipeline')
+                            ->preload()
+                            ->multiple()
+                            ->relationship('pipeline', 'name')
+                            ->searchable()
+                            ->live(),
+                        Forms\Components\Select::make('stage_name')
+                            ->label('Stage')
+                            ->options(function (Forms\Get $get) {
+                                $stages = [];
+                                foreach ($get('pipeline_id') as $pipeline_id) {
+                                    foreach (Pipeline::findOrFail($pipeline_id)->stages as $stage) {
+                                        $stages[$stage->name] = $stage->name;
+                                    }
+                                }
+                                return array_unique($stages);
+                            })
+                            ->searchable()
+                            ->multiple(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['pipeline_id'],
+                                function (Builder $query, $pipeline_id_array): Builder {
+                                    $query->whereIn('pipeline_id', $pipeline_id_array);
+                                    return $query;
+                                }
+                            )
+                            ->when(
+                                $data['stage_name'],
+                                function (Builder $query, $stage_name_array): Builder {
+                                    $query->whereIn('stage_id', Stage::whereIn('name', $stage_name_array)->pluck('id'));
+                                    return $query;
+                                }
+                            );
+                    }),
                 Tables\Filters\TernaryFilter::make('tracking_code')
                     ->label('Has Tracking Code')
                     ->placeholder('All Orders')
                     ->nullable(),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from'),
+                        Forms\Components\DatePicker::make('created_until')->default(now()),
+                    ])
             ])
             ->actions([
                 Tables\Actions\Action::make('History')

@@ -133,10 +133,8 @@ class InvoiceResource extends Resource
                     ->label('Company'),
                 Tables\Columns\TextColumn::make('total_price')
                     ->suffix(' DKK'),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->date()
             ])
             ->filters([
                 //
