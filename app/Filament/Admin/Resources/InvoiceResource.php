@@ -108,9 +108,11 @@ class InvoiceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('Invoice ID')
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_id')
                     ->label('Order ID')
+                    ->toggleable(isToggledHiddenByDefault: false)
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_type')
                     ->formatStateUsing(function (string $state) {
@@ -120,6 +122,7 @@ class InvoiceResource extends Resource
                             default => $state,
                         };
                     })
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Type'),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()

@@ -46,8 +46,8 @@ class InvoiceObserver
                 $total_price += $item->price * $item->quantity;
             }
 
-            if ($order->installation_required) {
-                Log::debug('Instalation required');
+            if ($order->installation_required && $order->pipeline_id != 1) {
+                Log::debug('Instalation required and not return order');
                 InvoiceItem::create([
                     'invoice_id' => $invoice->id,
                     'title' => $order->installation->kw . 'kW Installation: ' . $order->installation->name,
