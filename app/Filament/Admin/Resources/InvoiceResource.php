@@ -124,13 +124,19 @@ class InvoiceResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Type'),
+                Tables\Columns\TextColumn::make('invoiceable.order_reference')
+                    ->label('Reference')
+                    ->toggleable()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable.shipping_address')
                     ->label('Address')
                     ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable.full_name')
                     ->label('Full name')
-                    ->searchable()
+                    ->searchable([
+                        'customer_first_name', 'customer_last_name'
+                    ])
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
