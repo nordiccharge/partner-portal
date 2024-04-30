@@ -112,7 +112,7 @@ class InvoiceResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_id')
                     ->label('Order ID')
-                    ->toggleable(isToggledHiddenByDefault: false)
+                    ->toggleable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('invoiceable_type')
                     ->formatStateUsing(function (string $state) {
@@ -124,6 +124,14 @@ class InvoiceResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Type'),
+                Tables\Columns\TextColumn::make('invoiceable.shipping_address')
+                    ->label('Address')
+                    ->toggleable()
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('invoiceable.full_name')
+                    ->label('Full name')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(function ($record) {
@@ -133,7 +141,9 @@ class InvoiceResource extends Resource
                         };
                     }),
                 Tables\Columns\TextColumn::make('invoiceable.team.company.name')
-                    ->label('Company'),
+                    ->label('Company')
+                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('total_price')
                     ->suffix(' DKK'),
                 Tables\Columns\TextColumn::make('created_at')
