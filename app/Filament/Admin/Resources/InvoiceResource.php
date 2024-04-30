@@ -153,13 +153,13 @@ class InvoiceResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('Complete invoice')
+                Tables\Actions\Action::make('Complete')
                     ->color('success')
                     ->icon('heroicon-o-check-circle')
                     ->requiresConfirmation()
                     ->hidden(fn ($record) => $record->status == InvoiceStatus::Sent)
                     ->action(fn ($record) => $record->update(['status' => InvoiceStatus::Sent])),
-                Tables\Actions\Action::make('Cancel invoice')
+                Tables\Actions\Action::make('Cancel')
                     ->color('warning')
                     ->icon('heroicon-o-x-circle')
                     ->requiresConfirmation()
