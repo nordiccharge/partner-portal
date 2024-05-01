@@ -321,6 +321,7 @@ class OrderResource extends Resource
                     ->preload(),
                 Tables\Filters\SelectFilter::make('installer')
                     ->relationship('installer', 'company.name')
+                    ->multiple()
                     ->searchable()
                     ->preload(),
                 Tables\Filters\Filter::make('pipeline_stage')
