@@ -125,6 +125,7 @@ class OrderResource extends Resource
                                 ->label('Installation')
                                 ->relationship('installation', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', '=', $get('team_id')))
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
+                                ->nullable()
                                 ->required(fn (Forms\Get $get) => $get('installation_required'))
                                 ->afterStateUpdated(
                                     function (Forms\Set $set, ?string $state) {

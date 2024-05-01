@@ -97,7 +97,7 @@ class SendInstallationEmail
             } else {
                     Log::debug('Sending Missing Installer Email to Nordic Charge');
                     $email = new Mail();
-                    $email->setFrom('service@nordiccharge.com', 'Nordic Charge');
+                    $email->setFrom('it@nordiccharge.com', 'Nordic Charge');
                     $email->setTemplateId('d-5a3f0d2221824c0a88bd0472cdb823fe');
                     $email->addDynamicTemplateDatas([
                         'order_id' => $order->id,
@@ -113,9 +113,14 @@ class SendInstallationEmail
                         'order_items' => $order_items
                     ]);
 
-                    $email->setSubject('MISSING INSTALLATION for ' . $order->team->sendgrid_name);
+                    $email->setSubject('MISSING INSTALLER for ' . $order->team->sendgrid_name);
                     $email->addTo('service@nordiccharge.com');
                     $sendgrid = new \SendGrid(getenv('SENDGRID_API_KEY'));
+
+                    activity()
+                        ->performedOn($order)
+                        ->event('system')
+                        ->log('Missing installer – no email sent');
 
                     try {
                         $response = $sendgrid->send($email);
