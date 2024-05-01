@@ -319,6 +319,10 @@ class OrderResource extends Resource
                     ->multiple()
                     ->relationship('team', 'name')
                     ->preload(),
+                Tables\Filters\SelectFilter::make('installer')
+                    ->relationship('installer', 'company.name')
+                    ->searchable()
+                    ->preload(),
                 Tables\Filters\Filter::make('pipeline_stage')
                     ->form([
                         Forms\Components\Select::make('pipeline_id')
