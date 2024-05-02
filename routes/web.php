@@ -21,4 +21,11 @@ Route::get('/', function () {
     return redirect('/partner');
 });
 
+Route::group(['domain' => 'installer.nordiccharge.com'], function(){
+    Route::get('/', function(){
+        return 'Installer';
+    });
+});
+
+
 //Route::get('/import', [\App\Http\Controllers\ImportController::class, 'import']);

@@ -26,8 +26,3 @@ Route::get('inventory', [\App\Http\Controllers\API\InventoryController::class, '
 Route::get('installations', [\App\Http\Controllers\API\InstallationController::class, 'index']);
 Route::post('shipping', [\App\Http\Controllers\API\ShipmentController::class, 'store']);
 Route::post('date', [\App\Http\Controllers\API\InstallationDateController::class, 'index']);
-Route::group(['domain' => 'installer.nordiccharge.com'], function(){
-    Route::get('/', function(){
-        return 'Installer';
-    });
-});
