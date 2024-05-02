@@ -24,9 +24,7 @@ Route::group(['domain' => 'portal.nordiccharge.com'], function(){
 });
 
 Route::group(['domain' => 'installer.nordiccharge.com'], function(){
-    Route::get('/', function(){
-        return 'Installer';
-    });
+    Route::get('/', [\App\Http\Controllers\InstallerController::class, 'index']);
 });
 
 
