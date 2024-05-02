@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Livewire\Attributes\Rule;
 use Nette\Utils\Image;
 
 class OrderResource extends Resource
@@ -187,8 +188,13 @@ class OrderResource extends Resource
                                         ->preload()
                                         ->afterStateUpdated(
                                             function (Forms\Set $set, ?string $state) {
-                                                $inventory = Inventory::findOrFail($state);
-                                                $set('price', $inventory->sale_price);
+                                                if ($state) {
+                                                    $inventory = Inventory::findOrFail($state);
+                                                    $set('quantity', 1);
+                                                    $set('price', $inventory->sale_price);
+                                                } else {
+                                                    $set('price', null);
+                                                }
                                             }
                                         )
                                         ->columnSpan(5),
@@ -201,9 +207,19 @@ class OrderResource extends Resource
                                                 return $inventory->quantity;
                                             }
 
-                                            return 0;
+                                            return 1;
                                         })
-                                        ->rules(['required', 'numeric', 'min:1'])
+                                        ->helperText(function (Forms\Get $get): string {
+                                            if ($get('inventory_id') > 0) {
+                                                $inventory = Inventory::findOrFail($get('inventory_id'));
+                                                return 'Max: ' . $inventory->quantity;
+                                            }
+                                            return 'Max: ' . 1;
+                                        })
+                                        ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
+                                            $livewire->validateOnly($component->getStatePath());
+                                        })
+                                        ->live()
                                         ->default(1)
                                         ->required()
                                         ->columnSpan(1),

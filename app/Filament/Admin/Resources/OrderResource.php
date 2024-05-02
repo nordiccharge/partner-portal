@@ -218,16 +218,40 @@ class OrderResource extends Resource
                                             ->required()
                                             ->afterStateUpdated(
                                                 function (Forms\Set $set, ?string $state) {
-                                                    $inventory = Inventory::findOrFail($state);
-                                                    $set('price', $inventory->sale_price);
+                                                    if ($state) {
+                                                        $inventory = Inventory::findOrFail($state);
+                                                        $set('price', $inventory->sale_price);
+                                                    } else {
+                                                        $set('price', null);
+                                                    }
                                                 }
                                             )
                                             ->columnSpan(5),
                                         Forms\Components\TextInput::make('quantity')
                                             ->numeric()
+                                            ->minValue(1)
+                                            ->maxValue(function (Forms\Get $get) {
+                                                if ($get('inventory_id') > 0) {
+                                                    $inventory = Inventory::findOrFail($get('inventory_id'));
+                                                    return $inventory->quantity;
+                                                }
+
+                                                return 0;
+                                            })
+                                            ->helperText(function (Forms\Get $get): string {
+                                                if ($get('inventory_id') > 0) {
+                                                    $inventory = Inventory::findOrFail($get('inventory_id'));
+                                                    return 'Max: ' . $inventory->quantity;
+                                                }
+                                                return 'Max: ' . 0;
+                                            })
+                                            ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
+                                                $livewire->validateOnly($component->getStatePath());
+                                            })
+                                            ->live()
                                             ->default(1)
-                                            ->columnSpan(1)
-                                            ->required(),
+                                            ->required()
+                                            ->columnSpan(1),
                                         Forms\Components\TextInput::make('price')
                                             ->columnSpan(2)
                                             ->required()
