@@ -58,6 +58,7 @@ class OrderResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $isCreate = $form->getOperation() === "create";
         return $form
             ->schema([
                 Forms\Components\Section::make('Team Details')
@@ -230,26 +231,36 @@ class OrderResource extends Resource
                                         Forms\Components\TextInput::make('quantity')
                                             ->numeric()
                                             ->minValue(1)
-                                            ->maxValue(function (Forms\Get $get) {
-                                                if ($get('inventory_id') > 0) {
+                                            ->maxValue(function (Forms\Get $get) use ($isCreate) {
+                                                if ($get('inventory_id') > 0 && $isCreate) {
                                                     $inventory = Inventory::findOrFail($get('inventory_id'));
                                                     return $inventory->quantity;
                                                 }
 
-                                                return 0;
+                                                if ($isCreate) {
+                                                    return 0;
+                                                }
+
+                                                return null;
                                             })
-                                            ->helperText(function (Forms\Get $get): string {
-                                                if ($get('inventory_id') > 0) {
+                                            ->helperText(function (Forms\Get $get) use ($isCreate): string {
+                                                if ($get('inventory_id') > 0 && $isCreate) {
                                                     $inventory = Inventory::findOrFail($get('inventory_id'));
                                                     return 'Max: ' . $inventory->quantity;
                                                 }
-                                                return 'Max: ' . 0;
+
+                                                if ($isCreate) {
+                                                    return 'Max: ' . 0;
+                                                }
+
+                                                return '';
                                             })
-                                            ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) {
-                                                $livewire->validateOnly($component->getStatePath());
+                                            ->afterStateUpdated(function (Forms\Contracts\HasForms $livewire, Forms\Components\TextInput $component) use ($isCreate) {
+                                                if ($isCreate) {
+                                                    $livewire->validateOnly($component->getStatePath());
+                                                }
                                             })
                                             ->live()
-                                            ->default(1)
                                             ->required()
                                             ->columnSpan(1),
                                         Forms\Components\TextInput::make('price')
