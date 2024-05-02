@@ -28,7 +28,6 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
-            ->domain('portal.nordiccharge.com')
             ->colors([
                 'primary' => Color::Gray,
             ])

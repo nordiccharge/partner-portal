@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\City;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +14,15 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+if (App::environment('local')) {
+    Route::get('/', function () {
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return redirect('/admin');
+        }
+        return redirect('/partner');
+    });
+}
 
 Route::group(['domain' => 'portal.nordiccharge.com'], function(){
     Route::get('/', function () {

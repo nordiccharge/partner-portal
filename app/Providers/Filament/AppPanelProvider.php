@@ -42,7 +42,6 @@ class AppPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->passwordReset()
             ->profile()
-            ->domain('portal.nordiccharge.com')
             ->brandName('Partner Portal')
             ->spa()
             ->tenant(Team::class)
