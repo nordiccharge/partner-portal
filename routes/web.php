@@ -15,10 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['domain' => 'portal.nordiccharge.com'], function(){
-    if (auth()->check() && auth()->user()->isAdmin()) {
-        return redirect('/admin');
-    }
-    return redirect('/partner');
+    Route::get('/', function () {
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return redirect('/admin');
+        }
+        return redirect('/partner');
+    });
 });
 
 Route::group(['domain' => 'installer.nordiccharge.com'], function(){
