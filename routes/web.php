@@ -15,15 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-if (App::environment('local')) {
-    Route::get('/', function () {
-        if (auth()->check() && auth()->user()->isAdmin()) {
-            return redirect('/admin');
-        }
-        return redirect('/partner');
-    });
-}
-
 Route::group(['domain' => 'portal.nordiccharge.com'], function(){
     Route::get('/', function () {
         if (auth()->check() && auth()->user()->isAdmin()) {

@@ -8,6 +8,6 @@ class InstallerController extends Controller
 {
     public function index()
     {
-        return 'Installer Portal';
+        return 'Installer Portal – without domains';
     }
 }
