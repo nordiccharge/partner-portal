@@ -26,7 +26,23 @@ Route::group(['domain' => 'portal.nordiccharge.com'], function(){
 
 Route::group(['domain' => 'installer.nordiccharge.com'], function(){
     Route::get('/', [\App\Http\Controllers\InstallerController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\InstallerController::class, 'charger']);
+});
+
+Route::group(['domain' => 'portal.nordiccharge.local'], function(){
+    Route::get('/', function () {
+        if (auth()->check() && auth()->user()->isAdmin()) {
+            return redirect('/admin');
+        }
+        return redirect('/partner');
+    });
+});
+
+Route::group(['domain' => 'installer.nordiccharge.local'], function(){
+    Route::get('/', [\App\Http\Controllers\InstallerController::class, 'index']);
+    Route::post('/', [\App\Http\Controllers\InstallerController::class, 'charger']);
 });
 
 
-//Route::get('/import', [\App\Http\Controllers\ImportController::class, 'import']);
+
+//Route::get('/import', [\App\Http\Controllers\ImportController:a:class, 'import']);
