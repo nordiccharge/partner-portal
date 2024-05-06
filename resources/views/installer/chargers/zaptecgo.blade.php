@@ -34,7 +34,7 @@
                 <div x-cloak x-show="formStep === 2">
                     <h3 class="font-bold text-xl pb-2">Integrér lader med Monta</h3>
                     <iframe src="https://integrations.monta.com/brands/zaptec/models/zaptec_go/methods?charge_point_identifier=01a5db6c-f1c5-11ee-b12c-ea7e0843fa57&user_identifier=user_2ea327e2-1bd2-11ee-8f83-c6f7be6ec46f&locale=en&operator_id=2253"
-                            class="w-full h-[500px]">
+                            class="w-full h-[712px]">
                         <button x-cloak x-show="formStep > 1" @click="formStep -= 1" type="button" class="flex flex-row h-12 items-center text-white bg-[#FF5252] duration-200 hover:bg-[#FF3162] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 outline-0">
                             Integrér med Monta <svg viewBox="0 0 24 24" class="h-4 w-4 ml-2" xmlns="http://www.w3.org/2000/svg" fill="#ffffff"><path d="m10 21c-2.49999947 2.5-4.99999998 2-7 0s-2.49999989-4.5.00000004-7 2.99999994-3 2.99999994-3l7.00000052 7s-.500001.5-3.0000005 3zm4.0003207-18c2.4996793-2.50000022 4.9996793-2.00000022 7.0007473 0s2.498932 4.49999978 0 7c-2.4989321 2.5000002-3.0003202 3-3.0003202 3l-7.0007478-7s.5006414-.49999978 3.0003207-3zm-3.0003207 6.9999-2.5 2.5000999zm3 3.0001-2.5 2.5z" fill="none" stroke="#fff" stroke-width="2"/></svg>
                         </button>
@@ -48,7 +48,7 @@
                 <div x-cloak x-show="formStep === 4">
                     Final Step
                 </div>
-                <div class="flex flex-row w-full justify-between h-12 mt-6">
+                <div class="flex flex-row w-full justify-between gap-4 h-12 mt-6">
                     <button x-cloak x-show="formStep > 1" @click="formStep -= 1" type="button" class="h-12 text-white bg-gray-600 duration-200 hover:bg-gray-500 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 outline-0">
                         &larr; Back
                     </button>
