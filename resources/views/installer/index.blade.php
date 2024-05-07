@@ -25,7 +25,7 @@
                     <p class="text-md">Har du ikke et serienummer?</p>
                     <a href="#" class="text-md text-[#57995a]">+45 12 34 56 78</a>
                 </div>
-                <img class="h-10 py-4" src="https://nordiccharge.com/wp-content/uploads/2023/11/NordicChargeLogo2.svg">
+                <img class="h-10 my-4" src="https://nordiccharge.com/wp-content/uploads/2023/11/NordicChargeLogo2.svg">
             </form>
         </div>
     </div>
