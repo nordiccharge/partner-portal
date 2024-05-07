@@ -7,7 +7,7 @@
     <title>NC Installer Platform</title>
     @vite('resources/css/app.css')
 </head>
-<body class="flex flex-col justify-center items-center max-h-full w-full bg-gray-50">
+<body class="flex flex-col justify-center items-center h-full w-full lg:max-h-lg bg-gray-50">
     <div class="flex flex-col justify-center items-center max-w-md mx-auto bg-white rounded shadow p-8 max-h-full lg:max-h-[1280px] ">
         <div class="h-full w-full">
             <form class="flex flex-col h-full justify-around max-w-sm mx-auto text-center" action="/" method="post">

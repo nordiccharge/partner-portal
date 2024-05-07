@@ -48,7 +48,7 @@ class ReturnOrderPolicy
      */
     public function update(User $user, ReturnOrder $returnOrder): bool
     {
-        return $this->isAdmin() && $returnOrder->state !== 'completed';
+        return $this->isAdmin();
     }
 
     /**
