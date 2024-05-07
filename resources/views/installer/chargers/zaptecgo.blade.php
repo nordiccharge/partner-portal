@@ -100,7 +100,7 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="flex flex-col items-center gap-4 p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-                    <button id="monta-btn" type="button" disabled="true" @click="integrateCharger" class="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none text-white bg-[#FF5252] duration-200 hover:bg-[#FF3162] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-full">Bekræft integration<span id="timer" class="ml-1"></span></button>
+                    <button id="monta-btn" type="button" disabled="true" @click="integrateCharger" class="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 disabled:shadow-none text-white bg-[#57995a] duration-200 hover:bg-[#73b076] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 w-full">Bekræft integration<span id="timer" class="ml-1"></span></button>
                     <button type="button" @click="closeModal" class="duration-200 py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700 w-full">Annullér</button>
                 </div>
             </div>
