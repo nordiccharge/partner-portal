@@ -98,8 +98,16 @@ class ReturnOrderResource extends Resource
                 Tables\Columns\TextColumn::make('order.id')
                     ->searchable()
                     ->sortable()
-                    ->url(fn ($record) => OrderResource::getUrl() . '/' . $record->order->id),
-                Tables\Columns\TextColumn::make('pipeline.name'),
+                    ->url(fn ($record) => OrderResource::getUrl() . '/' . $record->order->id)
+                    ->description(fn ($record) => $record->reason),
+                Tables\Columns\TextColumn::make('order.full_name')
+                    ->label('Full name')
+                    ->searchable([
+                        'customer_first_name', 'customer_last_name'
+                    ])
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('pipeline.name')
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('team.name')
                     ->badge(),
                 Tables\Columns\TextColumn::make('state')
@@ -119,7 +127,6 @@ class ReturnOrderResource extends Resource
                         }
                     )
                     ->searchable(),
-                Tables\Columns\TextColumn::make('reason'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->date()
                     ->searchable()
@@ -133,12 +140,18 @@ class ReturnOrderResource extends Resource
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->requiresConfirmation()
+                    ->form([
+                        \Filament\Forms\Components\View::make('filament.forms.components.return_warning'),
+                    ])
                     ->hidden(fn (ReturnOrder $record) => $record->state != 'processing')
                     ->action(fn (ReturnOrder $record) => $record->update(['state' => 'completed'])),
                 Tables\Actions\Action::make('Start Processing')
                     ->icon('heroicon-o-arrow-right')
                     ->color('info')
                     ->requiresConfirmation()
+                    ->form([
+
+                    ])
                     ->hidden(fn (ReturnOrder $record) => $record->state != 'pending')
                     ->action(fn (ReturnOrder $record) => $record->update(['state' => 'processing'])),
                 Tables\Actions\EditAction::make(),
