@@ -21,11 +21,11 @@
                     <input type="text" name="serial" class="block uppercase text-center w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-5xl focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" autofocus>
                     <button type="submit" class="text-white mt-4 bg-[#57995a] duration-200 hover:bg-[#73b076] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md py-4 w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Find lader</button>
                 </div>
-                <div class="flex flex-col gap-2 text-gray-700">
+                <div class="flex flex-col gap-2 text-gray-700 py-4">
                     <p class="text-md">Har du ikke et serienummer?</p>
                     <a href="#" class="text-md text-[#57995a]">+45 12 34 56 78</a>
                 </div>
-                <img class="h-10" src="https://nordiccharge.com/wp-content/uploads/2023/11/NordicChargeLogo2.svg">
+                <img class="h-10 py-4" src="https://nordiccharge.com/wp-content/uploads/2023/11/NordicChargeLogo2.svg">
             </form>
         </div>
     </div>
