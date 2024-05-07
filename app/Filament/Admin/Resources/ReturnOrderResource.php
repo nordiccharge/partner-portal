@@ -141,8 +141,7 @@ class ReturnOrderResource extends Resource
                     ->requiresConfirmation()
                     ->hidden(fn (ReturnOrder $record) => $record->state != 'pending')
                     ->action(fn (ReturnOrder $record) => $record->update(['state' => 'processing'])),
-                Tables\Actions\EditAction::make()
-                    ->hidden(fn (ReturnOrder $record) => $record->state === 'completed'),
+                Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
