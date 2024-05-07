@@ -8,7 +8,7 @@
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     @vite('resources/css/app.css')
 </head>
-<body class="flex flex-col justify-center items-center min-h-full w-full bg-gray-50 text-gray-700" x-data="modalData">
+<body class="flex flex-col justify-center items-center max-h-full w-full bg-gray-50 text-gray-700" x-data="modalData">
     <div class="flex flex-col justify-center items-center max-w-md mx-auto bg-white rounded shadow w-full min- p-8 min-h-full lg:max-h-[1280px] ">
         <div class="flex flex-col justify-between h-full w-full gap-2">
             <div class="flex flex-row justify-between items-center w-full">
