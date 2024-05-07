@@ -29,5 +29,10 @@
             </form>
         </div>
     </div>
+<script>
+    document.addEventListener('gesturestart', function (e) {
+        e.preventDefault();
+    });
+</script>
 </body>
 </html>
