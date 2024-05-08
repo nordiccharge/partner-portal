@@ -43,6 +43,10 @@ class ViewInvoice extends ViewRecord
                         TextEntry::make('note'),
                         Section::make('Order Details')
                             ->schema([
+                                TextEntry::make('invoiceable.pipeline.name')
+                                    ->label('Pipeline')
+                                    ->copyable()
+                                    ->columnSpanFull(),
                                 TextEntry::make('invoiceable.id')
                                     ->label('Order ID from Nordic Charge')
                                     ->copyable(),
