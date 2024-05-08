@@ -47,7 +47,6 @@ class ChargerResource extends Resource
                 Forms\Components\Select::make('order_id')
                     ->label('Order')
                     ->preload()
-                    ->searchable()
                     ->options(Order::all()->pluck('id', 'id')->toArray())
                     ->nullable(),
                 Forms\Components\Select::make('product_id')
@@ -85,9 +84,14 @@ class ChargerResource extends Resource
                 Tables\Columns\TextColumn::make('serial_number')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('order.id')
-                    ->label('Order ID'),
+                    ->label('Order ID')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('order_reference')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->sortable()
+                    ->toggleable()
             ])
             ->filters([
                 //
