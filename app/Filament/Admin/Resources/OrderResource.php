@@ -359,6 +359,22 @@ class OrderResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Tables\Filters\Filter::make('installation_date')
+                    ->form([
+                        Forms\Components\DatePicker::make('installation_date_from'),
+                        Forms\Components\DatePicker::make('installation_date_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['installation_date_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['installation_date_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '<=', $date),
+                            );
+                    }),
                 Tables\Filters\Filter::make('pipeline_stage')
                     ->form([
                         Forms\Components\Select::make('pipeline_id')
