@@ -72,11 +72,14 @@ class ChargerResource extends Resource
                     ->label(''),
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable()
+                    ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('order.customer_first_name')
                     ->label('Full name')
                     ->formatStateUsing(fn (Charger $record) => $record->order->customer_first_name . ' ' . $record->order->customer_last_name)
-                    ->searchable()
+                    ->searchable([
+                        'customer_first_name',
+                        'customer_last_name',])
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('order.shipping_address')
                     ->label('Address')
@@ -86,7 +89,7 @@ class ChargerResource extends Resource
                 Tables\Columns\TextColumn::make('order.id')
                     ->label('Order ID')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('order_reference')
+                Tables\Columns\TextColumn::make('order.order_reference')
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
