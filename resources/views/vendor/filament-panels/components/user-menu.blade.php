@@ -13,24 +13,6 @@
 
     $current_panel = '';
 
-    function getPanelCSS($panel) {
-        switch ($panel) {
-            case 'admin':
-                if (request()->routeIs('filament.admin.*')) {
-                    return 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
-                }
-            case 'operation':
-                if (request()->routeIs('filament.operation.*')) {
-                    return 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
-                }
-            case 'partner':
-                if (request()->routeIs('filament.partner.*')) {
-                        return 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
-                }
-            default:
-                return 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5';
-        }
-    }
 @endphp
 <nav class="fi-tabs flex max-w-full gap-x-1 overflow-x-auto mx-auto rounded-xl bg-white p-2 dark:bg-gray-900" aria-label="Panel tabs" role="tablist">
     <a href="/partner/@if (auth()->user()->getTenants(\Filament\Facades\Filament::getPanel('partner'))->count() > 0){{ auth()->user()->getTenants(\Filament\Facades\Filament::getPanel('partner'))->first()->id }}@endif" class="fi-tabs-item group flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 {{ request()->routeIs('filament.partner.*') ? 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5' : 'hover:bg-gray-50 focus-visible:bg-gray-50 dark:hover:bg-white/5 dark:focus-visible:bg-white/5' }}" role="tab">
