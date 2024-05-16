@@ -48,15 +48,6 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#57995A'),
             ])
-            ->userMenuItems([
-                MenuItem::make()
-                    ->label('Admin Panel')
-                    ->url('/admin')
-                    ->visible(fn (): bool => auth()->user()->isAdmin())
-                    ->icon('heroicon-o-adjustments-horizontal'),
-                'profile' => MenuItem::make()
-                    ->label('Edit profile'),
-            ])
             ->navigationItems([
                 NavigationItem::make('Support & Guides')
                         ->icon('heroicon-o-arrow-top-right-on-square')

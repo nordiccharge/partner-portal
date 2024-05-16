@@ -11,35 +11,34 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
-use http\Env\Request;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
-class AdminPanelProvider extends PanelProvider
+class OperationPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->id('admin')
-            ->path('admin')
+            ->id('operation')
+            ->path('operation')
             ->login()
             ->profile()
             ->colors([
                 'primary' => Color::hex('#57995A'),
             ])
-            ->brandName('Administrator Panel')
-            ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
-            ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
+            ->brandName('Operation Panel')
+            ->discoverResources(in: app_path('Filament/Operation/Resources'), for: 'App\\Filament\\Operation\\Resources')
+            ->discoverPages(in: app_path('Filament/Operation/Pages'), for: 'App\\Filament\\Operation\\Pages')
             ->pages([
                 Pages\Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
+            ->discoverResources(in: app_path('Filament/Operation/Resources'), for: 'App\\Filament\\Operation\\Resources')
+            ->discoverWidgets(in: app_path('Filament/Operation/Widgets'), for: 'App\\Filament\\Operation\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
@@ -58,6 +57,5 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
-
     }
 }
