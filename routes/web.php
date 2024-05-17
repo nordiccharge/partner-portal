@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['domain' => 'portal.nordiccharge.com'], function(){
     Route::get('/', function () {
         if (auth()->check() && auth()->user()->isAdmin()) {
-            return redirect('/admin');
+            return redirect('/operation');
         }
         return redirect('/partner');
     });
@@ -32,7 +32,7 @@ Route::group(['domain' => 'installer.nordiccharge.com'], function(){
 Route::group(['domain' => 'portal.nordiccharge.local'], function(){
     Route::get('/', function () {
         if (auth()->check() && auth()->user()->isAdmin()) {
-            return redirect('/admin');
+            return redirect('/operation');
         }
         return redirect('/partner');
     });
