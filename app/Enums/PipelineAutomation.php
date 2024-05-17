@@ -9,12 +9,15 @@ enum PipelineAutomation: string implements hasLabel {
     case Shipping = 'muramura_shipping';
     case Return = 'muramura_return';
 
+    case Abort = 'abort';
+
     public function getLabel(): ?string
     {
         return match ($this) {
             self::None => 'None',
             self::Shipping => 'Ship with MuraMura',
             self::Return => 'Return with MuraMura',
+            self::Abort => 'Abort',
         };
     }
 }

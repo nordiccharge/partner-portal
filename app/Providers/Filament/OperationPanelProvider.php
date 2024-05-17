@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Operation\Widgets\StatsOverview;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -40,8 +41,7 @@ class OperationPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Operation/Resources'), for: 'App\\Filament\\Operation\\Resources')
             ->discoverWidgets(in: app_path('Filament/Operation/Widgets'), for: 'App\\Filament\\Operation\\Widgets')
             ->widgets([
-                Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
+
             ])
             ->middleware([
                 EncryptCookies::class,
