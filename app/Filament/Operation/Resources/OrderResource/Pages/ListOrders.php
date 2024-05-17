@@ -46,6 +46,8 @@ class ListOrders extends ListRecords
 
         if ($tab === 'missing_tracking_code') {
             return Order::query()->whereNull('tracking_code')
+                ->join('pipelines', 'pipelines.id', '=', 'orders.pipeline_id')
+                ->where('pipelines.shipping', '=', '0')
                 ->join('stages', 'stages.id', '=', 'orders.stage_id')
                 ->where('stages.state', '!=', 'completed')
                 ->where('stages.state', '!=', 'aborted')
@@ -129,6 +131,8 @@ class ListOrders extends ListRecords
                 ->modifyQueryUsing(function (Builder $query) {
                     $query->whereNull('tracking_code')
                         ->join('stages', 'stages.id', '=', 'orders.stage_id')
+                        ->join('pipelines', 'pipelines.id', '=', 'orders.pipeline_id')
+                        ->where('pipelines.shipping', '=', '0')
                         ->where('stages.state', '!=', 'completed')
                         ->where('stages.state', '!=', 'aborted')
                         ->where('stages.state', '!=', 'return')
