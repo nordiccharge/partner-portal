@@ -47,6 +47,13 @@ class ViewInvoice extends ViewRecord
                                     ->label('Pipeline')
                                     ->copyable()
                                     ->columnSpanFull(),
+                                IconEntry::make('invoiceable.installation_required')
+                                    ->boolean()
+                                    ->label('Installation included'),
+                                TextEntry::make('invoiceable.installer.company.name')
+                                    ->label('Installer'),
+                                TextEntry::make('invoiceable.installation_date')
+                                    ->label('Installation date'),
                                 TextEntry::make('invoiceable.id')
                                     ->label('Order ID from Nordic Charge')
                                     ->copyable(),
@@ -56,8 +63,6 @@ class ViewInvoice extends ViewRecord
                                 TextEntry::make('invoiceable.created_at')
                                     ->label('Order date')
                                     ->copyable(),
-                                TextEntry::make('invoiceable.installer.company.name')
-                                    ->label('Installer'),
                                 TextEntry::make('full_name')
                                     ->label('Full name')
                                     ->default(fn ($record) => $record->invoiceable->customer_first_name . ' ' . $record->invoiceable->customer_last_name)
