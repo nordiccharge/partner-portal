@@ -132,7 +132,7 @@ class ListOrders extends ListRecords
                     $query->whereNull('tracking_code')
                         ->join('stages', 'stages.id', '=', 'orders.stage_id')
                         ->join('pipelines', 'pipelines.id', '=', 'orders.pipeline_id')
-                        ->where('pipelines.shipping', '=', '0')
+                        ->where('pipelines.shipping', '=', '1')
                         ->where('stages.state', '!=', 'completed')
                         ->where('stages.state', '!=', 'aborted')
                         ->where('stages.state', '!=', 'return')
