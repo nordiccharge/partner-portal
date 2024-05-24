@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
 use App\Models\Installation;
@@ -18,6 +19,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ExportBulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -368,8 +370,8 @@ class OrderResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->visible(auth()->user()->isAdmin()),
+                    ExportBulkAction::make()
+                        ->exporter(OrderExporter::class),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

@@ -15,6 +15,8 @@ class OrderExporter extends Exporter
     public static function getColumns(): array
     {
         return [
+            ExportColumn::make('team.name')
+                ->label('Team'),
             ExportColumn::make('id')
                 ->label('ID'),
             ExportColumn::make('order_reference')
