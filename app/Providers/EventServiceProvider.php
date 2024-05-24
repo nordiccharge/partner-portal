@@ -7,6 +7,7 @@ use App\Events\OrderFulfilled;
 use App\Events\PushOrderToShipping;
 use App\Events\SendEmailToInstaller;
 use App\Events\TicketCreated;
+use App\Listeners\AssignOrderInstaller;
 use App\Listeners\SendInstallationEmail;
 use App\Listeners\SendOrderCreatedEmail;
 use App\Listeners\SendOrderCreatedNotification;
@@ -41,6 +42,7 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         OrderCreated::class => [
+            AssignOrderInstaller::class,
             SendOrderCreatedNotification::class,
             SendOrderCreatedEmail::class,
             SendInstallationEmail::class

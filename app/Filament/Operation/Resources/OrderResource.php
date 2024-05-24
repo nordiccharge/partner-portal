@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Filament\Tables\Actions\ExportBulkAction;
+use Illuminate\Support\HtmlString;
 use SendGrid\Mail\Section;
 
 class OrderResource extends Resource
@@ -150,8 +151,7 @@ class OrderResource extends Resource
                                                 ->pluck('companies.name', 'installers.id');
                                     }
                                 )
-                                ->disabled(fn (Forms\Get $get) => !$get('installation_required'))
-                                ->required(fn (Forms\Get $get) => $get('installation_required')),
+                                ->disabled(fn (Forms\Get $get) => !$get('installation_required')),
                             Forms\Components\DatePicker::make('wished_installation_date')
                                 ->label('Wished installation date')
                                 ->disabled(fn (Forms\Get $get) => !$get('installation_required')),
@@ -278,6 +278,9 @@ class OrderResource extends Resource
                             ])
                             ->columnSpanFull()
                             ->disabled(fn (Forms\Get $get) => $get('team_id') === null),
+                Forms\Components\Toggle::make('with_auto')
+                    ->label('Create order with automations')
+                    ->columnSpanFull()
             ]);
     }
 

@@ -27,8 +27,4 @@ class CreateOrder extends CreateRecord
         $data['stage_id'] = Stage::where('pipeline_id', '=', $data['pipeline_id'])->where('order', '=', 1)->first()->id;
         return $data;
     }
-
-    protected function afterCreate(): void {
-        OrderCreated::dispatch($this->record);
-    }
 }

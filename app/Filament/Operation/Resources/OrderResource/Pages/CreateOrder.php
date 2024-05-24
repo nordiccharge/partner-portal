@@ -5,7 +5,10 @@ namespace App\Filament\Operation\Resources\OrderResource\Pages;
 use App\Events\OrderCreated;
 use App\Filament\Operation\Resources\OrderResource;
 use Filament\Actions;
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\HtmlString;
 
 class CreateOrder extends CreateRecord
 {
@@ -15,6 +18,7 @@ class CreateOrder extends CreateRecord
         $this->form->fill([
             'id' => random_int(100000000, 999999999),
             'status' => 'Order Created',
+            'with_auto' => 1,
         ]);
     }
 
@@ -25,6 +29,8 @@ class CreateOrder extends CreateRecord
     }
 
     protected function afterCreate(): void {
-        OrderCreated::dispatch($this->record);
+        if ($this->data['with_auto']) {
+            OrderCreated::dispatch($this->record);
+        }
     }
 }

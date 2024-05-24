@@ -26,7 +26,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Rule;
+use Nette\Utils\Html;
 use Nette\Utils\Image;
 
 class OrderResource extends Resource
@@ -236,7 +238,7 @@ class OrderResource extends Resource
                                 ])
                                 ->live()
                                 ->columns(8)
-                        ])
+                        ]),
             ]);
     }
 
