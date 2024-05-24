@@ -307,7 +307,7 @@ class OrderResource extends Resource
                             ->label('Pipeline')
                             ->preload()
                             ->multiple()
-                            ->relationship('pipeline', 'name', fn (Builder $query) => $query->where('team_id', Filament::getTenant()->id)
+                            ->relationship('pipeline', 'name', fn (Builder $query) => $query->where('team_id', Filament::getTenant()->id))
                             ->searchable()
                             ->live(),
                         Forms\Components\Select::make('stage_name')
