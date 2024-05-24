@@ -283,10 +283,82 @@ class OrderResource extends Resource
                     ->toggleable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('stage')
-                    ->multiple()
-                    ->relationship('stage', 'name')
-                    ->preload(),
+                Tables\Filters\Filter::make('installation_date')
+                    ->form([
+                        Forms\Components\DatePicker::make('installation_date_from'),
+                        Forms\Components\DatePicker::make('installation_date_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['installation_date_from'],
+                                fn (Builder $query, $date): Builder => $query->where('team_id', '=', Filament::getTenant()->id)->whereDate('installation_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['installation_date_until'],
+                                fn (Builder $query, $date): Builder => $query->where('team_id', '=', Filament::getTenant()->id)->whereDate('installation_date', '<=', $date),
+                            );
+                    }),
+                Tables\Filters\Filter::make('pipeline_stage')
+                    ->form([
+                        Forms\Components\Select::make('pipeline_id')
+                            ->label('Pipeline')
+                            ->preload()
+                            ->multiple()
+                            ->relationship('pipeline', 'name')
+                            ->searchable()
+                            ->live(),
+                        Forms\Components\Select::make('stage_name')
+                            ->label('Stage')
+                            ->options(function (Forms\Get $get) {
+                                $stages = [];
+                                foreach ($get('pipeline_id') as $pipeline_id) {
+                                    foreach (Pipeline::findOrFail($pipeline_id)->stages as $stage) {
+                                        $stages[$stage->name] = $stage->name;
+                                    }
+                                }
+                                return array_unique($stages);
+                            })
+                            ->searchable()
+                            ->multiple(),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['pipeline_id'],
+                                function (Builder $query, $pipeline_id_array): Builder {
+                                    $query->whereIn('pipeline_id', $pipeline_id_array);
+                                    return $query;
+                                }
+                            )
+                            ->when(
+                                $data['stage_name'],
+                                function (Builder $query, $stage_name_array): Builder {
+                                    $query->whereIn('stage_id', Stage::whereIn('name', $stage_name_array)->pluck('id'));
+                                    return $query;
+                                }
+                            );
+                    }),
+                Tables\Filters\TernaryFilter::make('tracking_code')
+                    ->label('Has Tracking Code')
+                    ->placeholder('All Orders')
+                    ->nullable(),
+                Tables\Filters\Filter::make('created_at')
+                    ->form([
+                        Forms\Components\DatePicker::make('created_from'),
+                        Forms\Components\DatePicker::make('created_until'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->where('team_id', '=', Filament::getTenant()->id)->whereDate('created_at', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->where('team_id', '=', Filament::getTenant()->id)->whereDate('created_at', '<=', $date),
+                            );
+                    })
             ])
             ->actions([
                 Tables\Actions\Action::make('History')
