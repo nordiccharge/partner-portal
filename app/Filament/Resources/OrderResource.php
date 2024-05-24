@@ -75,7 +75,7 @@ class OrderResource extends Resource
                             ->preload()
                             ->default(1)
                             ->live()
-                            ->relationship('pipeline', 'name', fn(Builder $query, Forms\Get $get) => $query->where('team_id', Filament::getTenant()->id))
+                            ->relationship('pipeline', 'name', fn(Builder $query) => $query->where('team_id', Filament::getTenant()->id))
                             ->afterStateUpdated(
                                 function (Forms\Set $set, ?string $state) {
                                     if ($state) {
@@ -307,7 +307,7 @@ class OrderResource extends Resource
                             ->label('Pipeline')
                             ->preload()
                             ->multiple()
-                            ->relationship('pipeline', 'name')
+                            ->relationship('pipeline', 'name', fn (Builder $query) => $query->where('team_id', Filament::getTenant()->id)
                             ->searchable()
                             ->live(),
                         Forms\Components\Select::make('stage_name')
