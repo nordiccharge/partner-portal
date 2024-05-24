@@ -2,7 +2,7 @@
     @if (auth()->user()->can('create', \Parallax\FilamentComments\Models\FilamentComment::class))
         <div class="space-y-4">
             {{ $this->form }}
-            
+
             <x-filament::button
                 wire:click="create"
                 color="primary"
@@ -28,8 +28,8 @@
                                         {{ $comment->user[config('filament-comments.user_name_attribute')] }}
                                     </div>
 
-                                    <div class="text-xs font-medium text-gray-400 dark:text-gray-500">
-                                        {{ $comment->created_at->diffForHumans() }}
+                                    <div class="text-xs font-medium text-gray-500 dark:text-gray-500">
+                                        {{ $comment->created_at->format('H:i d-m-Y') }}
                                     </div>
                                 </div>
 
@@ -59,7 +59,7 @@
                 icon="{{ config('filament-comments.icons.empty') }}"
                 class="h-12 w-12 text-gray-400 dark:text-gray-500"
             />
-            
+
             <div class="text-sm text-gray-400 dark:text-gray-500">
                 {{ __('filament-comments::filament-comments.comments.empty') }}
             </div>
