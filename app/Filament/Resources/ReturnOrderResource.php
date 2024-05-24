@@ -59,7 +59,7 @@ class ReturnOrderResource extends Resource
                 Tables\Columns\TextColumn::make('order.id')
                     ->searchable()
                     ->sortable()
-                    ->url(fn ($record) => OrderResource::getUrl() . '/' . $record->order->id)
+                    ->url(fn ($record) => \App\Filament\Resources\OrderResource::getUrl() . '/' . $record->order->id)
                     ->label('Order ID'),
                 Tables\Columns\TextColumn::make('pipeline.name'),
                 Tables\Columns\TextColumn::make('state')

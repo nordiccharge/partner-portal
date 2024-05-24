@@ -32,6 +32,7 @@ class OperationPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::hex('#57995A'),
             ])
+            ->databaseNotifications()
             ->brandName('Operation Panel')
             ->discoverResources(in: app_path('Filament/Operation/Resources'), for: 'App\\Filament\\Operation\\Resources')
             ->discoverPages(in: app_path('Filament/Operation/Pages'), for: 'App\\Filament\\Operation\\Pages')

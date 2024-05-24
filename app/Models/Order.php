@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 use Spatie\Activitylog\LogOptions;
@@ -116,6 +117,10 @@ class Order extends Model
         return Attribute::make(
             fn ($value, $attributes) => $attributes['customer_first_name'] . ' ' . $attributes['customer_last_name'],
         );
+    }
+
+    protected function installerCompany(): HasOneThrough {
+        return $this->hasOneThrough(Company::class, Installer::class, 'id', 'id', 'installer_id', 'company_id');
     }
 
 }

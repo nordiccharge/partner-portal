@@ -12,8 +12,8 @@
         "fakerphp/faker": "^1.9.1",
         "filament/filament": "^3.0-stable",
         "guzzlehttp/guzzle": "^7.2",
-        "laravel/framework": "^10.10",
-        "laravel/sanctum": "^3.3",
+        "laravel/framework": "^11",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.8",
         "parallax/filament-comments": "^1.0",
         "pxlrbt/filament-activity-log": "^1.0",
@@ -21,10 +21,11 @@
         "spatie/laravel-activitylog": "^4.7"
     },
     "require-dev": {
+        "filament/upgrade": "^3.2",
         "laravel/pint": "^1.0",
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
-        "nunomaduro/collision": "^7.0",
+        "nunomaduro/collision": "^8.1",
         "phpunit/phpunit": "^10.1",
         "spatie/laravel-ignition": "^2.0"
     },

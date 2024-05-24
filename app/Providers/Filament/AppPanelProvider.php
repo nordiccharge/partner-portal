@@ -42,6 +42,7 @@ class AppPanelProvider extends PanelProvider
             ], isPersistent: true)
             ->passwordReset()
             ->profile()
+            ->databaseNotifications()
             ->brandName('Partner Portal')
             ->spa()
             ->tenant(Team::class)

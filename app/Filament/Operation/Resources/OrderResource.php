@@ -2,6 +2,7 @@
 
 namespace App\Filament\Operation\Resources;
 
+use App\Filament\Exports\OrderExporter;
 use App\Filament\Operation\Resources\OrderResource\Pages;
 use App\Models\Installation;
 use App\Models\Installer;
@@ -9,6 +10,8 @@ use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Pipeline;
 use App\Models\Stage;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -18,6 +21,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Filament\Tables\Actions\ExportBulkAction;
 use SendGrid\Mail\Section;
 
 class OrderResource extends Resource
@@ -353,8 +357,15 @@ class OrderResource extends Resource
                     ->multiple()
                     ->relationship('team', 'name')
                     ->preload(),
-                Tables\Filters\SelectFilter::make('installer')
-                    ->relationship('installer', 'company.name')
+                Tables\Filters\SelectFilter::make('installer_id')
+                    ->label('Installer')
+                    ->options(
+                        function (Forms\Get $get) {
+                            return
+                                Installer::join('companies', 'installers.company_id', '=', 'companies.id')
+                                    ->pluck('companies.name', 'installers.id');
+                        }
+                    )
                     ->multiple()
                     ->searchable()
                     ->preload(),
@@ -444,6 +455,8 @@ class OrderResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+                ExportBulkAction::make()
+                    ->exporter(OrderExporter::class),
             ]);
     }
 
