@@ -19,6 +19,7 @@ class CreateOrder extends CreateRecord
             'id' => random_int(100000000, 999999999),
             'status' => 'Order Created',
             'with_auto' => 1,
+            'created_at' => now()
         ]);
     }
 

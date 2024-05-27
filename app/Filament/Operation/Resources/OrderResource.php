@@ -76,6 +76,9 @@ class OrderResource extends Resource
                             ->reactive()
                             ->live()
                             ->afterStateUpdated(fn ($state, callable $set) => $set('items', [])),
+                        Forms\Components\DatePicker::make('created_at')
+                            ->label('Created At')
+                            ->required(),
                     ]),
                 Forms\Components\Group::make([Forms\Components\Section::make('Order Details')
                     ->schema([

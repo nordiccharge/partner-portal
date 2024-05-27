@@ -41,7 +41,8 @@ class Order extends Model
         'nc_price',
         'installer_id',
         'pending_action',
-        'action'
+        'action',
+        'created_at'
     ];
 
     protected static $logAttributes = ['*'];
