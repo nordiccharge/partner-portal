@@ -10,7 +10,7 @@ enum StageAutomation: string implements HasLabel {
     case Created = 'order_created';
     case InstallerContacted = 'installer_contacted';
     case InstallationDateConfirmed = 'installation_date_confirmed';
-    case Completed = 'order_completed';
+    case Invoice = 'create_invoice';
 
     public function getLabel(): ?string
     {
@@ -19,7 +19,7 @@ enum StageAutomation: string implements HasLabel {
             self::Created => 'Order Created',
             self::InstallerContacted => 'Installer Contacted',
             self::InstallationDateConfirmed => 'Installation Date Confirmed',
-            self::Completed => 'Order Completed',
+            self::Invoice => 'Create Invoice on first stage',
         };
     }
 }
