@@ -5,10 +5,12 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\OrderExporter;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Filament\Resources\OrderResource\RelationManagers;
+use App\Models\City;
 use App\Models\Installation;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Pipeline;
+use App\Models\Postal;
 use App\Models\Product;
 use App\Models\Stage;
 use Filament\Facades\Filament;
@@ -146,15 +148,36 @@ class OrderResource extends Resource
                             ->label('Postal')
                             ->searchable()
                             ->preload()
+                            ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                $postal = Postal::find($state);
+                                $set('city_id', $postal->city_id);
+                                $set('country_id', $postal->city->country_id);
+                            })
+                            ->live()
+                            ->reactive()
                             ->relationship('postal', 'postal')
                             ->required(),
                         Forms\Components\Select::make('city_id')
                             ->relationship('city', 'name')
                             ->searchable()
                             ->preload()
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
+                                $city = City::find($state);
+                                $set('postal_id', null);
+                                $set('country_id', $city->country_id);
+                            })
+                            ->reactive()
                             ->required(),
                         Forms\Components\Select::make('country_id')
                             ->required()
+                            ->reactive()
+                            ->live()
+                            ->afterStateUpdated(function (Forms\Set $set) {
+                                $set('city_id', null);
+                                $set('postal_id', null);
+                            })
+                            ->searchable()
                             ->relationship('country', 'name')
                     ])->columns(2)
                     ->description('The shipment will always be send to this address. The installer will also be notified about this address. If the installer needs to install somewhere other than this address – they must be notified elsewhere'),
