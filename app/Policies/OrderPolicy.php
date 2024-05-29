@@ -38,7 +38,7 @@ class OrderPolicy
      */
     public function create(User $user): bool
     {
-        return $this->isAdmin() || auth()->user()->isTeamManager();
+        return $this->isAdmin();
     }
 
     /**

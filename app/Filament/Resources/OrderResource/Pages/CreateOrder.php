@@ -24,6 +24,7 @@ class CreateOrder extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['id'] = random_int(100000000, 999999999);
+        $data['created_at'] = now();
         $data['stage_id'] = Stage::where('pipeline_id', '=', $data['pipeline_id'])->where('order', '=', 1)->first()->id;
         return $data;
     }
