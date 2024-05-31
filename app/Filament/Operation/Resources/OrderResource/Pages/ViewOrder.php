@@ -9,6 +9,7 @@ use App\Filament\Operation\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
 use App\Models\Invoice;
 use App\Models\Order;
+use App\Models\Postal;
 use App\Models\ReturnOrder;
 use App\Models\Stage;
 use Filament\Actions;
@@ -168,6 +169,7 @@ class ViewOrder extends ViewRecord
                                         ->pluck('companies.name', 'installers.id');
                             })
                         ->label('Installer')
+                        ->default(fn (Order $record) => Postal::find($record->postal_id)->installer_id)
                         ->required(),
                     Toggle::make('send_email')
                         ->label('Send email to installer')
