@@ -98,7 +98,7 @@ class ReturnOrderResource extends Resource
                 Tables\Columns\TextColumn::make('order.id')
                     ->searchable()
                     ->sortable()
-                    ->url(fn ($record) => OrderResource::getUrl() . 'ReturnOrderResource.php/' . $record->order->id)
+                    ->url(fn ($record) => OrderResource::getUrl() . '/' . $record->order->id)
                     ->description(fn ($record) => $record->reason),
                 Tables\Columns\TextColumn::make('order.full_name')
                     ->label('Full name')
