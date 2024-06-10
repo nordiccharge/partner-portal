@@ -8,11 +8,13 @@ use App\Models\Inventory;
 use App\Models\Order;
 use Faker\Provider\Text;
 use Filament\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
@@ -22,9 +24,13 @@ use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use http\Env\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
+use Nette\Utils\Html;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 
 class ViewOrder extends ViewRecord
@@ -116,6 +122,37 @@ class ViewOrder extends ViewRecord
     public function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('Return')
+                ->hidden() // Hide the action because it's not ready yet
+                ->link()
+                ->modalWidth('lg')
+                ->form(fn (Order $order) => [
+                    TextInput::make('order_url')
+                        ->label('URL')
+                        ->hint(new HtmlString('<br>This is the URL that the customer will use to return the order.'))
+                        ->autofocus()
+                        ->helperText('The return will be confirmed/declined by Nordic Charge after survey fulfillment.')
+                        ->default(url('/return/' . $order->id))
+                        ->readOnly()
+                        ->extraAttributes(function ($state) {
+                            return [
+                                'x-on:click' => 'window.navigator.clipboard.writeText("'.$state.'"); $tooltip("Copied to clipboard", { timeout: 1500 });',
+                            ];
+                        })
+                        ->suffixAction(
+                            Action::make('copy')
+                                ->icon('heroicon-o-clipboard')
+                                ->action(function ($livewire, $state) {
+                                    $livewire->js("document.getElementById('mountedActionsData.0.order_url').select(); document.execCommand('copy');");
+                                    Notification::make()
+                                        ->title('Saved to clipboard')
+                                        ->success()
+                                        ->send();
+                            })
+                        ),
+                ])
+                ->modalSubmitAction(false)
+                ->modalCancelAction(false),
             Actions\Action::make('Support')
                 ->color('primary')
                 ->icon('heroicon-o-question-mark-circle')

@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['domain' => 'portal.nordiccharge.com'], function(){
-    Route::get('/', function () {
+    Route::any('/', function () {
         if (auth()->check() && auth()->user()->isAdmin()) {
             return redirect('/operation');
         }
@@ -25,22 +25,32 @@ Route::group(['domain' => 'portal.nordiccharge.com'], function(){
 });
 
 Route::group(['domain' => 'installer.nordiccharge.com'], function(){
-    Route::get('/', [\App\Http\Controllers\InstallerController::class, 'index']);
     Route::post('/', [\App\Http\Controllers\InstallerController::class, 'charger']);
+    Route::any('/', [\App\Http\Controllers\InstallerController::class, 'index']);
 });
 
 Route::group(['domain' => 'portal.nordiccharge.local'], function(){
-    Route::get('/', function () {
+    Route::any('/', function () {
         if (auth()->check() && auth()->user()->isAdmin()) {
             return redirect('/operation');
         }
         return redirect('/partner');
     });
+
+    Route::any('/return/{id}', function (string $id) {
+        try {
+            $order = \App\Models\Order::findOrFail($id);
+            return view('returnOrder', ['order' => $order]);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return 'Not found';
+        }
+    });
+
 });
 
 Route::group(['domain' => 'installer.nordiccharge.local'], function(){
-    Route::get('/', [\App\Http\Controllers\InstallerController::class, 'index']);
     Route::post('/', [\App\Http\Controllers\InstallerController::class, 'charger']);
+    Route::any('/', [\App\Http\Controllers\InstallerController::class, 'index']);
 });
 
 
