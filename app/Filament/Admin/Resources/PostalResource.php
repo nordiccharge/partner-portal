@@ -82,13 +82,26 @@ class PostalResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('postal'),
                 Tables\Filters\TernaryFilter::make('installer')
                     ->label('Has Installer')
                     ->attribute('installer_id')
-                    ->placeholder('All Installers')
-                    ->nullable()
+                    ->placeholder('With and without')
+                    ->nullable(),
+                Tables\Filters\SelectFilter::make('installer_id')
+                    ->label('Installer')
+                    ->options(
+                        function (Forms\Get $get) {
+                            return
+                                Installer::join('companies', 'installers.company_id', '=', 'companies.id')
+                                    ->pluck('companies.name', 'installers.id');
+                        }
+                    )
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\SelectFilter::make('postal'),
             ])
+
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
