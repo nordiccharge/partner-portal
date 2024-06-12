@@ -307,6 +307,8 @@ class OrderResource extends Resource
                             ->disabled(fn (Forms\Get $get) => $get('team_id') === null),
                 Forms\Components\Toggle::make('with_auto')
                     ->label('Create order with automations')
+                    ->hiddenOn('edit')
+                    ->helperText('Disabling automations will disable: Customer email, pushing shipment, assigning a new installer, sending email to installer and creating order invoice (if set as completed). The quantity will still be deducted from inventory.')
                     ->columnSpanFull()
             ]);
     }
