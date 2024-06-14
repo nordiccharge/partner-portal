@@ -22,7 +22,7 @@ class PostalExporter extends Exporter
                 ->label('Postal'),
             ExportColumn::make('city.name')
                 ->label('City'),
-            ExportColumn::make('country.name')
+            ExportColumn::make('country.short_name')
                 ->label('Country'),
         ];
     }
