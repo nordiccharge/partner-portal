@@ -15,24 +15,27 @@ class PostalImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('postal')
-                ->requiredMapping()
-                ->numeric()
-                ->rules(['required', 'integer']),
-            ImportColumn::make('city')
-                ->requiredMapping()
-                ->relationship('city', 'name')
-                ->rules(['required']),
-            ImportColumn::make('country')
-                ->requiredMapping()
-                ->relationship('country', 'short_name')
-                ->rules(['required']),
-            ImportColumn::make('installer')
+            ImportColumn::make('Installer')
+                ->label('Installer')
                 ->relationship(resolveUsing: function (string $state): ?Installer {
                     return Installer::whereHas('company', function (\Illuminate\Database\Eloquent\Builder $query) use ($state) {
                         $query->where('name', '=', $state);
                     })->first();
-                })
+                }),
+            ImportColumn::make('Postal')
+                ->label('Postal')
+                ->requiredMapping()
+                ->numeric()
+                ->rules(['required', 'integer']),
+            ImportColumn::make('City')
+                ->label('City')
+                ->requiredMapping()
+                ->relationship('city', 'name')
+                ->rules(['required']),
+            ImportColumn::make('Country')
+                ->requiredMapping()
+                ->relationship('country', 'short_name')
+                ->rules(['required']),
         ];
     }
 

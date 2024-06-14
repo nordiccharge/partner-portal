@@ -4,6 +4,7 @@ namespace App\Filament\Admin\Resources;
 
 use App\Filament\Admin\Resources\PostalResource\Pages;
 use App\Filament\Admin\Resources\PostalResource\RelationManagers;
+use App\Filament\Exports\PostalExporter;
 use App\Filament\Imports\PostalImporter;
 use App\Models\Installer;
 use App\Models\Postal;
@@ -107,6 +108,8 @@ class PostalResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\ExportBulkAction::make()
+                        ->exporter(PostalExporter::class),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
