@@ -141,44 +141,19 @@ class OrderResource extends Resource
                     ])->columns(2),
                 Forms\Components\Section::make('Shipping & Installation')
                     ->schema([
-                        Forms\Components\TextInput::make('shipping_address')
-                            ->label('Address')
-                            ->required(),
-                        Forms\Components\Select::make('postal_id')
-                            ->label('Postal')
-                            ->searchable()
-                            ->preload()
-                            ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                                $postal = Postal::find($state);
-                                $set('city_id', $postal->city_id);
-                                $set('country_id', $postal->city->country_id);
-                            })
-                            ->live()
-                            ->reactive()
-                            ->relationship('postal', 'postal')
-                            ->required(),
-                        Forms\Components\Select::make('city_id')
-                            ->relationship('city', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->afterStateUpdated(function (Forms\Set $set, ?string $state) {
-                                $city = City::find($state);
-                                $set('postal_id', null);
-                                $set('country_id', $city->country_id);
-                            })
-                            ->reactive()
-                            ->required(),
-                        Forms\Components\Select::make('country_id')
+                        Forms\Components\Select::make('geocoding')
+                            ->label('Search for address')
                             ->required()
-                            ->reactive()
-                            ->live()
-                            ->afterStateUpdated(function (Forms\Set $set) {
-                                $set('city_id', null);
-                                $set('postal_id', null);
-                            })
                             ->searchable()
-                            ->relationship('country', 'name')
+                            ->live()
+                            ->columnSpanFull()
+                            ->getSearchResultsUsing(function ($query) {
+                                return app('geocoder')->geocode($query)->get()
+                                    ->mapWithKeys(fn ($result) => [
+                                        $result->getFormattedAddress() => $result->getFormattedAddress()
+                                    ])
+                                    ->toArray();
+                            }),
                     ])->columns(2)
                     ->description('The shipment will always be send to this address. The installer will also be notified about this address. If the installer needs to install somewhere other than this address – they must be notified elsewhere'),
                     Forms\Components\Section::make('Order Items')
