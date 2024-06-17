@@ -35,4 +35,11 @@ class ListInvoices extends ListRecords
                 }),
             ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            InvoiceResource\Widgets\AmountDueOverview::class
+        ];
+    }
 }
