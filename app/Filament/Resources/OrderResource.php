@@ -378,10 +378,6 @@ class OrderResource extends Resource
                                 }
                             );
                     }),
-                Tables\Filters\TernaryFilter::make('tracking_code')
-                    ->label('Has Tracking Code')
-                    ->placeholder('All Orders')
-                    ->nullable(),
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from'),
