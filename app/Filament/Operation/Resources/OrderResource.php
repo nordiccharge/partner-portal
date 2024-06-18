@@ -12,6 +12,7 @@ use App\Models\Order;
 use App\Models\Pipeline;
 use App\Models\Postal;
 use App\Models\Stage;
+use App\Models\Team;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -412,29 +413,32 @@ class OrderResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
-                Tables\Filters\Filter::make('installation_date')
-                    ->form([
-                        Forms\Components\DatePicker::make('installation_date_from'),
-                        Forms\Components\DatePicker::make('installation_date_until'),
-                    ])
-                    ->query(function (Builder $query, array $data): Builder {
-                        return $query
-                            ->when(
-                                $data['installation_date_from'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '>=', $date),
-                            )
-                            ->when(
-                                $data['installation_date_until'],
-                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '<=', $date),
-                            );
-                    }),
                 Tables\Filters\Filter::make('pipeline_stage')
                     ->form([
                         Forms\Components\Select::make('pipeline_id')
                             ->label('Pipeline')
                             ->preload()
                             ->multiple()
+                            ->reactive()
                             ->relationship('pipeline', 'name')
+                            ->options(function (Forms\Get $get) {
+                                if (!$get('../team')['values']) {
+                                    return Pipeline::all()->pluck('name', 'id');
+                                } else {
+                                    $pipelines = [];
+                                    foreach ($get('../team')['values'] as $team_id) {
+                                        Log::debug('Team ID:' . $team_id);
+                                        $team = Team::findOrFail($team_id);
+                                        foreach ($team->pipelines as $pipeline) {
+                                            $pipelines[$pipeline->id] = $team->name . ":\r\n" . $pipeline->name;
+                                        }
+                                    }
+                                    foreach (Pipeline::where('team_id', null)->get() as $pipeline) {
+                                        $pipelines[$pipeline->id] = "Global:\r\n" . $pipeline->name;
+                                    }
+                                    return $pipelines;
+                                }
+                            })
                             ->searchable()
                             ->live(),
                         Forms\Components\Select::make('stage_name')
@@ -451,6 +455,8 @@ class OrderResource extends Resource
                             ->searchable()
                             ->multiple(),
                     ])
+                    ->columns(2)
+                    ->columnSpanFull()
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
@@ -482,11 +488,31 @@ class OrderResource extends Resource
                         blank: fn (Builder $query): Builder => $query,
                     )
                     ->label('Has invoice(s)'),
+                Tables\Filters\Filter::make('installation_date')
+                    ->form([
+                        Forms\Components\DatePicker::make('installation_date_from'),
+                        Forms\Components\DatePicker::make('installation_date_until'),
+                    ])
+                    ->columnSpanFull()
+                    ->columns(2)
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['installation_date_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['installation_date_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('installation_date', '<=', $date),
+                            );
+                    }),
                 Tables\Filters\Filter::make('created_at')
                     ->form([
                         Forms\Components\DatePicker::make('created_from'),
                         Forms\Components\DatePicker::make('created_until'),
                     ])
+                    ->columns(2)
+                    ->columnSpanFull()
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
@@ -498,7 +524,9 @@ class OrderResource extends Resource
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
                     })
+
             ])
+            ->filtersFormColumns(2)
             ->actions([
                 Tables\Actions\Action::make('History')
                     ->icon('heroicon-o-document-text')
@@ -512,7 +540,6 @@ class OrderResource extends Resource
                     ->exporter(OrderExporter::class),
             ]);
     }
-
 
 
     public static function getRelations(): array
