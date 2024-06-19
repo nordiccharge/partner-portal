@@ -41,7 +41,7 @@ class ViewOrder extends ViewRecord
     public function getTitle(): string|Htmlable
     {
         $order = $this->getRecord();
-        return new HtmlString('<b>' . $order->team->name . '</b>' . ' – <i>#' . $order->id . '</i>');
+        return new HtmlString('<span class="text-gray-800">' . $order->team->name . '</span>&nbsp;&nbsp;<span class="text-primary-600">' . $order->id . '</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
