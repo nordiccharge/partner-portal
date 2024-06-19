@@ -23,6 +23,8 @@ class ViewInvoice extends ViewRecord
             ->schema([
                 Section::make('Information')
                     ->schema([
+                        TextEntry::make('team.name')
+                            ->size(TextEntry\TextEntrySize::Large),
                         TextEntry::make('status')
                             ->badge()
                             ->color(function ($record) {

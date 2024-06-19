@@ -27,7 +27,9 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\HtmlString;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
 use Parallax\FilamentComments\Models\FilamentComment;
 use SendGrid\Mail\Mail;
@@ -36,12 +38,21 @@ class ViewOrder extends ViewRecord
 {
     protected static string $resource = OrderResource::class;
 
+    public function getTitle(): string|Htmlable
+    {
+        $order = $this->getRecord();
+        return new HtmlString('<b>' . $order->team->name . '</b>' . ' – <i>#' . $order->id . '</i>');
+    }
+
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
                 Section::make('Order Details')
                     ->schema([
+                        TextEntry::make('pipeline.name')
+                            ->label('Pipeline')
+                            ->copyable(),
                         TextEntry::make('id')
                             ->label('Order ID')
                             ->copyable(),
