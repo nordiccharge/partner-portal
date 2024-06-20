@@ -142,6 +142,7 @@ class ViewOrder extends ViewRecord
                             IconEntry::make('installation_required')
                                 ->boolean()
                                 ->label('Installation included'),
+                            TextEntry::make('installation.name'),
                             TextEntry::make('installer.company.name'),
                             TextEntry::make('installation_date')
                                 ->visible(fn (Order $order) => $order->installation_required)
