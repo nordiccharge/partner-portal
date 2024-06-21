@@ -24,6 +24,7 @@ class ViewInvoice extends ViewRecord
                 Section::make('Information')
                     ->schema([
                         TextEntry::make('invoiceable.team.name')
+                            ->label('Team name')
                             ->size(TextEntry\TextEntrySize::Large),
                         TextEntry::make('status')
                             ->badge()
