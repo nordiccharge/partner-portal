@@ -540,7 +540,7 @@ class OrderResource extends Resource
                         }
                     )
                     ->columnSpanFull()
-                    ->options(Product::all()->pluck('name', 'id'))
+                    ->options(Product::all()->pluck('detailed_name', 'id'))
             ])
             ->filtersFormColumns(2)
             ->actions([
