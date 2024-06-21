@@ -23,7 +23,7 @@ class ViewInvoice extends ViewRecord
             ->schema([
                 Section::make('Information')
                     ->schema([
-                        TextEntry::make('team.name')
+                        TextEntry::make('invoiceable.team.name')
                             ->size(TextEntry\TextEntrySize::Large),
                         TextEntry::make('status')
                             ->badge()
@@ -44,6 +44,7 @@ class ViewInvoice extends ViewRecord
                             ->copyable(),
                         TextEntry::make('note'),
                         Section::make('Order Details')
+                            ->hidden(fn ($record) => !$record->invoiceable instanceof Order)
                             ->schema([
                                 TextEntry::make('invoiceable.pipeline.name')
                                     ->label('Pipeline')
@@ -75,8 +76,7 @@ class ViewInvoice extends ViewRecord
                                     ->copyable(),
                             ])->columns(3),
                     ])
-                    ->columns(2)
-                    ->hidden(fn ($record) => !$record->invoiceable instanceof Order),
+                    ->columns(2),
                 Section::make('Invoice')
                     ->schema([
                         RepeatableEntry::make('items')

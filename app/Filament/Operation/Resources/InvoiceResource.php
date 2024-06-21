@@ -124,20 +124,29 @@ class InvoiceResource extends Resource
                     })
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->label('Type'),
-                Tables\Columns\TextColumn::make('invoiceable.order_reference')
+                Tables\Columns\TextColumn::make('invoiceable_reference')
                     ->label('Reference')
+                    ->state(
+                        function (Invoice $record) {
+                            return match($record->invoiceable_type) {
+                                Order::class => $record->invoiceable->order_reference,
+                                default => '',
+                            };
+                        }
+                    ),
+                Tables\Columns\TextColumn::make('invoiceable_customer')
+                    ->label('Customer')
                     ->toggleable()
-                    ->searchable(),
+                    ->state(function (Invoice $record) {
+                        return match ($record->invoiceable_type) {
+                            Order::class => $record->invoiceable->full_name . ' (' . $record->invoiceable->team->name . ')',
+                            PurchaseOrder::class => $record->invoiceable->team->name,
+                        };
+                    }),
                 Tables\Columns\TextColumn::make('invoiceable.shipping_address')
                     ->label('Address')
-                    ->toggleable()
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->searchable(),
-                Tables\Columns\TextColumn::make('invoiceable.full_name')
-                    ->label('Full name')
-                    ->searchable([
-                        'customer_first_name', 'customer_last_name'
-                    ])
-                    ->toggleable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()
                     ->color(function ($record) {

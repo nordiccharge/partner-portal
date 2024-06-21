@@ -65,6 +65,24 @@ class ViewOrder extends ViewRecord
                     ->columns(5)
                     ->columnSpanFull()
                     ->headerActions([
+                        ReplicateAction::make()
+                            ->mutateRecordDataUsing(function (Order $record, array $data): array {
+                                $data['team_id'] = $record->team_id;
+                                $data['order_reference'] = $record->order_reference . '_new';
+                                $data['id'] = random_int(100000000, 999999999);
+                                $data['status'] = 'Order Created';
+                                $data['with_auto'] = 1;
+                                $data['created_at'] = now();
+                                $data['installation_required'] = 0;
+                                $data['installer_id'] = null;
+                                $data['installation_price'] = null;
+                                $data['installation_date'] = null;
+                                $data['tracking_code'] = null;
+                                $data['nc_price'] = null;
+                                $data['stage_id'] = null;
+                                $data['pipeline_id'] = null;
+                                return $data;
+                            }),
                         Action::make('Create invoice')
                             ->icon('heroicon-o-document-check')
                             ->color('info')
