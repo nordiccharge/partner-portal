@@ -11,6 +11,7 @@ use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\Pipeline;
 use App\Models\Postal;
+use App\Models\Product;
 use App\Models\Stage;
 use App\Models\Team;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -523,8 +524,23 @@ class OrderResource extends Resource
                                 $data['created_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('created_at', '<=', $date),
                             );
-                    })
-
+                    }),
+                Tables\Filters\SelectFilter::make('items')
+                    ->multiple()
+                    ->label('Items')
+                    ->query(
+                        function(Builder $query, array $data) {
+                            if(!empty($data['values'])) {
+                                $query->whereHas('items', function (Builder $query) use ($data) {
+                                    $query->whereHas('inventory', function (Builder $query) use ($data) {
+                                        $query->whereIn('product_id', $data['values']);
+                                    });
+                                });
+                            }
+                        }
+                    )
+                    ->columnSpanFull()
+                    ->options(Product::all()->pluck('name', 'id'))
             ])
             ->filtersFormColumns(2)
             ->actions([
