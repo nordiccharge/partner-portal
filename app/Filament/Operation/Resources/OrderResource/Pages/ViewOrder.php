@@ -91,7 +91,7 @@ class ViewOrder extends ViewRecord
                             ])
                             ->color('gray')
                             ->modalSubmitActionLabel('Create now')
-                            ->visible(fn (Order $record) => $record->team_id == 1)
+                            ->visible(fn (Order $record) => $record->team_id == 7)
                             ->action(function (Order $record, array $data) {
                                 Log::debug('Creating on Monta...');
                                 $response = \Illuminate\Support\Facades\Http::timeout(180)
