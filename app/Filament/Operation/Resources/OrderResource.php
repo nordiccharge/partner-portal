@@ -527,7 +527,7 @@ class OrderResource extends Resource
                     }),
                 Tables\Filters\SelectFilter::make('items')
                     ->multiple()
-                    ->label('Items')
+                    ->label('Product items')
                     ->query(
                         function(Builder $query, array $data) {
                             if(!empty($data['values'])) {

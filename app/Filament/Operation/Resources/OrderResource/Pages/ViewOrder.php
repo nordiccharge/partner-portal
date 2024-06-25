@@ -65,6 +65,69 @@ class ViewOrder extends ViewRecord
                     ->columns(5)
                     ->columnSpanFull()
                     ->headerActions([
+                        Action::make('Create on Monta')
+                            ->icon('heroicon-o-cloud-arrow-up')
+                            ->modalHeading('Create on Monta?')
+                            ->modalDescription('This will create team, invite customer and create chargepoint (with subscription) on Monta.')
+                            ->form([
+                                Select::make('model')
+                                    ->label('ChargePoint integration model')
+                                    ->options([
+                                        'Easee - Charge Lite' => 'Easee - Charge Lite',
+                                        'Zaptec - Go' => 'Zaptec - Go',
+                                        'Nexblue - Edge' => 'Nexblue - Edge',
+                                    ])
+                                    ->searchable()
+                                    ->required(),
+                                Select::make('subscription')
+                                    ->label('Monta Subscription')
+                                    ->options([
+                                        'false' => 'No subscription',
+                                        '2636' => '#2636 Elrefusion abonnement ink. moms – Nordisk Energi',
+                                        '2757' => '#2757 Serviceaftale uden refusion – Nordisk Energi',
+                                    ])
+                                    ->searchable()
+                                    ->required(),
+                            ])
+                            ->color('gray')
+                            ->modalSubmitActionLabel('Create now')
+                            ->visible(fn (Order $record) => $record->team_id == 1)
+                            ->action(function (Order $record, array $data) {
+                                Log::debug('Creating on Monta...');
+                                $response = \Illuminate\Support\Facades\Http::timeout(180)
+                                    ->get('https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi', [
+                                    'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
+                                    'email' => $record->customer_email,
+                                    'address' => $record->shipping_address,
+                                    'zip' => $record->postal->postal,
+                                    'city' => $record->city->name,
+                                    'model' => $data['model'],
+                                    'id' => $data['subscription'],
+                                ]);
+                                if ($response->status() == 200) {
+                                    activity()
+                                        ->performedOn($record)
+                                        ->event('system')
+                                        ->log('Order created on Monta: ' . $response->body());
+                                    Notification::make()
+                                        ->title('Order created on Monta')
+                                        ->body($response->body())
+                                        ->sendToDatabase(auth()->user())
+                                        ->success()
+                                        ->send();
+                                } else {
+                                    activity()
+                                        ->performedOn($record)
+                                        ->event('system')
+                                        ->log('Failed to create order on Monta:' . $response->status() . ' ' . $response->body());
+                                    Notification::make()
+                                        ->title('Failed to create order order on Monta')
+                                        ->body($response->body())
+                                        ->sendToDatabase(auth()->user())
+                                        ->danger()
+                                        ->send();
+                                }
+                            }),
                         Action::make('Create invoice')
                             ->icon('heroicon-o-document-check')
                             ->color('info')

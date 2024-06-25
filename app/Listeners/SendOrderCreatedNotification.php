@@ -93,7 +93,9 @@ class SendOrderCreatedNotification
                     ->event('system')
                     ->log('Failed to send order to MuraMura Response:' . $response->status() . ' ' . $response->body());
                 Notification::make()
-                    ->title($response->body())
+                    ->title('Failed to send order to MuraMura')
+                    ->body($response->body())
+                    ->sendToDatabase()
                     ->danger()
                     ->send();
 
