@@ -104,7 +104,7 @@ class ViewOrder extends ViewRecord
                                     'model' => $data['model'],
                                     'id' => $data['subscription'],
                                 ]);
-                                if ($response->status() == 200) {
+                                if ($response->status() == 201) {
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
