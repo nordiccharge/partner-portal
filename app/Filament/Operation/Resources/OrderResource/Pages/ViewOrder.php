@@ -7,6 +7,7 @@ use App\Events\SendEmailToInstaller;
 use App\Filament\Operation\Resources\OrderResource;
 use App\Filament\Operation\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
+use App\Jobs\MontaJob;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\Postal;
@@ -65,7 +66,8 @@ class ViewOrder extends ViewRecord
                     ->columns(5)
                     ->columnSpanFull()
                     ->headerActions([
-                        Action::make('Create on Monta')
+                        Action::make('monta_action')
+                            ->label('Create on Monta')
                             ->icon('heroicon-o-cloud-arrow-up')
                             ->modalHeading('Create on Monta?')
                             ->modalDescription('This will create team, invite customer and create chargepoint (with subscription) on Monta.')
@@ -106,42 +108,15 @@ class ViewOrder extends ViewRecord
                             ])
                             ->color('gray')
                             ->modalSubmitActionLabel('Create now')
-                            ->visible(fn (Order $record) => $record->team_id == 7)
+                            ->visible(fn (Order $record) => $record->team_id == 1)
                             ->action(function (Order $record, array $data) {
-                                Log::debug('Creating on Monta...');
-                                $response = \Illuminate\Support\Facades\Http::timeout(300)
-                                    ->get('https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi', [
-                                    'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
-                                    'email' => $record->customer_email,
-                                    'address' => $record->shipping_address,
-                                    'zip' => $record->postal->postal,
-                                    'city' => $record->city->name,
-                                    'model' => $data['model'],
-                                    'id' => $data['subscription'],
-                                ]);
-                                if ($response->status() == 201) {
-                                    activity()
-                                        ->performedOn($record)
-                                        ->event('system')
-                                        ->log('Order created on Monta: ' . $response->body());
-                                    Notification::make()
-                                        ->title('Order created on Monta')
-                                        ->body($response->body())
-                                        ->sendToDatabase(auth()->user())
-                                        ->success()
-                                        ->send();
-                                } else {
-                                    activity()
-                                        ->performedOn($record)
-                                        ->event('system')
-                                        ->log('Failed to create order on Monta:' . $response->status() . ' ' . $response->body());
-                                    Notification::make()
-                                        ->title('Failed to create order order on Monta')
-                                        ->body($response->body())
-                                        ->sendToDatabase(auth()->user())
-                                        ->danger()
-                                        ->send();
-                                }
+                                MontaJob::dispatch($record, $data['subscription'], $data['model'], auth()->user());
+                                Notification::make()
+                                    ->title('You are NOT done!')
+                                    ->body('The system is starting the Monta job. Please check back and follow the proccess in notifications.')
+                                    ->icon('heroicon-o-information-circle')
+                                    ->iconColor('warning')
+                                    ->send();
                             }),
                         Action::make('Create invoice')
                             ->icon('heroicon-o-document-check')
