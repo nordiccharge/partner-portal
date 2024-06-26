@@ -80,14 +80,16 @@ class ViewOrder extends ViewRecord
                                     ->searchable()
                                     ->required()
                                 ->default(function (Order $record) {
-                                    if ($record->items->first()->inventory->product->brand->name == 'Easee') {
-                                        return 'Easee - Charge Lite';
-                                    }
-                                    if ($record->items->first()->inventory->product->brand->name == 'Zaptec') {
-                                        return 'Zaptec - Go';
-                                    }
-                                    if ($record->items->first()->inventory->product->brand->name == 'NexBlue') {
-                                        return 'Nexblue - Edge';
+                                    if ($record->items()->count() > 0) {
+                                        if ($record->items->first()->inventory->product->brand->name == 'Easee') {
+                                            return 'Easee - Charge Lite';
+                                        }
+                                        if ($record->items->first()->inventory->product->brand->name == 'Zaptec') {
+                                            return 'Zaptec - Go';
+                                        }
+                                        if ($record->items->first()->inventory->product->brand->name == 'NexBlue') {
+                                            return 'Nexblue - Edge';
+                                        }
                                     }
                                     return null;
                                 }),
@@ -99,6 +101,7 @@ class ViewOrder extends ViewRecord
                                         '2757' => '#2757 Serviceaftale uden refusion – Nordisk Energi',
                                     ])
                                     ->searchable()
+                                    ->default('false')
                                     ->required(),
                             ])
                             ->color('gray')
