@@ -94,7 +94,7 @@ class ViewOrder extends ViewRecord
                             ->visible(fn (Order $record) => $record->team_id == 7)
                             ->action(function (Order $record, array $data) {
                                 Log::debug('Creating on Monta...');
-                                $response = \Illuminate\Support\Facades\Http::timeout(180)
+                                $response = \Illuminate\Support\Facades\Http::timeout(300)
                                     ->get('https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi', [
                                     'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
                                     'email' => $record->customer_email,
