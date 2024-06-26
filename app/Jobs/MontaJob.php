@@ -64,10 +64,8 @@ class MontaJob implements ShouldQueue
                     ->body($response->body())
                     ->icon('heroicon-o-check-circle')
                     ->iconColor('success')
-                    ->sendToDatabase($user)
                     ->broadcast($user)
-                    ->success()
-                    ->send();
+                    ->sendToDatabase($user);
             } else {
                 activity()
                     ->performedOn($record)
@@ -78,10 +76,9 @@ class MontaJob implements ShouldQueue
                     ->body($response->body())
                     ->icon('heroicon-o-x-circle')
                     ->iconColor('danger')
-                    ->sendToDatabase($user)
                     ->broadcast($user)
-                    ->danger()
-                    ->send();
+                    ->sendToDatabase($user);
+
             }
         } catch (Exception $e) {
             activity()
@@ -93,10 +90,8 @@ class MontaJob implements ShouldQueue
                 ->body($e->getMessage())
                 ->icon('heroicon-o-x-circle')
                 ->iconColor('danger')
-                ->sendToDatabase($user)
                 ->broadcast($user)
-                ->danger()
-                ->send();
+                ->sendToDatabase($user);
         }
     }
 }
