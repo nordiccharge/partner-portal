@@ -78,7 +78,19 @@ class ViewOrder extends ViewRecord
                                         'Nexblue - Edge' => 'Nexblue - Edge',
                                     ])
                                     ->searchable()
-                                    ->required(),
+                                    ->required()
+                                ->default(function (Order $record) {
+                                    if ($record->items->first()->inventory->product->brand->name == 'Easee') {
+                                        return 'Easee - Charge Lite';
+                                    }
+                                    if ($record->items->first()->inventory->product->brand->name == 'Zaptec') {
+                                        return 'Zaptec - Go';
+                                    }
+                                    if ($record->items->first()->inventory->product->brand->name == 'NexBlue') {
+                                        return 'Nexblue - Edge';
+                                    }
+                                    return null;
+                                }),
                                 Select::make('subscription')
                                     ->label('Monta Subscription')
                                     ->options([
