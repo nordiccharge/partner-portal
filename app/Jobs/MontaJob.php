@@ -58,12 +58,13 @@ class MontaJob implements ShouldQueue
                     'id' => $subscription,
                 ]);
             if ($response->status() == 201) {
+                Log::debug('Successfully created Monta team, response: ' . $response->body());
                 activity()
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
+                Log::debug('Updating stage on Monta...');
                 try {
-                    Log::debug('Updating stage on Monta...');
                     $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();
                     $new_stage = $record->stage;
                     if ($record->stage->order <= $monta_stage->order) {
