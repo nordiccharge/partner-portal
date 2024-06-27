@@ -63,7 +63,7 @@ class MontaJob implements ShouldQueue
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
                 try {
-                    Debug::log('Updating stage on Monta...');
+                    Log::debug('Updating stage on Monta...');
                     $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();
                     $new_stage = $record->stage;
                     if ($record->stage->order <= $monta_stage->order) {
@@ -73,7 +73,7 @@ class MontaJob implements ShouldQueue
                         'stage_id' => $new_stage->id,
                     ]);
                 } catch (Exception $e) {
-                    Log::error('Failed to update stage on Monta: ' . $e->getMessage());
+                    Log::debug('Failed to update stage on Monta: ' . $e->getMessage());
                 }
                 Notification::make()
                     ->title("#{$id} : CREATED on Monta")
