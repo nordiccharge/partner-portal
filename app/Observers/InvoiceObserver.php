@@ -61,7 +61,7 @@ class InvoiceObserver
             InvoiceItem::create([
                 'invoice_id' => $invoice->id,
                 'title' => 'Nordic Charge fee',
-                'price' => $order->pipeline->nc_price,
+                'price' => $order->nc_price,
                 'quantity' => 1
             ]);
 

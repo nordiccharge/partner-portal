@@ -64,8 +64,8 @@ class MontaJob implements ShouldQueue
                     ->body($response->body())
                     ->icon('heroicon-o-check-circle')
                     ->iconColor('success')
-                    ->broadcast($user)
-                    ->sendToDatabase($user);
+                    ->sendToDatabase($user)
+                    ->broadcast($user);
             } else {
                 activity()
                     ->performedOn($record)
@@ -73,12 +73,10 @@ class MontaJob implements ShouldQueue
                     ->log('Failed to create order on Monta:' . $response->status() . ' ' . $response->body());
                 Notification::make()
                     ->title("#{$id} : FAILED to create order on Monta")
-                    ->body($response->body())
                     ->icon('heroicon-o-x-circle')
                     ->iconColor('danger')
-                    ->broadcast($user)
-                    ->sendToDatabase($user);
-
+                    ->sendToDatabase($user)
+                    ->broadcast($user);
             }
         } catch (Exception $e) {
             activity()
@@ -90,8 +88,8 @@ class MontaJob implements ShouldQueue
                 ->body($e->getMessage())
                 ->icon('heroicon-o-x-circle')
                 ->iconColor('danger')
-                ->broadcast($user)
-                ->sendToDatabase($user);
+                ->sendToDatabase($user)
+                ->broadcast($user);
         }
     }
 }
