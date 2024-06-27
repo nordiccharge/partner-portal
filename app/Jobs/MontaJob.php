@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Enums\StageAutomation;
 use App\Models\Order;
+use App\Models\Stage;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -11,6 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\ErrorHandler\Debug;
 
 class MontaJob implements ShouldQueue
 {
@@ -59,6 +62,18 @@ class MontaJob implements ShouldQueue
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
+                try {
+                    $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();
+                    $new_stage = $record->stage;
+                    if ($record->stage->order <= $monta_stage->order) {
+                        $new_stage = $monta_stage;
+                    }
+                    $record->update([
+                        'stage_id' => $new_stage->id,
+                    ]);
+                } catch (Exception $e) {
+                    Log::error('Failed to update stage on Monta: ' . $e->getMessage());
+                }
                 Notification::make()
                     ->title("#{$id} : CREATED on Monta")
                     ->body($response->body())

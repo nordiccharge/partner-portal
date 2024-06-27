@@ -11,6 +11,7 @@ enum StageAutomation: string implements HasLabel {
     case InstallerContacted = 'installer_contacted';
     case InstallationDateConfirmed = 'installation_date_confirmed';
     case Invoice = 'create_invoice';
+    case Monta = 'create_monta';
 
     public function getLabel(): ?string
     {
@@ -20,6 +21,7 @@ enum StageAutomation: string implements HasLabel {
             self::InstallerContacted => 'Installer Contacted',
             self::InstallationDateConfirmed => 'Installation Date Confirmed',
             self::Invoice => 'Create Invoice on first stage',
+            self::Monta => 'Monta team, chargepoint and subscription is created',
         };
     }
 }
