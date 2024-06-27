@@ -108,7 +108,7 @@ class ViewOrder extends ViewRecord
                             ])
                             ->color('gray')
                             ->modalSubmitActionLabel('Create now')
-                            ->visible(fn (Order $record) => $record->team_id == 1)
+                            ->visible(fn (Order $record) => $record->team_id == 7 || 1)
                             ->action(function (Order $record, array $data) {
                                 MontaJob::dispatch($record, $data['subscription'], $data['model'], auth()->user());
                                 Notification::make()
