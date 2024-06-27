@@ -21,7 +21,7 @@ enum StageAutomation: string implements HasLabel {
             self::InstallerContacted => 'Installer Contacted',
             self::InstallationDateConfirmed => 'Installation Date Confirmed',
             self::Invoice => 'Create Invoice on first stage',
-            self::Monta => 'Monta team, chargepoint and subscription is created',
+            self::Monta => 'Monta team etc. is created',
         };
     }
 }

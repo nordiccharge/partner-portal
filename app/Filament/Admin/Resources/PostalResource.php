@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use PhpParser\Node\Expr\Ternary;
 use PHPUnit\Util\Filter;
+use Illuminate\Database\Eloquent\Collection;
 
 class PostalResource extends Resource
 {
@@ -110,6 +111,24 @@ class PostalResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\ExportBulkAction::make()
                         ->exporter(PostalExporter::class),
+                    Tables\Actions\BulkAction::make('set_installer')
+                        ->label('Set Primary Installer')
+                        ->icon('heroicon-o-user-plus')
+                        ->form([
+                            Forms\Components\Select::make('installer_id')
+                                ->label('Primary Installer')
+                                ->required()
+                                ->nullable()
+                                ->searchable()
+                                ->preload()
+                                ->options(
+                                    function () {
+                                        return Installer::join('companies', 'installers.company_id', '=', 'companies.id')
+                                            ->pluck('companies.name', 'installers.id');
+                                    }
+                                )
+                        ])
+                        ->action(fn (Collection $records, array $data) => $records->each->update(['installer_id' => $data['installer_id']])),
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
