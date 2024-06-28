@@ -27,7 +27,7 @@ class MontaJob implements ShouldQueue
     protected $subscription;
     protected $model;
     protected $user;
-    public function __construct(Order $record, $subscription, $model, $user)
+    public function __construct(Order $record, $subscription, $model, $user = null)
     {
         $this->record = $record;
         $this->subscription = $subscription;
@@ -76,37 +76,43 @@ class MontaJob implements ShouldQueue
                 } catch (Exception $e) {
                     Log::debug('Failed to update stage on Monta: ' . $e->getMessage());
                 }
-                Notification::make()
-                    ->title("#{$id} : CREATED on Monta")
-                    ->body($response->body())
-                    ->icon('heroicon-o-check-circle')
-                    ->iconColor('success')
-                    ->sendToDatabase($user)
-                    ->broadcast($user);
+                if ($user != null) {
+                    Notification::make()
+                        ->title("#{$id} : CREATED on Monta")
+                        ->body($response->body())
+                        ->icon('heroicon-o-check-circle')
+                        ->iconColor('success')
+                        ->sendToDatabase($user)
+                        ->broadcast($user);
+                }
             } else {
                 activity()
                     ->performedOn($record)
                     ->event('system')
                     ->log('Failed to create order on Monta:' . $response->status() . ' ' . $response->body());
-                Notification::make()
-                    ->title("#{$id} : FAILED to create order on Monta")
-                    ->icon('heroicon-o-x-circle')
-                    ->iconColor('danger')
-                    ->sendToDatabase($user)
-                    ->broadcast($user);
+                if ($user != null) {
+                    Notification::make()
+                        ->title("#{$id} : FAILED to create order on Monta")
+                        ->icon('heroicon-o-x-circle')
+                        ->iconColor('danger')
+                        ->sendToDatabase($user)
+                        ->broadcast($user);
+                }
             }
         } catch (Exception $e) {
             activity()
                 ->performedOn($record)
                 ->event('system')
                 ->log('Failed to create order on Monta: ' . $e->getMessage());
-            Notification::make()
-                ->title("#{$id} : FAILED to create order on Monta")
-                ->body($e->getMessage())
-                ->icon('heroicon-o-x-circle')
-                ->iconColor('danger')
-                ->sendToDatabase($user)
-                ->broadcast($user);
+            if ($user != null) {
+                Notification::make()
+                    ->title("#{$id} : FAILED to create order on Monta")
+                    ->body($e->getMessage())
+                    ->icon('heroicon-o-x-circle')
+                    ->iconColor('danger')
+                    ->sendToDatabase($user)
+                    ->broadcast($user);
+            }
         }
     }
 }
