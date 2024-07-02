@@ -110,6 +110,13 @@ class ViewInvoice extends ViewRecord
                             ->visible(fn ($record) => $record->invoiceable->chargers->count() == 1)
                             ->copyable()
                             ->html()
+                            ->copyableState(fn ($record) =>
+                                           "Produkt: {$record->invoiceable->chargers->first()->product->name}\n
+                                            S/N: {$record->invoiceable->chargers->first()->serial_number}\n
+                                            ID: {$record->invoiceable->id}\n
+                                            Reference: {$record->invoiceable->order_reference}\n
+                                            Adresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}\n
+                                            Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}")
                             ->default(fn ($record) =>
                             "
                                             Produkt: {$record->invoiceable->chargers->first()->product->name}<br>
@@ -117,15 +124,18 @@ class ViewInvoice extends ViewRecord
                                             ID: {$record->invoiceable->id}<br>
                                             Reference: {$record->invoiceable->order_reference}<br>
                                             Adresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}<br>
-                                            Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}<br>
+                                            Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}
                                             "),
                         TextEntry::make('line_2')
                             ->label('Håndteringsgebyr')
                             ->copyable()
+                            ->copyableState(fn ($record) =>
+                                "ID: {$record->invoiceable->id}\n
+                                 Reference: {$record->invoiceable->order_reference}\n")
                             ->html()
                             ->default(fn ($record) =>
                                 "ID: {$record->invoiceable->id}<br>
-                                 Reference: {$record->invoiceable->order_reference}<br><br>"),
+                                 Reference: {$record->invoiceable->order_reference}<br>"),
                     ])
                     ->columns(2)
             ]);
