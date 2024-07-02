@@ -111,12 +111,7 @@ class ViewInvoice extends ViewRecord
                             ->copyable()
                             ->html()
                             ->copyableState(fn ($record) =>
-                                           "Produkt: {$record->invoiceable->chargers->first()->product->name}\n
-                                            S/N: {$record->invoiceable->chargers->first()->serial_number}\n
-                                            ID: {$record->invoiceable->id}\n
-                                            Reference: {$record->invoiceable->order_reference}\n
-                                            Adresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}\n
-                                            Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}")
+                                           "Produkt: {$record->invoiceable->chargers->first()->product->name}\nS/N: {$record->invoiceable->chargers->first()->serial_number}\nID: {$record->invoiceable->id}\nReference: {$record->invoiceable->order_reference}\nAdresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}\nKunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}")
                             ->default(fn ($record) =>
                             "
                                             Produkt: {$record->invoiceable->chargers->first()->product->name}<br>
@@ -130,8 +125,7 @@ class ViewInvoice extends ViewRecord
                             ->label('Håndteringsgebyr')
                             ->copyable()
                             ->copyableState(fn ($record) =>
-                                "ID: {$record->invoiceable->id}\n
-                                 Reference: {$record->invoiceable->order_reference}\n")
+                                "ID: {$record->invoiceable->id}\nReference: {$record->invoiceable->order_reference}\n")
                             ->html()
                             ->default(fn ($record) =>
                                 "ID: {$record->invoiceable->id}<br>
