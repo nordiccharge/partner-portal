@@ -109,6 +109,7 @@ class ViewInvoice extends ViewRecord
                             })
                             ->visible(fn ($record) => $record->invoiceable->chargers->count() == 1)
                             ->copyable()
+                            ->html()
                             ->default(fn ($record) =>
                             new HtmlString("
                                             Produkt: {$record->invoiceable->chargers->first()->product->name}<br>
@@ -121,6 +122,7 @@ class ViewInvoice extends ViewRecord
                         TextEntry::make('line_2')
                             ->label('Håndteringsgebyr')
                             ->copyable()
+                            ->html()
                             ->default(fn ($record) =>
                             new HtmlString("
                                             ID: {$record->invoiceable->id}<br>
