@@ -13,6 +13,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Infolists\Components\Section;
+use Illuminate\Support\HtmlString;
+use Nette\Utils\Html;
 
 class ViewInvoice extends ViewRecord
 {
@@ -96,6 +98,36 @@ class ViewInvoice extends ViewRecord
                             ->suffix(' DKK')
                             ->copyable(),
                     ]),
+                Section::make('For E-Conomics')
+                    ->schema([
+                        TextEntry::make('line_1')
+                            ->label(function ($record) {
+                                if ($record->invoiceable->installation_required == 1) {
+                                    return $record->invoiceable->installation->kw . 'kW installation';
+                                }
+                                return 'Uden installation';
+                            })
+                            ->visible(fn ($record) => $record->invoiceable->chargers->count() == 1)
+                            ->copyable()
+                            ->default(fn ($record) =>
+                            new HtmlString("
+                                            Produkt: {$record->invoiceable->chargers->first()->product->name}<br>
+                                            S/N: {$record->invoiceable->chargers->first()->serial_number}<br>
+                                            ID: {$record->invoiceable->id}<br>
+                                            Reference: {$record->invoiceable->order_reference}<br>
+                                            Adresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}<br>
+                                            Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}<br>
+                                            ")),
+                        TextEntry::make('line_2')
+                            ->label('Håndteringsgebyr')
+                            ->copyable()
+                            ->default(fn ($record) =>
+                            new HtmlString("
+                                            ID: {$record->invoiceable->id}<br>
+                                            Reference: {$record->invoiceable->order_reference}<br><br>
+                                            ")),
+                    ])
+                    ->columns(2)
             ]);
     }
 
