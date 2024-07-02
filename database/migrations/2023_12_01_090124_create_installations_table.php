@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->decimal('price');
-            $table->unsignedDecimal('kw');
+            $table->decimal('kw');
             $table->foreignId('team_id')
                 ->constrained();
             $table->timestamps();

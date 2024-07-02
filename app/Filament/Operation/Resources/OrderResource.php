@@ -390,6 +390,10 @@ class OrderResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('customer_phone')
+                    ->label('Phone')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Created')
                     ->sortable()
