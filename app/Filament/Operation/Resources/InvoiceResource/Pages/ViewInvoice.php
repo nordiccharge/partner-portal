@@ -111,23 +111,21 @@ class ViewInvoice extends ViewRecord
                             ->copyable()
                             ->html()
                             ->default(fn ($record) =>
-                            new HtmlString("
+                            "
                                             Produkt: {$record->invoiceable->chargers->first()->product->name}<br>
                                             S/N: {$record->invoiceable->chargers->first()->serial_number}<br>
                                             ID: {$record->invoiceable->id}<br>
                                             Reference: {$record->invoiceable->order_reference}<br>
                                             Adresse: {$record->invoiceable->shipping_address}, {$record->invoiceable->postal->postal} {$record->invoiceable->city->name} {$record->invoiceable->country->name}<br>
                                             Kunde: {$record->invoiceable->customer_first_name} {$record->invoiceable->customer_last_name}<br>
-                                            ")),
+                                            "),
                         TextEntry::make('line_2')
                             ->label('Håndteringsgebyr')
                             ->copyable()
                             ->html()
                             ->default(fn ($record) =>
-                            new HtmlString("
-                                            ID: {$record->invoiceable->id}<br>
-                                            Reference: {$record->invoiceable->order_reference}<br><br>
-                                            ")),
+                                "ID: {$record->invoiceable->id}<br>
+                                 Reference: {$record->invoiceable->order_reference}<br><br>"),
                     ])
                     ->columns(2)
             ]);
