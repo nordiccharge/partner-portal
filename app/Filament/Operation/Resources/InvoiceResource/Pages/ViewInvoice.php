@@ -132,6 +132,7 @@ class ViewInvoice extends ViewRecord
                                  Reference: {$record->invoiceable->order_reference}<br>"),
                     ])
                     ->columns(2)
+                    ->visible(fn ($record) => $record->invoiceable instanceof Order),
             ]);
     }
 
