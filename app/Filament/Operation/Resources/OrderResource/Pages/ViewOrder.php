@@ -113,6 +113,7 @@ class ViewOrder extends ViewRecord
                             ->action(function (Order $record, array $data) {
                                 MontaJob::dispatch($record, $data['subscription'], $data['model'], auth()->user())
                                     ->onQueue('monta-ne')
+                                    ->onConnection('database')
                                     ->delay(Carbon::now()->addSeconds(10));
                                 Notification::make()
                                     ->title('You are NOT done!')
