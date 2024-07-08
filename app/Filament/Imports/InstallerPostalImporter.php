@@ -4,6 +4,7 @@ namespace App\Filament\Imports;
 
 use App\Models\Installer;
 use App\Models\InstallerPostal;
+use App\Models\Postal;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -17,7 +18,7 @@ class InstallerPostalImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('postal_id')
+            ImportColumn::make('postal')
                 ->requiredMapping()
                 ->relationship('postal', 'postal')
                 ->numeric()
@@ -28,7 +29,7 @@ class InstallerPostalImporter extends Importer
     public function resolveRecord(): ?InstallerPostal
     {
         return InstallerPostal::firstOrNew([
-            'postal_id' => $this->data['postal_id'],
+            'postal_id' => Postal::where('postal', $this->data['postal'])->firstOrFail()->id,
             'installer_id' => $this->options['installer_id'],
         ]);
 
