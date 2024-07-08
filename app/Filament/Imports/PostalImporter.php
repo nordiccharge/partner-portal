@@ -42,7 +42,7 @@ class PostalImporter extends Importer
     public function resolveRecord(): ?Postal
     {
         return Postal::firstOrNew([
-            'postal' => $this->data['postal'],
+            'postal' => $this->data['Postal'],
         ]);
     }
 

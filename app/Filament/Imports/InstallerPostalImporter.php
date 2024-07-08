@@ -29,7 +29,7 @@ class InstallerPostalImporter extends Importer
     public function resolveRecord(): ?InstallerPostal
     {
         return InstallerPostal::firstOrNew([
-            'postal_id' => Postal::where('postal', $this->data['postal'])->firstOrFail()->id,
+            'postal_id' => Postal::where('postal', (int)$this->data['postal'])->firstOrFail()->id,
             'installer_id' => $this->options['installer_id'],
         ]);
 
