@@ -17,12 +17,12 @@ class PostalImporter extends Importer
         return [
             ImportColumn::make('Installer')
                 ->label('Installer')
-                ->relationship(resolveUsing: function (string $state): ?Installer {
+                ->relationship(resolveUsing: function ($state): ?Installer {
                     return Installer::whereHas('company', function (\Illuminate\Database\Eloquent\Builder $query) use ($state) {
-                        $query->where('name', '=', $state);
+                        $query->where('name', '=', (string) $state);
                     })->first();
                 }),
-            ImportColumn::make('Postal')
+            ImportColumn::make('postal')
                 ->label('Postal')
                 ->requiredMapping()
                 ->numeric()
@@ -42,7 +42,7 @@ class PostalImporter extends Importer
     public function resolveRecord(): ?Postal
     {
         return Postal::firstOrNew([
-            'postal' => $this->data['Postal'],
+            'postal' => $this->data['postal'],
         ]);
     }
 
