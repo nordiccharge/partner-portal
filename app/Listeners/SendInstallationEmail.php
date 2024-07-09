@@ -89,7 +89,6 @@ class SendInstallationEmail
                             ->event('system')
                             ->log('Email sent to installer on ' . $installer->contact_email);
                     } else {
-                        Log::error('Using key: ' . getenv('SENDGRID_API_KEY'));
                         Log::error('Email not sent to installer: ' . $response->statusCode() . ' ' . $response->body());
                     }
                 } catch (\Exception $e) {
