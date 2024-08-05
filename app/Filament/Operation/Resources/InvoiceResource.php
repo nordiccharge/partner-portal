@@ -188,6 +188,9 @@ class InvoiceResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\BulkAction::make('Cancel')
+                        ->color('warning')
+                        ->icon('heroicon-o-x-circle')
+                        ->requiresConfirmation()
                         ->action(fn (Collection $records) => $records->each->update(['status' => InvoiceStatus::Pending])),
                 ]),
             ]);
