@@ -161,6 +161,7 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('total_price')
                     ->suffix(' DKK'),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->sortable()
                     ->date()
             ])
             ->filters([
