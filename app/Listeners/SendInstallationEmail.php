@@ -65,6 +65,7 @@ class SendInstallationEmail
                     'address' => $order->shipping_address,
                     'city' => $order->city->name,
                     'postal' => $order->postal->postal,
+                    'installation_name' => $order->installation->name,
                     'country' => $order->country->short_name,
                     'kw' => $order->installation->kw,
                     'note' => $order->note,
@@ -108,6 +109,7 @@ class SendInstallationEmail
                         'city' => $order->city->name,
                         'postal' => $order->postal->postal,
                         'country' => $order->country->short_name,
+                        'installation_name' => $order->installation->name,
                         'kw' => $order->installation->kw,
                         'note' => $order->note,
                         'order_items' => $order_items
