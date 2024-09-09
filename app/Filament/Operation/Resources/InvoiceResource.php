@@ -187,7 +187,7 @@ class InvoiceResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\BulkAction::make('Cancel')
+                    Tables\Actions\BulkAction::make('Cancel selected')
                         ->color('warning')
                         ->icon('heroicon-o-x-circle')
                         ->requiresConfirmation()

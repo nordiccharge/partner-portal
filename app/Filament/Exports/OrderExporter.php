@@ -2,6 +2,7 @@
 
 namespace App\Filament\Exports;
 
+use App\Models\Inventory;
 use App\Models\Order;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;

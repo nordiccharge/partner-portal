@@ -3,6 +3,7 @@
 namespace App\Filament\Operation\Resources;
 
 use App\Filament\Exports\OrderExporter;
+use App\Filament\Exports\OrderItemsExporter;
 use App\Filament\Operation\Resources\OrderResource\Pages;
 use App\Models\City;
 use App\Models\Installation;
@@ -553,11 +554,55 @@ class OrderResource extends Resource
                     ->url(fn ($record) => OrderResource::getUrl('activities', ['record' => $record])),
             ])
             ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-                ExportBulkAction::make()
-                    ->exporter(OrderExporter::class),
+                    ExportBulkAction::make()
+                        ->exporter(OrderExporter::class)
+                        ->label('Export to Excel'),
+                    Tables\Actions\BulkAction::make('export-json')
+                        ->label('Export to JSON')
+                        ->icon('heroicon-o-code-bracket-square')
+                    ->action(function (Collection $records) {
+
+                        return response()->streamDownload(function () use ($records) {
+                            $data = [];
+                            foreach ($records as $order) {
+                                $data[$order->id] = [
+                                    'order_id' => $order->id,
+                                    'order_reference' => $order->order_reference,
+                                    'team_name' => $order->team->name,
+                                    'pipeline_name' => $order->pipeline->name,
+                                    'stage_name' => $order->stage->name,
+                                    'installer_name' => $order->installer->company->name ?? null,
+                                    'shipping_address' => $order->shipping_address,
+                                    'postal' => $order->postal->postal,
+                                    'city' => $order->city->name,
+                                    'country' => $order->city->country->name,
+                                    'customer_full_name' => $order->full_name,
+                                    'customer_phone' => $order->customer_phone,
+                                    'customer_email' => $order->customer_email,
+                                    'items' => $order->items->map(function ($item) {
+                                            return [
+                                                'product_name' => $item->inventory->product->name ?? null,
+                                                'sku' => $item->inventory->sku ?? null,
+                                                'quantity' => $item->quantity,
+                                                'price' => $item->price,
+                                            ];
+                                        }) ?? [],
+                                    'chargers' => $order->chargers->map(function ($charger) {
+                                            return [
+                                                'product_name' => $charger->product->name ?? null,
+                                                'serial_number' => $charger->serial_number ?? null,
+                                            ];
+                                        }) ?? [],
+                                    'created_at' => $order->created_at,
+                                ];
+                            }
+                            echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+                        }, "orders_" . time() . '.json');
+                    })
+                ])
+                ->label('Export Orders'),
             ]);
     }
 
