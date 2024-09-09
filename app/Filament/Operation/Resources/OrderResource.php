@@ -584,7 +584,7 @@ class OrderResource extends Resource
                                     'items' => $order->items->map(function ($item) {
                                             return [
                                                 'product_name' => $item->inventory->product->name ?? null,
-                                                'sku' => $item->inventory->sku ?? null,
+                                                'sku' => $item->inventory->product->sku ?? null,
                                                 'quantity' => $item->quantity,
                                                 'price' => $item->price,
                                             ];
