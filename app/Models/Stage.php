@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StageAutomation;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,5 +32,11 @@ class Stage extends Model
 
     public function orders(): HasMany {
         return $this->hasMany(Order::class);
+    }
+
+    protected function orderName(): Attribute {
+        return Attribute::make(
+            fn ($value, $attributes) => $attributes['order'] . ': ' . $attributes['name'],
+        );
     }
 }

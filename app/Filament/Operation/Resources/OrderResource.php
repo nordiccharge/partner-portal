@@ -28,6 +28,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Filament\Tables\Actions\ExportBulkAction;
 use Illuminate\Support\HtmlString;
+use Livewire\Pipe;
 use SendGrid\Mail\Section;
 
 class OrderResource extends Resource
@@ -114,9 +115,18 @@ class OrderResource extends Resource
                         Forms\Components\Select::make('stage_id')
                             ->label('Stage')
                             ->required()
-                            ->options(fn (Forms\Get $get): Collection => Stage::query()
-                                ->where('pipeline_id', $get('pipeline_id'))
-                                ->pluck('name', 'id'))
+                            ->options(
+                                function (Forms\Get $get) {
+                                    if (!$get('pipeline_id')) {
+                                        return [];
+                                    }
+                                    return
+                                        Stage::where('pipeline_id', $get('pipeline_id'))
+                                            ->orderBy('order')
+                                            ->get()
+                                            ->pluck('order_name', 'id');
+                                }
+                            )
                             ->searchable()
                             ->default(1),
                         Forms\Components\TextInput::make('nc_price')
