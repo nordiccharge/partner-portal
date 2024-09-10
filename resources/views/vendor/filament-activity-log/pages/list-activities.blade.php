@@ -4,7 +4,7 @@
 <x-filament-panels::page>
     <div class="space-y-6">
         @foreach($this->getActivities() as $activityItem)
-            @if ($this->record instanceof \App\Models\Inventory)
+            @if ($this->record instanceof \App\Models\Inventory && $activityItem->description != "updated")
                 <div @class([
                 'p-2 space-y-2 bg-white rounded-xl shadow',
                 'dark:border-gray-600 dark:bg-gray-800',
@@ -12,19 +12,29 @@
                     <div class="p-2">
                         <div class="flex justify-between">
                             <div class="flex items-center gap-4">
+                                @if ($activityItem->causer && $activityItem->getExtraProperty('manual') === true)
+                                    <x-filament-panels::avatar.user :user="$activityItem->causer" class="!w-7 !h-7"/>
+                                @else
+                                    <span class="text-sm font-bold !w-7 !h-7" style="margin-right: 3px;">SYS</span>
+                                @endif
                                 <div class="flex flex-col text-left">
-
-                                    <span class="font-medium">{{ $activityItem->description }}</span>
+                                    <span class="text-sm font-medium">{{ ucfirst($activityItem->description) }}</span>
                                     <span class="text-xs">{{ $activityItem->causer?->name }} – {{ $activityItem->causer?->email }}</span>
                                     <span class="text-xs text-gray-500">
                                     {{ $activityItem->created_at->format(__('filament-activity-log::activities.default_datetime_format')) }}
                                     </span>
+                                    <br>
+                                    @if ($activityItem->getExtraProperty('manual') === true)
+                                        <span class="text-sm">
+                                            {{ $activityItem->getExtraProperty('reason') }}
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            @else
+            @elseif ($activityItem->description != "updated")
                 <div @class([
                     'p-2 space-y-2 bg-white rounded-xl shadow',
                     'dark:border-gray-600 dark:bg-gray-800',

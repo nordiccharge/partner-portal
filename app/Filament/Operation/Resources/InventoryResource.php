@@ -14,6 +14,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\HtmlString;
 use PHPUnit\Metadata\Group;
 
 class InventoryResource extends Resource
@@ -72,7 +73,7 @@ class InventoryResource extends Resource
                                     Forms\Components\TextInput::make('newQuantity')
                                         ->label('Amount')
                                         ->default(0)
-                                        ->integer()
+                                        ->integer(),
                                 ])
                                 ->action(function (Forms\Set $set, array $data, Inventory $record = null): void {
                                     if ($record == null) {
@@ -171,7 +172,8 @@ class InventoryResource extends Resource
                         Forms\Components\Placeholder::make('helpText')
                             ->label('Your changes will be automatically saved'),
                         Forms\Components\Select::make('quantityMethod')
-                            ->label('')
+                            ->label('Action')
+                            ->required()
                             ->options([
                                 'Add', 'Subtract', 'Move'
                             ])
@@ -179,6 +181,7 @@ class InventoryResource extends Resource
                             ->default(0),
                         Forms\Components\Select::make('new_inventory')
                             ->label('Move to')
+                            ->required()
                             ->disabled(fn (Forms\Get $get) => $get('quantityMethod') != 2)
                             ->hidden(fn (Forms\Get $get) => $get('quantityMethod') != 2)
                             ->options(fn (Inventory $record) => Inventory::where('product_id', '=', $record->product_id)->where('id', '!=', $record->id)->get()->pluck('id', 'id'))
@@ -187,8 +190,13 @@ class InventoryResource extends Resource
                             ->searchable(),
                         Forms\Components\TextInput::make('newQuantity')
                             ->label('Amount')
+                            ->required()
                             ->default(0)
-                            ->integer()
+                            ->integer(),
+                        Forms\Components\Textarea::make('reason')
+                            ->label('Reason')
+                            ->required()
+                            ->default(''),
                     ])
                     ->action(function (array $data, Inventory $record = null): void {
                         $newQuantity = $record->quantity;
@@ -204,7 +212,9 @@ class InventoryResource extends Resource
                         $record->update(['quantity']);
                         activity()
                             ->performedOn($record)
-                            ->log('Quantity updated from ' . $oldQuantity . ' to ' . $newQuantity . ' by ' . auth()->user()->email);
+                            ->causedBy(auth()->user())
+                            ->withProperties(['manual' => true, 'reason' => $data['reason']])
+                            ->log('Manually updated from ' . $oldQuantity . ' to ' . $newQuantity . ' by ' . auth()->user()->email);
                     }),
                 Tables\Actions\Action::make('History')
                     ->icon('heroicon-o-document-text')
