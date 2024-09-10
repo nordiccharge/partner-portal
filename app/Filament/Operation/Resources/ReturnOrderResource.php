@@ -133,7 +133,10 @@ class ReturnOrderResource extends Resource
                     ->sortable(),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('team')
+                    ->multiple()
+                    ->relationship('team', 'name')
+                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\Action::make('Complete Return')
