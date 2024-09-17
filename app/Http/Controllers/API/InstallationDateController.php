@@ -15,7 +15,8 @@ use Spatie\Activitylog\ActivityLogger;
 
 class InstallationDateController extends Controller
 {
-    public function index(Request $request) {
+    public function index(Request $request): \Illuminate\Http\JsonResponse
+    {
         $request->validate([
             'order' => 'required',
             'date' => 'required',
@@ -47,13 +48,19 @@ class InstallationDateController extends Controller
         }
     }
 
-    public function completeOrder(Request $request) {
+    public function completeOrder(Request $request): \Illuminate\Http\JsonResponse
+    {
+        Log::debug('Request: ' . $request);
         $request->validate([
             'serial_number' => 'required',
         ]);
 
+        Log::debug("Validated");
+
         try {
+            Log::debug("Trying to find charger");
             $order = Charger::where('serial_number', $request->serial_number)->first()->order;
+            Log::debug("Found charger");
             $order->update([
                 'stage_id' => Stage::where('pipeline_id', $order->pipeline_id)->where('state', 'completed')->first()->id,
                 'installation_date' => now()
