@@ -92,6 +92,9 @@ class ViewOrder extends ViewRecord
                                 if ($charger->inventory->product->brand->name == 'NexBlue') {
                                     $guide = 2;
                                 }
+                                Log::debug("Guide: " . $guide);
+                                Log::debug("Charger: " . $charger);
+                                Log::debug($data['monta_url']);
                                 $response = Http::withHeaders([
                                     'Content-Type' => 'application/json',
                                 ])
@@ -113,7 +116,7 @@ class ViewOrder extends ViewRecord
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
-                                        ->log('Failed to create charger on Installer Tool: ' . $response->status() . ' ' . $response->body());
+                                        ->log('Failed to create charger on Installer Tool: ' . $response->status());
                                 }
                                 \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
                             })
