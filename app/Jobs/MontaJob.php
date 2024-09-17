@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\StageAutomation;
 use App\Models\Order;
 use App\Models\Stage;
+use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -84,6 +85,34 @@ class MontaJob implements ShouldQueue
                         ->iconColor('success')
                         ->sendToDatabase($user)
                         ->broadcast($user);
+                }
+                try {
+                    $guide = null;
+                    $charger = $record->items->first();
+                    if ($charger->inventory->product->brand->name == 'Easee') {
+                        $guide = 1;
+                    }
+                    if ($charger->inventory->product->brand->name == 'Zaptec') {
+                        $guide = 3;
+                    }
+                    if ($charger->inventory->product->brand->name == 'NexBlue') {
+                        $guide = 2;
+                    }
+                    $response = Http::withHeaders([
+                        'Content-Type' => 'application/json',
+                    ])
+                        ->post('https://installer-api.nordiccharge.com/chargers', [
+                            "serial_number" => $charger->serial_number,
+                            "guide" => $guide,
+                            "data" => json_encode([
+                                "name" => $charger->inventory->product->name,
+                                "image" => $charger->inventory->product->image,
+                                "monta_url" => $response->json()['url'],
+                            ]),
+                        ]);
+                    \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
+                } catch (Exception $e) {
+                    Log::debug('Failed to create charger on Installer Tool: ' . $e->getMessage());
                 }
             } else {
                 activity()
