@@ -16,6 +16,7 @@ use App\Models\Stage;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Group;
@@ -30,6 +31,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 use Parallax\FilamentComments\Infolists\Components\CommentsEntry;
@@ -67,6 +69,55 @@ class ViewOrder extends ViewRecord
                     ->columns(5)
                     ->columnSpanFull()
                     ->headerActions([
+                        Action::make("installer_action")
+                            ->label("Add to Installer Tool")
+                            ->icon("heroicon-o-user-plus")
+                            ->modalHeading('Create on Installer Tool?')
+                            ->modalDescription('This will create the charger on the installer tool.')
+                            ->form([
+                                TextInput::make('monta_url')
+                                    ->label('Monta URL')
+                                    ->required(),
+                                ])
+                            ->modalSubmitActionLabel('Create now')
+                            ->action(function (Order $record, array $data) {
+                                $guide = null;
+                                $charger = $record->items->first();
+                                if ($charger->inventory->product->brand->name == 'Easee') {
+                                    $guide = 1;
+                                }
+                                if ($charger->inventory->product->brand->name == 'Zaptec') {
+                                    $guide = 3;
+                                }
+                                if ($charger->inventory->product->brand->name == 'NexBlue') {
+                                    $guide = 2;
+                                }
+                                $response = Http::withHeaders([
+                                    'Content-Type' => 'application/json',
+                                ])
+                                    ->post('https://installer-api.nordiccharge.com/chargers', [
+                                        "serial_number" => $charger->serial_number,
+                                        "guide" => $guide,
+                                        "data" => json_encode([
+                                            "name" => $charger->inventory->product->name,
+                                            "image" => $charger->inventory->product->image,
+                                            "monta_url" => $data['monta_url'],
+                                        ]),
+                                    ]);
+                                if($response->status() == 201) {
+                                    activity()
+                                        ->performedOn($record)
+                                        ->event('system')
+                                        ->log('Charger created on Installer Tool: ' . $response->body());
+                                } else {
+                                    activity()
+                                        ->performedOn($record)
+                                        ->event('system')
+                                        ->log('Failed to create charger on Installer Tool: ' . $response->status() . ' ' . $response->body());
+                                }
+                                \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
+                            })
+                        ,
                         Action::make('monta_action')
                             ->label('Create on Monta')
                             ->icon('heroicon-o-cloud-arrow-up')
