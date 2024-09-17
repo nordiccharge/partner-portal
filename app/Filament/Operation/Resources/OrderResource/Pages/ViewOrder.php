@@ -111,14 +111,14 @@ class ViewOrder extends ViewRecord
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
-                                        ->log('Charger created on Installer Tool: ' . $response->body());
+                                        ->log('Charger created on Installer Tool');
                                 } else {
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
-                                        ->log('Failed to create charger on Installer Tool: ' . $response->status());
+                                        ->log('Failed to create charger on Installer Tool');
                                 }
-                                \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
+                                \Illuminate\Support\Facades\Log::debug('Failed to create charger on Installer Tool');
                             })
                         ,
                         Action::make('monta_action')
