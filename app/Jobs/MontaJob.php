@@ -110,6 +110,17 @@ class MontaJob implements ShouldQueue
                                 "monta_url" => $response->json()['url'],
                             ]),
                         ]);
+                    if($response->status() == 201) {
+                        activity()
+                            ->performedOn($record)
+                            ->event('system')
+                            ->log('Charger created on Installer Tool: ' . $response->body());
+                    } else {
+                        activity()
+                            ->performedOn($record)
+                            ->event('system')
+                            ->log('Failed to create charger on Installer Tool: ' . $response->status() . ' ' . $response->body());
+                    }
                     \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
                 } catch (Exception $e) {
                     Log::debug('Failed to create charger on Installer Tool: ' . $e->getMessage());
