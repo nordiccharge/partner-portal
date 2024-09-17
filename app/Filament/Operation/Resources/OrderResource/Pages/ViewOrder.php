@@ -92,9 +92,7 @@ class ViewOrder extends ViewRecord
                                 if ($charger->inventory->product->brand->name == 'NexBlue') {
                                     $guide = 2;
                                 }
-                                Log::debug("Guide: " . $guide);
-                                Log::debug("Charger: " . $charger);
-                                Log::debug($data['monta_url']);
+                                Log::debug('Serial number: ' . $charger->serial_number);
                                 $response = Http::withHeaders([
                                     'Content-Type' => 'application/json',
                                 ])
