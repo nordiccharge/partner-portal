@@ -64,6 +64,9 @@ class MontaJob implements ShouldQueue
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
+                $record->update([
+                    "action" => $response->json()['url']
+                ]);
                 Log::debug('Updating stage on Monta...');
                 try {
                     $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();
@@ -85,45 +88,6 @@ class MontaJob implements ShouldQueue
                         ->iconColor('success')
                         ->sendToDatabase($user)
                         ->broadcast($user);
-                }
-                try {
-                    $guide = null;
-                    $charger = $record->items->first();
-                    if ($charger->inventory->product->brand->name == 'Easee') {
-                        $guide = 1;
-                    }
-                    if ($charger->inventory->product->brand->name == 'Zaptec') {
-                        $guide = 3;
-                    }
-                    if ($charger->inventory->product->brand->name == 'NexBlue') {
-                        $guide = 2;
-                    }
-                    $response = Http::withHeaders([
-                        'Content-Type' => 'application/json',
-                    ])
-                        ->post('https://installer-api.nordiccharge.com/chargers', [
-                            "serial_number" => $charger->serial_number,
-                            "guide" => $guide,
-                            "data" => json_encode([
-                                "name" => $charger->inventory->product->name,
-                                "image" => $charger->inventory->product->image,
-                                "monta_url" => $response->json()['url'],
-                            ]),
-                        ]);
-                    if($response->status() == 201) {
-                        activity()
-                            ->performedOn($record)
-                            ->event('system')
-                            ->log('Charger created on Installer Tool: ' . $response->body());
-                    } else {
-                        activity()
-                            ->performedOn($record)
-                            ->event('system')
-                            ->log('Failed to create charger on Installer Tool: ' . $response->status() . ' ' . $response->body());
-                    }
-                    \Illuminate\Support\Facades\Log::debug("Response: " . $response->body());
-                } catch (Exception $e) {
-                    Log::debug('Failed to create charger on Installer Tool: ' . $e->getMessage());
                 }
             } else {
                 activity()

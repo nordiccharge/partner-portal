@@ -75,79 +75,126 @@ class ViewOrder extends ViewRecord
                             ->modalHeading('Create on Installer Tool?')
                             ->modalDescription('This will create the charger on the installer tool.')
                             ->form([
-                                TextInput::make('monta_url')
-                                    ->label('Monta URL')
+                                Select::make('model')
+                                    ->label('ChargePoint integration model')
+                                    ->options(function (Order $order) {
+                                        return $order->chargers->mapWithKeys(function ($item) {
+                                            return [$item->id => $item->product->name . ' - ' . $item->serial_number];
+                                        });
+                                    })
+                                    ->default(function (Order $order) {
+                                        return $order->chargers->first()->id;
+                                    })
+                                    ->searchable()
                                     ->required(),
-                                ])
-                            ->modalSubmitActionLabel('Create now')
+                                TextInput::make('monta')
+                                    ->label('Monta URL')
+                                    ->default(fn (Order $order) => $order->action)
+                                    ->url()
+                                    ->required()
+                            ])
                             ->action(function (Order $record, array $data) {
-                                $guide = null;
-                                $charger = $record->items->first();
-                                if ($charger->inventory->product->brand->name == 'Easee') {
-                                    $guide = 1;
-                                }
-                                if ($charger->inventory->product->brand->name == 'Zaptec') {
-                                    $guide = 3;
-                                }
-                                if ($charger->inventory->product->brand->name == 'NexBlue') {
-                                    $guide = 2;
-                                }
-                                Log::debug('Serial number: ' . $charger->serial_number);
-                                $response = Http::withHeaders([
-                                    'Content-Type' => 'application/json',
-                                ])
-                                    ->post('https://installer-api.nordiccharge.com/chargers', [
-                                        "serial_number" => $charger->serial_number,
-                                        "guide" => $guide,
-                                        "data" => json_encode([
-                                            "name" => $charger->inventory->product->name,
-                                            "image" => $charger->inventory->product->image,
-                                            "monta_url" => $data['monta_url'],
-                                        ]),
+                                try {
+                                    $charger = $record->chargers->where('id', $data['model'])->first();
+                                    if(!$charger->exists()) {
+                                        activity()
+                                            ->performedOn($record)
+                                            ->event('system')
+                                            ->log('Failed to create on Installer Tool: Charger not found');
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->body('Charger not found')
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->send();
+                                        return;
+                                    }
+                                    $guide = null;
+                                    if ($charger->product->brand->name === 'Easee') {
+                                        $guide = 1;
+                                    } elseif ($charger->product->brand->name === 'NexBlue') {
+                                        $guide = 2;
+                                    } elseif ($charger->product->brand->name === 'Zaptec') {
+                                        $guide = 3;
+                                    } else {
+                                        activity()
+                                            ->performedOn($record)
+                                            ->event('system')
+                                            ->log('Failed to create on Installer Tool: Brand not supported');
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->body('Brand not supported')
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->send();
+                                        Log::error('Brand not supported');
+                                        return;
+                                    }
+                                    $response = Http::post("https://installer-api.nordiccharge.com/chargers", [
+                                        'serial_number' => $charger->serial_number,
+                                        'guide' => $guide,
+                                        'data' => json_encode([
+                                            'title' => $charger->product->name,
+                                            'image' => 'https://portal.nordiccharge.com/storage/products/' . $charger->product->image_url,
+                                            'monta_url' => $data['monta']
+                                        ])
                                     ]);
-                                if($response->status() == 201) {
+                                    if (!$response->status() == 201) {
+                                        Log::error('Failed to create on Installer Tool: ' . $response->status() . ' ' . $response->body());
+                                        Notification::make()
+                                            ->title('Error')
+                                            ->body('Failed to create on Installer Tool: ' . $response->status())
+                                            ->icon('heroicon-o-x-circle')
+                                            ->iconColor('danger')
+                                            ->send();
+                                        activity()
+                                            ->performedOn($record)
+                                            ->event('system')
+                                            ->log('Failed to create on Installer Tool: ' . $response->status());
+                                        return;
+                                    }
+                                    Notification::make()
+                                        ->title('Success')
+                                        ->body('Created on Installer Tool')
+                                        ->icon('heroicon-o-check-circle')
+                                        ->iconColor('success')
+                                        ->send();
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
-                                        ->log('Charger created on Installer Tool');
-                                } else {
+                                        ->log('Created on Installer Tool: ' . $response->body());
+                                } catch (\Exception $e) {
                                     activity()
                                         ->performedOn($record)
                                         ->event('system')
-                                        ->log('Failed to create charger on Installer Tool');
+                                        ->log('Failed to create on Installer Tool: ' . $e->getMessage());
+                                    Log::error('Failed to create on Installer Tool: ' . $e->getMessage());
                                 }
-                                \Illuminate\Support\Facades\Log::debug('Failed to create charger on Installer Tool');
                             })
-                        ,
+                            ->hidden(fn (Order $order) => ($order->chargers->count() <= 0)),
                         Action::make('monta_action')
                             ->label('Create on Monta')
                             ->icon('heroicon-o-cloud-arrow-up')
+                            ->hidden(fn (Order $order) => ($order->chargers->count() <= 0))
                             ->modalHeading('Create on Monta?')
                             ->modalDescription('This will create team, invite customer and create chargepoint (with subscription) on Monta.')
                             ->form([
                                 Select::make('model')
                                     ->label('ChargePoint integration model')
-                                    ->options([
-                                        'Easee - Charge Lite' => 'Easee - Charge Lite',
-                                        'Zaptec - Go' => 'Zaptec - Go',
-                                        'Nexblue - Edge' => 'Nexblue - Edge',
-                                    ])
+                                    ->options(function (Order $order) {
+                                        return $order->items->mapWithKeys(function ($item) {
+                                            return [$item->inventory->product->brand->name => $item->inventory->product->name];
+                                        });
+                                    })
+                                    ->default(function (Order $order) {
+                                        foreach ($order->items as $item) {
+                                            if ($item->inventory->product->brand->name == 'Easee' || $item->inventory->product->brand->name == 'Zaptec' || $item->inventory->product->brand->name == 'NexBlue') {
+                                                return $item->inventory->product->name;
+                                            }
+                                        }
+                                    })
                                     ->searchable()
-                                    ->required()
-                                ->default(function (Order $record) {
-                                    if ($record->items()->count() > 0) {
-                                        if ($record->items->first()->inventory->product->brand->name == 'Easee') {
-                                            return 'Easee - Charge Lite';
-                                        }
-                                        if ($record->items->first()->inventory->product->brand->name == 'Zaptec') {
-                                            return 'Zaptec - Go';
-                                        }
-                                        if ($record->items->first()->inventory->product->brand->name == 'NexBlue') {
-                                            return 'Nexblue - Edge';
-                                        }
-                                    }
-                                    return null;
-                                }),
+                                    ->required(),
                                 Select::make('subscription')
                                     ->label('Monta Subscription')
                                     ->options([
@@ -156,8 +203,9 @@ class ViewOrder extends ViewRecord
                                         '2757' => '#2757 Serviceaftale uden refusion – Nordisk Energi',
                                     ])
                                     ->searchable()
-                                    ->default('false')
+                                    ->default('2636')
                                     ->required(),
+
                             ])
                             ->color('gray')
                             ->modalSubmitActionLabel('Create now')
