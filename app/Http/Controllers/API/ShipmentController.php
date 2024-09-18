@@ -4,10 +4,12 @@ namespace App\Http\Controllers\API;
 
 use App\Events\OrderFulfilled;
 use App\Http\Controllers\Controller;
+use App\Jobs\InstallerJob;
 use App\Models\Charger;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Team;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use mysql_xdevapi\Exception;
@@ -59,7 +61,7 @@ class ShipmentController extends Controller
                         $charger = Charger::where('serial_number', '=', $serialNumber)->first();
                         if ($charger === null) {
                             Log::debug('Creating charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' for order ' . $order_id . ' and team ' . $team_id);
-                            Charger::create([
+                            $newCharger = Charger::create([
                                 'team_id' => $team_id,
                                 'order_id' => $order_id,
                                 'product_id' => $product->id,
@@ -69,6 +71,12 @@ class ShipmentController extends Controller
                                 ->performedOn($order)
                                 ->event('system')
                                 ->log('Charger added with S/N ' . $serialNumber);
+                            if ($order->action != null) {
+                                InstallerJob::dispatch($order, $newCharger->id, $order->action, null)
+                                    ->onQueue('monta-ne')
+                                    ->onConnection('database')
+                                    ->delay(Carbon::now()->addSeconds(10));
+                            }
                         }
 
                         Log::debug('Charger with SKU ' . $sku . ' and serial number ' . $serialNumber . ' already exists');

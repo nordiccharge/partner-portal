@@ -7,6 +7,7 @@ use App\Events\SendEmailToInstaller;
 use App\Filament\Operation\Resources\OrderResource;
 use App\Filament\Operation\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
+use App\Jobs\InstallerJob;
 use App\Jobs\MontaJob;
 use App\Models\Invoice;
 use App\Models\Order;
@@ -94,82 +95,10 @@ class ViewOrder extends ViewRecord
                                     ->required()
                             ])
                             ->action(function (Order $record, array $data) {
-                                try {
-                                    $charger = $record->chargers->where('id', $data['model'])->first();
-                                    if(!$charger->exists()) {
-                                        activity()
-                                            ->performedOn($record)
-                                            ->event('system')
-                                            ->log('Failed to create on Installer Tool: Charger not found');
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->body('Charger not found')
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->send();
-                                        return;
-                                    }
-                                    $guide = null;
-                                    if ($charger->product->brand->name === 'Easee') {
-                                        $guide = 1;
-                                    } elseif ($charger->product->brand->name === 'NexBlue') {
-                                        $guide = 2;
-                                    } elseif ($charger->product->brand->name === 'Zaptec') {
-                                        $guide = 3;
-                                    } else {
-                                        activity()
-                                            ->performedOn($record)
-                                            ->event('system')
-                                            ->log('Failed to create on Installer Tool: Brand not supported');
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->body('Brand not supported')
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->send();
-                                        Log::error('Brand not supported');
-                                        return;
-                                    }
-                                    $response = Http::post("https://installer-api.nordiccharge.com/chargers", [
-                                        'serial_number' => $charger->serial_number,
-                                        'guide' => $guide,
-                                        'data' => json_encode([
-                                            'title' => $charger->product->name,
-                                            'image' => 'https://portal.nordiccharge.com/storage/products/' . $charger->product->image_url,
-                                            'monta_url' => $data['monta']
-                                        ])
-                                    ]);
-                                    if (!$response->status() == 201) {
-                                        Log::error('Failed to create on Installer Tool: ' . $response->status() . ' ' . $response->body());
-                                        Notification::make()
-                                            ->title('Error')
-                                            ->body('Failed to create on Installer Tool: ' . $response->status())
-                                            ->icon('heroicon-o-x-circle')
-                                            ->iconColor('danger')
-                                            ->send();
-                                        activity()
-                                            ->performedOn($record)
-                                            ->event('system')
-                                            ->log('Failed to create on Installer Tool: ' . $response->status());
-                                        return;
-                                    }
-                                    Notification::make()
-                                        ->title('Success')
-                                        ->body('Created on Installer Tool')
-                                        ->icon('heroicon-o-check-circle')
-                                        ->iconColor('success')
-                                        ->send();
-                                    activity()
-                                        ->performedOn($record)
-                                        ->event('system')
-                                        ->log('Created on Installer Tool: ' . $response->body());
-                                } catch (\Exception $e) {
-                                    activity()
-                                        ->performedOn($record)
-                                        ->event('system')
-                                        ->log('Failed to create on Installer Tool: ' . $e->getMessage());
-                                    Log::error('Failed to create on Installer Tool: ' . $e->getMessage());
-                                }
+                                InstallerJob::dispatch($record, $data['model'], $data['monta'], auth()->user())
+                                    ->onQueue('monta-ne')
+                                    ->onConnection('database')
+                                    ->delay(Carbon::now()->addSeconds(10));
                             })
                             ->hidden(fn (Order $order) => ($order->chargers->count() <= 0)),
                         Action::make('monta_action')
