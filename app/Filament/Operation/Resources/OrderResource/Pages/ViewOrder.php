@@ -99,6 +99,7 @@ class ViewOrder extends ViewRecord
                                 TextInput::make('service')
                                     ->label('Service URL (Monta Integration URL)')
                                     ->url()
+                                    ->reactive()
                                     ->required()
                             ])
                             ->action(function (Order $record, array $data) {
