@@ -92,7 +92,6 @@ class ViewOrder extends ViewRecord
                                     ->required(),
                                 TextInput::make('service')
                                     ->label('Service URL (Monta Integration URL)')
-                                    ->default(fn (Order $order) => $order->action)
                                     ->url()
                                     ->required()
                             ])
