@@ -9,6 +9,7 @@ use App\Filament\Operation\Resources\ReturnOrderResource;
 use App\Forms\Components\Flow;
 use App\Jobs\InstallerJob;
 use App\Jobs\MontaJob;
+use App\Models\Charger;
 use App\Models\Invoice;
 use App\Models\Order;
 use App\Models\Postal;
@@ -86,7 +87,7 @@ class ViewOrder extends ViewRecord
                                     ->default(function (Order $order) {
                                         return $order->chargers->first()->id;
                                     })
-                                    ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Order::find($state)->chargers->where('id', $state)->first()->service) : $set('service', null))
+                                    ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Charger::find($state)->where('id', $state)->first()->service) : $set('service', null))
                                     ->live()
                                     ->searchable()
                                     ->required(),
