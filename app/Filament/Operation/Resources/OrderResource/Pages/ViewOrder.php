@@ -84,14 +84,6 @@ class ViewOrder extends ViewRecord
                                             return [$item->id => $item->product->name . ' - ' . $item->serial_number];
                                         });
                                     })
-                                    ->default(function (Order $order, callable $set) {
-                                        if ($order->chargers->count() > 0) {
-                                            $charger = $order->chargers->first();
-                                            $set('service', $charger->service);
-                                            return $charger->id;
-                                        }
-                                        return [];
-                                    })
                                     ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Charger::find($state)->where('id', $state)->first()->service) : $set('service', null))
                                     ->live()
                                     ->searchable()
