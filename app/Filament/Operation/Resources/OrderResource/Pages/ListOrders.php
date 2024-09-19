@@ -56,6 +56,21 @@ class ListOrders extends ListRecords
                 ->select('orders.*');
         }
 
+        if ($tab === 'missing_charger') {
+            return Order::query()
+                ->where('installation_required', '=', 1)
+                ->join('stages', 'orders.stage_id', '=', 'stages.id')
+                ->where('stages.state', '!=', 'completed')
+                ->where('stages.state', '!=', 'aborted')
+                ->where('stages.state', '!=', 'return')
+                ->whereDoesntHave('chargers')
+                ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                ->join('inventories', 'order_items.inventory_id', '=', 'inventories.id')
+                ->join('products', 'inventories.product_id', '=', 'products.id')
+                ->where('products.category_id', '=', 1)
+                ->select('orders.*');
+        }
+
         return Order::query()
             ->join('stages', 'stages.id', '=', 'orders.stage_id')
             ->where('stages.state', '!=', 'completed')
@@ -76,6 +91,34 @@ class ListOrders extends ListRecords
                     $count = $this->tabQuery('')->count();
                     if ($count>0) {
                         return 'info';
+                    }
+                    return 'gray';
+                }),
+
+            'missing_charger' => Tab::make('Missing charger')
+                ->icon('heroicon-o-bolt-slash')
+                ->modifyQueryUsing(function (Builder $query) {
+                    // query orders that require installation, are not in a completed or aborted stage, have no chargers but have inventory items which are chargers
+                    $query
+                        ->where('installation_required', '=', 1)
+                        ->join('stages', 'orders.stage_id', '=', 'stages.id')
+                        ->where('stages.state', '!=', 'completed')
+                        ->where('stages.state', '!=', 'aborted')
+                        ->where('stages.state', '!=', 'return')
+                        ->whereDoesntHave('chargers')
+                        ->join('order_items', 'orders.id', '=', 'order_items.order_id')
+                        ->join('inventories', 'order_items.inventory_id', '=', 'inventories.id')
+                        ->join('products', 'inventories.product_id', '=', 'products.id')
+                        ->where('products.category_id', '=', 1)
+                        ->select('orders.*');
+                })
+                ->badge(function () {
+                    return $this->tabQuery('missing_charger')->count();
+                })
+                ->badgeColor(function () {
+                    $count = $this->tabQuery('missing_charger')->count();
+                    if ($count>0) {
+                        return 'warning';
                     }
                     return 'gray';
                 }),
