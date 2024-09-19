@@ -94,8 +94,8 @@ class InstallerJob implements ShouldQueue
                 'serial_number' => $charger->serial_number,
                 'guide' => $guide,
                 'data' => json_encode([
-                    'title' => $charger->product->name,
-                    'image' => 'https://portal.nordiccharge.com/storage/products/' . $charger->product->image_url,
+                    'name' => $charger->product->name,
+                    'image' => 'https://portal.nordiccharge.com/storage/' . $charger->product->image_url,
                     'monta_url' => $monta
                 ])
             ]);
