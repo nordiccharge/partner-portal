@@ -82,7 +82,7 @@ class MontaJob implements ShouldQueue
                     'address' => $record->shipping_address,
                     'zip' => $record->postal->postal,
                     'city' => $record->city->name,
-                    'model' => 'Easee',
+                    'model' => $charger->product->brand->name,
                     'id' => $subscription,
                 ]);
             if ($response->status() == 201) {
