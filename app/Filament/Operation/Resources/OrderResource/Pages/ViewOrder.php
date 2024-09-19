@@ -116,6 +116,7 @@ class ViewOrder extends ViewRecord
                             ->visible(fn (Order $record) => $record->team_id == 7 || 1)
                             ->action(function (Order $record, array $data) {
                                 $charger = $record->chargers->where('id', $data['charger'])->first();
+                                Log::debug('Charger brand is: ' . $charger->product->brand->name);
                                 MontaJob::dispatch($record, $data['subscription'], $charger, auth()->user())
                                     ->onQueue('monta-ne')
                                     ->onConnection('database')
