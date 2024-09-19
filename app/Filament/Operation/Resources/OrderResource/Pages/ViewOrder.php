@@ -113,7 +113,7 @@ class ViewOrder extends ViewRecord
 
                             ])
                             ->modalSubmitActionLabel('Create now')
-                            ->visible(fn (Order $record) => $record->team_id == 7 || 1)
+                            ->visible(fn (Order $record) => $record->team_id == 7 || 5)
                             ->action(function (Order $record, array $data) {
                                 $charger = $record->chargers->where('id', $data['charger'])->first();
                                 Log::debug('Charger brand is: ' . $charger->product->brand->name);
