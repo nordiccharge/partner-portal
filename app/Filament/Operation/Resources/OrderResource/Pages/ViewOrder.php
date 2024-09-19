@@ -95,6 +95,9 @@ class ViewOrder extends ViewRecord
                                     ->required()
                             ])
                             ->action(function (Order $record, array $data) {
+                                $record->update([
+                                    'action' => $data['monta']
+                                ]);
                                 InstallerJob::dispatch($record, $data['model'], $data['monta'], auth()->user())
                                     ->onQueue('monta-ne')
                                     ->onConnection('database')

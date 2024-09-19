@@ -29,10 +29,33 @@ class ChargerResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Team Details')
+                    ->schema([
+                        Forms\Components\Select::make('team_id')
+                            ->label('Team')
+                            ->relationship('team', 'name')
+                            ->required()
+                            ->preload()
+                            ->searchable()
+                            ->reactive()
+                            ->live()
+                            ->afterStateUpdated(fn ($state, callable $set) => $set('order_id', [])),
+                    ]),
                 Forms\Components\Select::make('order_id')
                     ->label('Order')
                     ->preload()
-                    ->options(Order::all()->pluck('id', 'id')->toArray())
+                    ->options(function (Forms\Get $get) {
+                        if (!$get('team_id')) {
+                            return [];
+                        }
+                        return
+                            Order::where('team_id', $get('team_id'))->get()->mapWithKeys(function ($order) {
+                                return [
+                                    $order->id => $order->id . ': ' . $order->shipping_address . ' - ' . $order->customer_first_name . ' ' . $order->customer_last_name,
+                                ];
+                            });
+                    })
+                    ->searchable()
                     ->nullable(),
                 Forms\Components\Select::make('product_id')
                     ->label('Product')
