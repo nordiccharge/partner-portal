@@ -86,7 +86,7 @@ class ViewOrder extends ViewRecord
                                     ->default(function (Order $order) {
                                         return $order->chargers->first()->id;
                                     })
-                                    ->afterStateUpdated(fn (Order $record, $state, callable $set) => $set('service', $record->chargers->where('id', $state)->first()->service))
+                                    ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Order::find($state)->chargers->where('id', $state)->first()->service) : $set('service', null))
                                     ->live()
                                     ->searchable()
                                     ->required(),
