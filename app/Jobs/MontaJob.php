@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Enums\StageAutomation;
 use App\Models\Order;
 use App\Models\Stage;
+use Carbon\Carbon;
 use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Queueable;
@@ -26,13 +27,13 @@ class MontaJob implements ShouldQueue
 
     protected $record;
     protected $subscription;
-    protected $model;
+    protected $charger;
     protected $user;
-    public function __construct(Order $record, $subscription, $model, $user = null)
+    public function __construct(Order $record, $subscription, $charger, $user = null)
     {
         $this->record = $record;
         $this->subscription = $subscription;
-        $this->model = $model;
+        $this->charger = $charger;
         $this->user = $user;
     }
 
@@ -43,19 +44,42 @@ class MontaJob implements ShouldQueue
     {
         Log::debug('Creating on Monta...');
         $record = $this->record;
-        $model = $this->model;
+        $charger = $this->charger;
         $subscription = $this->subscription;
         $user = $this->user;
         $id = (string) $record->id;
         try {
+            Log::debug('Choosing operator...');
+            $url = '';
+            if ($record->team->id == 5) {
+                $url = 'https://monta-script-obd7ro23jq-lz.a.run.app/create/stromlinet';
+            } elseif ($record->team->id == 7) {
+                $url = 'https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi';
+            } else {
+                Log::error('Team not found');
+                activity()
+                    ->performedOn($record)
+                    ->event('system')
+                    ->log('Failed to create order on Monta: Team not found');
+                if ($user != null) {
+                    Notification::make()
+                        ->title("#{$id} : FAILED to create order on Monta")
+                        ->body('Team not found')
+                        ->icon('heroicon-o-x-circle')
+                        ->iconColor('danger')
+                        ->sendToDatabase($user)
+                        ->broadcast($user);
+                }
+                return;
+            }
             $response = Http::timeout(300)
-                ->get('https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi', [
+                ->get($url, [
                     'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
                     'email' => $record->customer_email,
                     'address' => $record->shipping_address,
                     'zip' => $record->postal->postal,
                     'city' => $record->city->name,
-                    'model' => $model,
+                    'model' => $charger->product->brand->name,
                     'id' => $subscription,
                 ]);
             if ($response->status() == 201) {
@@ -64,10 +88,22 @@ class MontaJob implements ShouldQueue
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
-                $charger = $record->chargers->where('id', $model)->first();
+                Log::debug('Updating service on charger...');
                 $charger->update([
                     "service" => $response->json()['url']
                 ]);
+                try {
+                    InstallerJob::dispatch($record, $charger->id, $charger->service)
+                        ->onQueue('monta-ne')
+                        ->onConnection('database')
+                        ->delay(Carbon::now()->addSeconds(10));
+                } catch (Exception $e) {
+                    Log::debug('Failed to add service on charger to Install Tool: ' . $e->getMessage());
+                    activity()
+                        ->performedOn($record)
+                        ->event('system')
+                        ->log('Failed to add service on charger to Install Tool: ' . $e->getMessage());
+                }
                 Log::debug('Updating stage on Monta...');
                 try {
                     $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();

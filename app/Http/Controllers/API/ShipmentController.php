@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Events\OrderFulfilled;
 use App\Http\Controllers\Controller;
 use App\Jobs\InstallerJob;
+use App\Jobs\MontaJob;
 use App\Models\Charger;
 use App\Models\Order;
 use App\Models\Product;
@@ -71,11 +72,13 @@ class ShipmentController extends Controller
                                 ->performedOn($order)
                                 ->event('system')
                                 ->log('Charger added with S/N ' . $serialNumber);
-                            if ($order->action != null) {
-                                InstallerJob::dispatch($order, $newCharger->id, $order->action, null)
-                                    ->onQueue('monta-ne')
-                                    ->onConnection('database')
-                                    ->delay(Carbon::now()->addSeconds(10));
+                            $chargerCounter = 0;
+                            foreach ($order->items as $item) {
+                                if ($item->category->name == "AC Chargers " && $chargerCounter === 0) {
+                                    // dispatch
+                                    $chargerCounter = 1;
+                                    break;
+                                }
                             }
                         }
 

@@ -112,29 +112,36 @@ class ViewOrder extends ViewRecord
                             ->modalHeading('Create on Monta?')
                             ->modalDescription('This will create team, invite customer and create chargepoint (with subscription) on Monta.')
                             ->form([
-                                Select::make('model')
+                                Select::make('charger')
                                     ->label('ChargePoint integration model')
                                     ->options(function (Order $order) {
-                                        return $order->items->mapWithKeys(function ($item) {
-                                            return [$item->inventory->product->brand->name => $item->inventory->product->name];
+                                        return $order->chargers->mapWithKeys(function ($item) {
+                                            return [$item->id => $item->product->name . ' - ' . $item->serial_number];
                                         });
-                                    })
-                                    ->default(function (Order $order) {
-                                        foreach ($order->items as $item) {
-                                            if ($item->inventory->product->brand->name == 'Easee' || $item->inventory->product->brand->name == 'Zaptec' || $item->inventory->product->brand->name == 'NexBlue') {
-                                                return $item->inventory->product->name;
-                                            }
-                                        }
                                     })
                                     ->searchable()
                                     ->required(),
                                 Select::make('subscription')
                                     ->label('Monta Subscription')
-                                    ->options([
-                                        'false' => 'No subscription',
-                                        '2636' => '#2636 Elrefusion abonnement ink. moms – Nordisk Energi',
-                                        '2757' => '#2757 Serviceaftale uden refusion – Nordisk Energi',
-                                    ])
+                                    ->options(function (Order $record) {
+                                        if ($record->team->id == 5 ) {
+                                            return [
+                                                'false' => 'No subscription',
+                                                '1864' => 'El. refusion abonnement til kunder som har købt en ladestander',
+                                                '1878' => 'El. refusion - leje af ladestander',
+                                            ];
+                                        }
+
+                                        if ($record->team->id == 7) {
+                                            return                                         [
+                                                'false' => 'No subscription',
+                                                '2636' => '#2636 Elrefusion abonnement ink. moms – Nordisk Energi',
+                                                '2757' => '#2757 Serviceaftale uden refusion – Nordisk Energi',
+                                            ];
+                                        }
+
+                                        return [];
+})
                                     ->searchable()
                                     ->default('2636')
                                     ->required(),
@@ -144,7 +151,8 @@ class ViewOrder extends ViewRecord
                             ->modalSubmitActionLabel('Create now')
                             ->visible(fn (Order $record) => $record->team_id == 7 || 1)
                             ->action(function (Order $record, array $data) {
-                                MontaJob::dispatch($record, $data['subscription'], $data['model'], auth()->user())
+                                $charger = $record->chargers->where('id', $data['charger'])->first();
+                                MontaJob::dispatch($record, $data['subscription'], $charger, auth()->user())
                                     ->onQueue('monta-ne')
                                     ->onConnection('database')
                                     ->delay(Carbon::now()->addSeconds(10));
