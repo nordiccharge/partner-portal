@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Enums\StageAutomation;
+use App\Models\Charger;
 use App\Models\Order;
 use App\Models\Stage;
 use Carbon\Carbon;
@@ -29,7 +30,7 @@ class MontaJob implements ShouldQueue
     protected $subscription;
     protected $charger;
     protected $user;
-    public function __construct(Order $record, $subscription, $charger, $user = null)
+    public function __construct(Order $record, $subscription, Charger $charger, $user = null)
     {
         $this->record = $record;
         $this->subscription = $subscription;
@@ -72,6 +73,7 @@ class MontaJob implements ShouldQueue
                 }
                 return;
             }
+            Log::debug('Adding service to charger' . $charger->product->brand->name . '...');
             $response = Http::timeout(300)
                 ->get($url, [
                     'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
