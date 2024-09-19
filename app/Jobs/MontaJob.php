@@ -64,8 +64,9 @@ class MontaJob implements ShouldQueue
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
-                $record->update([
-                    "action" => $response->json()['url']
+                $charger = $record->chargers->where('id', $model)->first();
+                $charger->update([
+                    "service" => $response->json()['url']
                 ]);
                 Log::debug('Updating stage on Monta...');
                 try {

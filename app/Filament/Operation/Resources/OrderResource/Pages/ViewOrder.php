@@ -86,19 +86,22 @@ class ViewOrder extends ViewRecord
                                     ->default(function (Order $order) {
                                         return $order->chargers->first()->id;
                                     })
+                                    ->afterStateUpdated(fn (Order $record, $state, callable $set) => $set('service', $record->chargers->where('id', $state)->first()->service))
+                                    ->live()
                                     ->searchable()
                                     ->required(),
-                                TextInput::make('monta')
-                                    ->label('Monta URL')
+                                TextInput::make('service')
+                                    ->label('Service URL (Monta Integration URL)')
                                     ->default(fn (Order $order) => $order->action)
                                     ->url()
                                     ->required()
                             ])
                             ->action(function (Order $record, array $data) {
-                                $record->update([
-                                    'action' => $data['monta']
+                                $charger = $record->chargers->where('id', $data['model'])->first();
+                                $charger->update([
+                                    'service' => $data['service']
                                 ]);
-                                InstallerJob::dispatch($record, $data['model'], $data['monta'], auth()->user())
+                                InstallerJob::dispatch($record, $data['model'], $data['service'], auth()->user())
                                     ->onQueue('monta-ne')
                                     ->onConnection('database')
                                     ->delay(Carbon::now()->addSeconds(10));
