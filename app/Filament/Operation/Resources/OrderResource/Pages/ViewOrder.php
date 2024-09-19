@@ -71,40 +71,6 @@ class ViewOrder extends ViewRecord
                     ->columns(5)
                     ->columnSpanFull()
                     ->headerActions([
-                        Action::make("installer_action")
-                            ->label("Add to Installer Tool")
-                            ->icon("heroicon-o-user-plus")
-                            ->modalHeading('Create on Installer Tool?')
-                            ->modalDescription('This will create the charger on the installer tool.')
-                            ->form([
-                                Select::make('model')
-                                    ->label('ChargePoint integration model')
-                                    ->options(function (Order $order) {
-                                        return $order->chargers->mapWithKeys(function ($item) {
-                                            return [$item->id => $item->product->name . ' - ' . $item->serial_number];
-                                        });
-                                    })
-                                    ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Charger::find($state)->where('id', $state)->first()->service) : $set('service', null))
-                                    ->live()
-                                    ->searchable()
-                                    ->required(),
-                                TextInput::make('service')
-                                    ->label('Service URL (Monta Integration URL)')
-                                    ->url()
-                                    ->reactive()
-                                    ->required()
-                            ])
-                            ->action(function (Order $record, array $data) {
-                                $charger = $record->chargers->where('id', $data['model'])->first();
-                                $charger->update([
-                                    'service' => $data['service']
-                                ]);
-                                InstallerJob::dispatch($record, $data['model'], $data['service'], auth()->user())
-                                    ->onQueue('monta-ne')
-                                    ->onConnection('database')
-                                    ->delay(Carbon::now()->addSeconds(10));
-                            })
-                            ->hidden(fn (Order $order) => ($order->chargers->count() <= 0)),
                         Action::make('monta_action')
                             ->label('Create on Monta')
                             ->icon('heroicon-o-cloud-arrow-up')
@@ -141,13 +107,11 @@ class ViewOrder extends ViewRecord
                                         }
 
                                         return [];
-})
+                                    })
                                     ->searchable()
-                                    ->default('2636')
                                     ->required(),
 
                             ])
-                            ->color('gray')
                             ->modalSubmitActionLabel('Create now')
                             ->visible(fn (Order $record) => $record->team_id == 7 || 1)
                             ->action(function (Order $record, array $data) {
@@ -163,6 +127,41 @@ class ViewOrder extends ViewRecord
                                     ->iconColor('warning')
                                     ->send();
                             }),
+                        Action::make("installer_action")
+                            ->label("Add to Installer Tool")
+                            ->color('gray')
+                            ->icon("heroicon-o-user-plus")
+                            ->modalHeading('Create on Installer Tool?')
+                            ->modalDescription('This will create the charger on the installer tool.')
+                            ->form([
+                                Select::make('model')
+                                    ->label('ChargePoint integration model')
+                                    ->options(function (Order $order) {
+                                        return $order->chargers->mapWithKeys(function ($item) {
+                                            return [$item->id => $item->product->name . ' - ' . $item->serial_number];
+                                        });
+                                    })
+                                    ->afterStateUpdated(fn ($state, callable $set) => $state != null ? $set('service', Charger::find($state)->where('id', $state)->first()->service) : $set('service', null))
+                                    ->live()
+                                    ->searchable()
+                                    ->required(),
+                                TextInput::make('service')
+                                    ->label('Service URL (Monta Integration URL)')
+                                    ->url()
+                                    ->reactive()
+                                    ->required()
+                            ])
+                            ->action(function (Order $record, array $data) {
+                                $charger = $record->chargers->where('id', $data['model'])->first();
+                                $charger->update([
+                                    'service' => $data['service']
+                                ]);
+                                InstallerJob::dispatch($record, $data['model'], $data['service'], auth()->user())
+                                    ->onQueue('monta-ne')
+                                    ->onConnection('database')
+                                    ->delay(Carbon::now()->addSeconds(10));
+                            })
+                            ->hidden(fn (Order $order) => ($order->chargers->count() <= 0)),
                         Action::make('Create invoice')
                             ->icon('heroicon-o-document-check')
                             ->color('info')
