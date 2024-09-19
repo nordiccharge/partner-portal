@@ -49,6 +49,7 @@ class MontaJob implements ShouldQueue
         $subscription = $this->subscription;
         $user = $this->user;
         $id = (string) $record->id;
+        Log::debug($charger);
         try {
             Log::debug('Choosing operator...');
             $url = '';
