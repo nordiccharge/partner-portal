@@ -494,6 +494,16 @@ class OrderResource extends Resource
                     ->label('Has Tracking Code')
                     ->placeholder('All Orders')
                     ->nullable(),
+                Tables\Filters\TernaryFilter::make('chargers')
+                    ->label('Has Invoice')
+                    ->placeholder('All Orders')
+                    ->nullable()
+                    ->queries(
+                        true: fn (Builder $query): Builder => $query->whereHas('chargers'),
+                        false: fn (Builder $query): Builder => $query->whereDoesntHave('chargers'),
+                        blank: fn (Builder $query): Builder => $query,
+                    )
+                    ->label('Has invoice(s)'),
                 Tables\Filters\TernaryFilter::make('invoices')
                     ->label('Has Invoice')
                     ->placeholder('All Orders')
