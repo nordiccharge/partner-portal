@@ -10,6 +10,7 @@ use App\Models\Installation;
 use App\Models\Installer;
 use App\Models\Inventory;
 use App\Models\Order;
+use App\Models\OrderItem;
 use App\Models\Pipeline;
 use App\Models\Postal;
 use App\Models\Product;
@@ -29,6 +30,7 @@ use Illuminate\Support\Facades\Log;
 use Filament\Tables\Actions\ExportBulkAction;
 use Illuminate\Support\HtmlString;
 use Livewire\Pipe;
+use RalphJSmit\Filament\RecordFinder\Forms\Components\RecordFinder;
 use SendGrid\Mail\Section;
 
 class OrderResource extends Resource
@@ -256,18 +258,15 @@ class OrderResource extends Resource
                                     ->label('Items in order')
                                     ->relationship()
                                     ->schema([
-                                        Forms\Components\Select::make('inventory_id')
+                                        RecordFinder::make('inventory_id')
                                             ->label('Product')
-                                            ->options(
-                                                function (Forms\Get $get) {
-                                                    return
-                                                        Inventory::join('products', 'inventories.product_id', '=', 'products.id')
-                                                            ->where('inventories.team_id', '=', (int)$get('../../team_id'))
-                                                            ->orWhere('inventories.global', '=', true)
-                                                            ->pluck('products.detailed_name', 'inventories.id');
-                                                }
-                                            )
-                                            ->searchable()
+                                            ->standalone()
+                                            ->tableQuery(Inventory::query())
+                                            ->query(function (Builder $query, Forms\Get $get) {
+                                                return Inventory::where('quantity', '>', 0)
+                                                    ->where('team_id', '=', (int)$get('../../team_id'))
+                                                    ->orWhere('global', '=', true);
+                                            })
                                             ->hidden(fn (Forms\Get $get) => $get('../../team_id') === null)
                                             ->live()
                                             ->required()
@@ -276,11 +275,51 @@ class OrderResource extends Resource
                                                     if ($state) {
                                                         $inventory = Inventory::findOrFail($state);
                                                         $set('price', $inventory->sale_price);
+                                                        $set('quantity', 1);
                                                     } else {
                                                         $set('price', null);
                                                     }
                                                 }
                                             )
+                                            ->openModalActionLabel('Select product')
+                                            ->getRecordLabelFromRecordUsing(fn (Inventory $record) => "{$record->product->name} ({$record->product->sku})")
+                                            ->tableColumns([
+                                                Tables\Columns\ImageColumn::make('product.image_url')
+                                                    ->label(''),
+                                                Tables\Columns\TextColumn::make('team.name')
+                                                    ->label('Team')
+                                                    ->searchable()
+                                                    ->sortable(),
+                                                Tables\Columns\TextColumn::make('product.name')
+                                                    ->searchable()
+                                                    ->description(fn (Inventory $record): string => $record->product->description ?: 'No description'),
+                                                Tables\Columns\TextColumn::make('product.sku')
+                                                    ->label('SKU')
+                                                    ->searchable()
+                                                    ->toggleable()
+                                                    ->sortable(),
+                                                Tables\Columns\TextColumn::make('quantity')
+                                                    ->badge()
+                                                    ->color(function ($record) {
+                                                        $quantity = $record->quantity;
+                                                        if ($quantity > 0) {
+                                                            return 'success';
+                                                        }
+
+                                                        if ($quantity < 0) {
+                                                            return 'danger';
+                                                        }
+
+                                                        return 'primary';
+                                                    })
+                                                    ->sortable(),
+                                                Tables\Columns\TextColumn::make('sale_price')
+                                                    ->label('Price')
+                                                    ->money('DKK')
+                                                    ->sortable()
+                                                    ->searchable(),
+                                            ])
+                                            ->inline()
                                             ->columnSpan(5),
                                         Forms\Components\TextInput::make('quantity')
                                             ->numeric()
@@ -495,7 +534,6 @@ class OrderResource extends Resource
                     ->placeholder('All Orders')
                     ->nullable(),
                 Tables\Filters\TernaryFilter::make('chargers')
-                    ->label('Has Invoice')
                     ->placeholder('All Orders')
                     ->nullable()
                     ->queries(
@@ -503,9 +541,8 @@ class OrderResource extends Resource
                         false: fn (Builder $query): Builder => $query->whereDoesntHave('chargers'),
                         blank: fn (Builder $query): Builder => $query,
                     )
-                    ->label('Has invoice(s)'),
+                    ->label('Has charger(s)'),
                 Tables\Filters\TernaryFilter::make('invoices')
-                    ->label('Has Invoice')
                     ->placeholder('All Orders')
                     ->nullable()
                     ->queries(

@@ -32,6 +32,7 @@ use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Rule;
 use Nette\Utils\Html;
 use Nette\Utils\Image;
+use RalphJSmit\Filament\RecordFinder\Forms\Components\RecordFinder;
 
 class OrderResource extends Resource
 {
@@ -199,43 +200,67 @@ class OrderResource extends Resource
                                 ->label('Items in order')
                                 ->relationship()
                                 ->schema([
-                                    Forms\Components\Select::make('inventory_id')
+                                    RecordFinder::make('inventory_id')
                                         ->label('Product')
-                                        ->options(
-                                            function () {
-                                                return Inventory::all()->filter(
-                                                    function ($inventory) {
-                                                        if ($inventory->quantity > 0) {
-                                                            return true;
-                                                        }
-
-                                                        return false;
-                                                    })
-                                                    ->mapWithKeys(
-                                                    function ($inventory) {
-                                                        $owner = $inventory->team->name;
-                                                        if ($inventory->global == 1) {
-                                                            $owner = 'Nordic Charge';
-                                                        }
-                                                        return [$inventory->id => $owner . ' – ' . $inventory->product->name . ' (' . $inventory->product->sku . ')'];
-                                                    }
-                                                );
-                                            }
-                                        )
+                                        ->standalone()
+                                        ->tableQuery(Inventory::query())
+                                        ->query(function (Builder $query) {
+                                            return Inventory::where('quantity', '>', 0)
+                                                ->where('team_id', '=', Filament::getTenant()->id)
+                                                ->orWhere('global', '=', true);
+                                        })
+                                        ->live()
                                         ->required()
-                                        ->searchable()
-                                        ->preload()
                                         ->afterStateUpdated(
                                             function (Forms\Set $set, ?string $state) {
                                                 if ($state) {
                                                     $inventory = Inventory::findOrFail($state);
-                                                    $set('quantity', 1);
                                                     $set('price', $inventory->sale_price);
+                                                    $set('quantity', 1);
                                                 } else {
                                                     $set('price', null);
                                                 }
                                             }
                                         )
+                                        ->openModalActionLabel('Select product')
+                                        ->getRecordLabelFromRecordUsing(fn (Inventory $record) => "{$record->product->name} ({$record->product->sku})")
+                                        ->tableColumns([
+                                            Tables\Columns\ImageColumn::make('product.image_url')
+                                                ->label(''),
+                                            Tables\Columns\TextColumn::make('team.name')
+                                                ->label('Team')
+                                                ->searchable()
+                                                ->sortable(),
+                                            Tables\Columns\TextColumn::make('product.name')
+                                                ->searchable()
+                                                ->description(fn (Inventory $record): string => $record->product->description ?: 'No description'),
+                                            Tables\Columns\TextColumn::make('product.sku')
+                                                ->label('SKU')
+                                                ->searchable()
+                                                ->toggleable()
+                                                ->sortable(),
+                                            Tables\Columns\TextColumn::make('quantity')
+                                                ->badge()
+                                                ->color(function ($record) {
+                                                    $quantity = $record->quantity;
+                                                    if ($quantity > 0) {
+                                                        return 'success';
+                                                    }
+
+                                                    if ($quantity < 0) {
+                                                        return 'danger';
+                                                    }
+
+                                                    return 'primary';
+                                                })
+                                                ->sortable(),
+                                            Tables\Columns\TextColumn::make('sale_price')
+                                                ->label('Price')
+                                                ->money('DKK')
+                                                ->sortable()
+                                                ->searchable(),
+                                        ])
+                                        ->inline()
                                         ->columnSpan(5),
                                     Forms\Components\TextInput::make('quantity')
                                         ->numeric()

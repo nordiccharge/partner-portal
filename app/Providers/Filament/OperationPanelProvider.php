@@ -19,6 +19,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use RalphJSmit\Filament\RecordFinder\FilamentRecordFinder;
 
 class OperationPanelProvider extends PanelProvider
 {
@@ -29,6 +30,7 @@ class OperationPanelProvider extends PanelProvider
             ->path('operation')
             ->login()
             ->profile()
+            ->plugin(FilamentRecordFinder::make())
             ->colors([
                 'primary' => Color::hex('#57995A'),
             ])
