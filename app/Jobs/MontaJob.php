@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Enums\StageAutomation;
-use App\Models\Charger;
 use App\Models\Order;
 use App\Models\Stage;
 use Carbon\Carbon;
@@ -28,13 +27,13 @@ class MontaJob implements ShouldQueue
 
     protected $record;
     protected $subscription;
-    protected $charger;
+    protected $chargerName;
     protected $user;
-    public function __construct(Order $record, $subscription, Charger $charger, $user = null)
+    public function __construct(Order $record, $subscription, $chargerName, $user = null)
     {
         $this->record = $record;
         $this->subscription = $subscription;
-        $this->charger = $charger;
+        $this->chargerName = $chargerName;
         $this->user = $user;
     }
 
@@ -45,11 +44,10 @@ class MontaJob implements ShouldQueue
     {
         Log::debug('Creating on Monta...');
         $record = $this->record;
-        $charger = $this->charger;
         $subscription = $this->subscription;
         $user = $this->user;
+        $chargerName = $this->chargerName;
         $id = (string) $record->id;
-        Log::debug($charger);
         try {
             Log::debug('Choosing operator...');
             $url = '';
@@ -74,7 +72,6 @@ class MontaJob implements ShouldQueue
                 }
                 return;
             }
-            Log::debug('Adding service to charger' . $charger->product->brand->name . '...');
             $response = Http::timeout(300)
                 ->get($url, [
                     'name' => $record->customer_first_name . ' ' . $record->customer_last_name,
@@ -82,7 +79,7 @@ class MontaJob implements ShouldQueue
                     'address' => $record->shipping_address,
                     'zip' => $record->postal->postal,
                     'city' => $record->city->name,
-                    'model' => $charger->product->brand->name,
+                    'model' => $chargerName,
                     'id' => $subscription,
                 ]);
             if ($response->status() == 201) {
@@ -91,22 +88,9 @@ class MontaJob implements ShouldQueue
                     ->performedOn($record)
                     ->event('system')
                     ->log('Order created on Monta: ' . $response->body());
-                Log::debug('Updating service on charger...');
-                $charger->update([
-                    "service" => $response->json()['url']
+                $record->update([
+                    "action" => $response->json()['url']
                 ]);
-                try {
-                    InstallerJob::dispatch($record, $charger->id, $charger->service)
-                        ->onQueue('monta-ne')
-                        ->onConnection('database')
-                        ->delay(Carbon::now()->addSeconds(10));
-                } catch (Exception $e) {
-                    Log::debug('Failed to add service on charger to Install Tool: ' . $e->getMessage());
-                    activity()
-                        ->performedOn($record)
-                        ->event('system')
-                        ->log('Failed to add service on charger to Install Tool: ' . $e->getMessage());
-                }
                 Log::debug('Updating stage on Monta...');
                 try {
                     $monta_stage = Stage::where('pipeline_id', (int)$record->pipeline_id)->where('automation_type', StageAutomation::Monta)->first();

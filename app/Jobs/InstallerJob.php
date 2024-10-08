@@ -90,14 +90,23 @@ class InstallerJob implements ShouldQueue
                 Log::error('Brand not supported');
                 return;
             }
-            $response = Http::post("https://installer-api.nordiccharge.com/chargers", [
-                'serial_number' => $charger->serial_number,
-                'guide' => $guide,
-                'data' => json_encode([
+            $data = json_encode([
+                'name' => $charger->product->name,
+                'image' => 'https://portal.nordiccharge.com/storage/' . $charger->product->image_url
+            ]);
+
+            if ($monta != '' || $monta != null) {
+                $data = json_encode([
                     'name' => $charger->product->name,
                     'image' => 'https://portal.nordiccharge.com/storage/' . $charger->product->image_url,
                     'monta_url' => $monta
-                ])
+                ]);
+            }
+
+            $response = Http::post("https://installer-api.nordiccharge.com/chargers", [
+                'serial_number' => $charger->serial_number,
+                'guide' => $guide,
+                'data' => $data
             ]);
             if (!$response->status() == 201) {
                 Log::error('Failed to create on Installer Tool: ' . $response->status() . ' ' . $response->body());

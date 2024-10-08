@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Jobs\MontaJob;
 use App\Models\Inventory;
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -20,6 +21,13 @@ class OrderItemObserver
         activity()
             ->performedOn($inventory)
             ->log('Quantity updated from ' . $orderItem->inventory->quantity . ' to ' . $new_quantity . ' on #' . $orderItem->order_id);
+
+        $order = Order::find($orderItem->order_id);
+        if ($orderItem->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
+            MontaJob::dispatch($order, 'false', $orderItem->product->brand->name)
+                ->onQueue('monta-ne')
+                ->onConnection('database');
+        }
     }
 
     /**

@@ -42,7 +42,7 @@ class SendOrderCreatedNotification
 
         Log::debug('Starting Shipping Automation');
 
-        if ($allow_shipping == 1 && $pipeline_automation == PipelineAutomation::Shipping) {
+        if ($allow_shipping == 1 && ($pipeline_automation == PipelineAutomation::Shipping || $pipeline_automation == PipelineAutomation::MontaShipping)) {
             Log::debug('Pipeline automation is set to shipping');
             $items = array();
             foreach ($order->items()->get(['inventory_id', 'quantity']) as $item) {

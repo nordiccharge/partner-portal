@@ -47,13 +47,18 @@ class ViewOrder extends ViewRecord
     public function getTitle(): string|Htmlable
     {
         $order = $this->getRecord();
-        return new HtmlString('<span class="text-gray-800 text-2xl">' . $order->team->name . '</span>  <span class="text-primary-600 font-medium text-2xl">#' . $order->id . '</span>');
+        return new HtmlString('<span class="text-gray-800 text-2xl dark:text-white">' . $order->team->name . '</span>  <span class="text-primary-600 font-medium text-2xl">#' . $order->id . '</span>');
     }
 
     public function infolist(Infolist $infolist): Infolist
     {
         return $infolist
             ->schema([
+                Group::make([
+                    ViewEntry::make('comments')
+                        ->view('ticketing.admin.comments')
+                        ->columnSpan(2),
+                ])->columns(3),
                 Section::make('Order Details')
                     ->schema([
                         TextEntry::make('pipeline.name')
