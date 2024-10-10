@@ -23,9 +23,9 @@ class OrderItemObserver
             ->performedOn($inventory)
             ->log('Quantity updated from ' . $orderItem->inventory->quantity . ' to ' . $new_quantity . ' on #' . $orderItem->order_id);
 
-        Log::debug('Checking if order is going to Monta Monta: ' . ($orderItem->inventory->product->category_id == 1) . ', ' . ($orderItem->order->action != "" || $orderItem->order->action != null));
+        Log::debug('Checking if order is going to Monta: ' . ($orderItem->inventory->product->category_id == 1) . ', ' . $orderItem->order->action != "");
         $order = Order::find($orderItem->order_id);
-        if ($orderItem->inventory->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
+        if ($orderItem->inventory->product->category_id == 1 && $order->action != "") {
             Log::debug('Dispatching MontaJob');
             MontaJob::dispatch($order, 'false', $orderItem->inventory->product->brand->name)
                 ->onQueue('monta-ne')
