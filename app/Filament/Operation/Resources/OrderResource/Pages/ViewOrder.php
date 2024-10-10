@@ -54,11 +54,6 @@ class ViewOrder extends ViewRecord
     {
         return $infolist
             ->schema([
-                Group::make([
-                    ViewEntry::make('comments')
-                        ->view('ticketing.admin.comments')
-                        ->columnSpan(2),
-                ])->columns(3),
                 Section::make('Order Details')
                     ->schema([
                         TextEntry::make('pipeline.name')
