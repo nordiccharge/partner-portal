@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\PipelineAutomation;
 use App\Jobs\MontaJob;
 use App\Models\Inventory;
 use App\Models\Order;
@@ -25,7 +26,7 @@ class OrderItemObserver
 
         Log::debug('Checking if order is going to Monta: ' . ($orderItem->inventory->product->category_id == 1) . ', ' . $orderItem->order->action != "");
         $order = Order::find($orderItem->order_id);
-        if ($orderItem->inventory->product->category_id == 1) {
+        if ($orderItem->inventory->product->category_id == 1 && $order->pipeline->automation_type == PipelineAutomation::MontaShipping) {
             Log::debug('Dispatching MontaJob');
             MontaJob::dispatch($order, 'false', $orderItem->inventory->product->brand->name)
                 ->onQueue('monta-ne')
