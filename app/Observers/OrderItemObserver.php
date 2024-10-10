@@ -15,6 +15,7 @@ class OrderItemObserver
      */
     public function created(OrderItem $orderItem): void
     {
+        Log::debug('OrderItem created');
         $new_quantity = $orderItem->inventory->quantity - $orderItem->quantity;
         $inventory = Inventory::find($orderItem->inventory_id);
         $inventory->update(['quantity' => $new_quantity]);
@@ -22,6 +23,7 @@ class OrderItemObserver
             ->performedOn($inventory)
             ->log('Quantity updated from ' . $orderItem->inventory->quantity . ' to ' . $new_quantity . ' on #' . $orderItem->order_id);
 
+        Log::debug('Checking if order is going to Monta Monta: ' . ($orderItem->inventory->product->category_id == 1) . ', ' . ($orderItem->order->action != "" || $orderItem->order->action != null));
         $order = Order::find($orderItem->order_id);
         if ($orderItem->inventory->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
             Log::debug('Dispatching MontaJob');
