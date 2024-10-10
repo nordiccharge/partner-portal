@@ -52,8 +52,10 @@ class MontaJob implements ShouldQueue
             Log::debug('Choosing operator...');
             $url = '';
             if ($record->team->id == 5) {
+                Log::debug('Creating on Monta Strømlinet...');
                 $url = 'https://monta-script-obd7ro23jq-lz.a.run.app/create/stromlinet';
             } elseif ($record->team->id == 7) {
+                Log::debug('Creating on Monta Nordisk Energi...');
                 $url = 'https://monta-script-obd7ro23jq-lz.a.run.app/create/nordisk-energi';
             } else {
                 Log::error('Team not found');

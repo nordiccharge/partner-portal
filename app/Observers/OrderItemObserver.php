@@ -24,6 +24,7 @@ class OrderItemObserver
 
         $order = Order::find($orderItem->order_id);
         if ($orderItem->inventory->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
+            Log::debug('Dispatching MontaJob');
             MontaJob::dispatch($order, 'false', $orderItem->inventory->product->brand->name)
                 ->onQueue('monta-ne')
                 ->onConnection('database');
