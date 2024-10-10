@@ -26,8 +26,4 @@ class OrderItem extends Model
         return $this->belongsTo(Inventory::class);
     }
 
-    public function product(): HasOneThrough {
-        return $this->hasOneThrough(Product::class, Inventory::class);
-    }
-
 }

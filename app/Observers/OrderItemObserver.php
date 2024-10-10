@@ -23,8 +23,8 @@ class OrderItemObserver
             ->log('Quantity updated from ' . $orderItem->inventory->quantity . ' to ' . $new_quantity . ' on #' . $orderItem->order_id);
 
         $order = Order::find($orderItem->order_id);
-        if ($orderItem->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
-            MontaJob::dispatch($order, 'false', $orderItem->product->brand->name)
+        if ($orderItem->inventory->product->category_id == 1 && ($order->action != "" || $order->action != null)) {
+            MontaJob::dispatch($order, 'false', $orderItem->inventory->product->brand->name)
                 ->onQueue('monta-ne')
                 ->onConnection('database');
         }
