@@ -13,15 +13,12 @@ class ChargerObserver
 {
     public function created(Charger $record): void
     {
+        Log::debug('Charger created');
         $order = $record->order;
-        $pipeline = $order->pipeline;
 
         try {
-            $brand = Brand::find($record->product->brand_id);
-            $product = $record->product_id;
-
-            Log::debug("Brand first product: " . $brand->products->first()->id . " Product: " . $product);
-            if ($order->installation_required == 1 && ($brand->products->first()->id == $product)) {
+            if ($order->installation_required == 1) {
+                Log::debug('Dispatching InstallerJob');
                 InstallerJob::dispatch($order, $record->id, $order->action)
                     ->onQueue('monta-ne')
                     ->onConnection('database')
