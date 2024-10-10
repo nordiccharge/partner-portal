@@ -28,7 +28,11 @@ class OrderItemObserver
         $order = Order::find($orderItem->order_id);
         if ($orderItem->inventory->product->category_id == 1 && $order->pipeline->automation_type == PipelineAutomation::MontaShipping) {
             Log::debug('Dispatching MontaJob');
-            MontaJob::dispatch($order, 'false', $orderItem->inventory->product->brand->name)
+            $subscription = 'false';
+            if ($order->pipeline_id == 6) {
+                $subscription = '1864';
+            }
+            MontaJob::dispatch($order, $subscription, $orderItem->inventory->product->brand->name)
                 ->onQueue('monta-ne')
                 ->onConnection('database');
         }
