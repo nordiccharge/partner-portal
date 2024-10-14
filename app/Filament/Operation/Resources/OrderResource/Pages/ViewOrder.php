@@ -117,7 +117,7 @@ class ViewOrder extends ViewRecord
                             ->action(function (Order $record, array $data) {
                                 $charger = $record->chargers->where('id', $data['charger'])->first();
                                 Log::debug('Charger brand is: ' . $charger->product->brand->name);
-                                MontaJob::dispatch($record, $data['subscription'], $charger, auth()->user())
+                                MontaJob::dispatch($record, $data['subscription'], $charger->product->brand->name, auth()->user())
                                     ->onQueue('monta-ne')
                                     ->onConnection('database')
                                     ->delay(Carbon::now()->addSeconds(10));
